@@ -1,0 +1,50 @@
+<!-- ComboBox and toolBar row -->
+<div>
+    <div class="container-fluid">
+      <div class="row">
+        <app-toolbar class="container-fluid row"></app-toolbar>
+      </div>
+    </div>
+  </div>
+  <!-- Main window -->
+  <div class="container-fluid h-100 d-flex flex-column">
+    <div class="row h-100">
+      <!-- Left menu -->
+      <div class="col-md-4" style="background-color: #c82c2c;max-width: 8%;min-width: 8%;">
+        <app-menu (sendIsShowSettings)="receiveState($event)" 
+                  (sendIsShowDisplay)="receiveWorkspaceState($event)" 
+                  (sendIsShowShoot)="receiveShootState($event)"
+                  (sendIsShowCollection)="receiveCollectionState($event)"
+                  (sendIsShowLibrary)="receiveLibraryState($event)">
+        </app-menu>
+      </div>
+      <!-- Shoot selector -->
+      <div class="col-md-4" style="background-color: #cb9595;max-width: 8%;min-width: 8%;">
+        <app-shoot-selector></app-shoot-selector>
+      </div>
+      <!-- Picture display -->
+      <div class="col-md-4" style="background-color: #CCFFCC;max-width: 68%;min-width: 68%;">
+        <app-window></app-window>
+        <!-- <app-add-workspace ></app-add-workspace> -->
+        <app-settings *ngIf="!isShowSettings"></app-settings>
+        <app-library *ngIf="!isShowLibrary"></app-library>
+        <app-album *ngIf="!isShowShoot"></app-album>
+        <app-collection *ngIf="!isShowCollection"></app-collection>
+      </div>
+      <!-- Flow selector -->
+      <div class="col-md-4" style="background-color: #b510ef;max-width: 16%;min-width: 16%;">
+        <app-flow-selector></app-flow-selector>
+      </div>
+    </div>
+  </div>
+  <!--  Footer toolBar -->
+  <div>
+    <div class="container-fluid">
+      <div class="row" style="background-color: #f5a303;">
+        <div class="col-md-12">
+          <app-footer></app-footer>
+        </div>
+      </div>
+    </div>
+  </div>
+  

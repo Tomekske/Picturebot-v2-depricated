@@ -1,0 +1,87 @@
+<form [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+  <!-- Editing software settings -->
+  <div class="card">
+    <div class="card-header">
+      <h4>Upload settings</h4>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <input formControlName="uploadEdited" type="text" class="form-control" placeholder="Upload pictures from the edited flow">
+      </div>
+      <div class="form-group">
+        <input formControlName="uploadSocialMedia" type="text" class="form-control" placeholder="Upload pictures from the social-media flow">
+      </div>
+    </div>
+  </div>
+  <!-- Software settings -->
+  <div class="card spacing-card">
+    <div class="card-header">
+      <h4>Software settings</h4>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <input formControlName="sofwareEditing" type="text" class="form-control" placeholder="Editing software">
+      </div>
+      <div class="form-group">
+        <input formControlName="sofwarePostProcessing" type="text" class="form-control" placeholder="Post processing software">
+      </div>
+    </div>
+  </div>
+  <!-- Default file type -->
+  <div class="card spacing-card">
+    <div class="card-header">
+      <h4>Logging level</h4>
+    </div>
+    <div class="card-body">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" name="fileType" value="RAW" formControlName="fileType">
+          <label class="form-check-label">RAW</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" name="fileType" value="Compressed" formControlName="fileType">
+          <label class="form-check-label">Compressed</label>
+        </div>
+    </div>
+  </div>
+  <!-- Logging level -->
+  <div class="card spacing-card">
+    <div class="card-header">
+      <h4>Logging level</h4>
+    </div>
+    <div class="card-body">
+        <div class="form-check">
+          <input type="radio" class="form-check-input" name="logLevel" value="Debug" formControlName="logLevel">
+          <label class="form-check-label">Debug</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" class="form-check-input" name="logLevel" value="Error" formControlName="logLevel">
+          <label class="form-check-label">Error</label>
+        </div>
+    </div>
+  </div>
+  <!-- Conversion percentage -->
+  <div class="card spacing-card">
+    <div class="card-header">
+      <h4>Conversion percentage</h4>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <input formControlName="conversion" type="text" class="form-control" placeholder="Conversion percentage">
+      </div>
+    </div>
+  </div>
+
+  <!-- Button save -->
+  <div class="row spacing-card">
+    <!-- Right button spacing by placing an empty placeholder value on the left side -->
+    <div class="col">
+      <h3 class="one"></h3>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary bmd-btn-fab">
+        <i class="material-icons">save</i>
+      </button>
+    </div>
+  </div>
+</form>
+

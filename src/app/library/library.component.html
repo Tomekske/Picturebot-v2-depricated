@@ -1,0 +1,29 @@
+<form [formGroup]="libraryForm" (ngSubmit)="saveLibrary()">
+    <!-- Conversion percentage -->
+    <div class="card spacing-card">
+        <div class="card-header">
+        <h4>Add new library</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <input formControlName="name" type="text" class="form-control" placeholder="Library name">
+                <input formControlName="base" type="text" class="form-control" placeholder="Base path">
+            </div>
+        </div>
+    </div>
+
+    <!-- Button save -->
+    <div class="row spacing-card">
+        <!-- Right button spacing by placing an empty placeholder value on the left side -->
+        <div class="col">
+        <h3 class="one"></h3>
+        </div>
+        <div class="col-auto">
+        <button type="submit" class="btn btn-primary bmd-btn-fab">
+            <i class="material-icons">save</i>
+        </button>
+        </div>
+    </div>
+</form>
+  
+  

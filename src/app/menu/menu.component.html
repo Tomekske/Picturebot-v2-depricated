@@ -1,0 +1,26 @@
+<nav id="menu">
+    <ul class="parent-menu">
+      <li data-toggle="tooltip"><a><i class="fa fa-folder-open"></i></a></li>
+      <li><a><i class="fa fa-file"></i></a></li>
+      <li>
+        <a><i class="fa fa-book"></i></a>
+        <ul>
+          <li (click)="showCollection()"><a><i class="fa fa-plus-square" ></i></a></li>
+          <li><a><i class="fa fa-edit"></i></a></li>
+          <li><a><i class="fas fa-arrows-alt"></i></a></li>
+          <li><a><i class="fas fa-trash"></i></a></li>
+        </ul>
+      </li>
+      <li>
+        <a><i class="fas fa-object-group"></i></a>
+        <ul>
+          <li><a><i class="fa fa-edit"></i></a></li>
+          <li><a><i class="fas fa-arrows-alt"></i></a></li>
+          <li><a><i class="fas fa-trash"></i></a></li>
+          <li (click)="showLibrary()"><a><i class="fa fa-plus-square" ></i></a></li>
+        </ul>
+      </li>
+      <li (click)="showShoot()"><a><i class="fa fa-plus-square"></i></a></li>
+      <li (click)="showSettings()"><a><i class="fa fa-cog"></i></a></li>
+    </ul>
+  </nav>

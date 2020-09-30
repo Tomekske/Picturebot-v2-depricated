@@ -1,0 +1,53 @@
+<form [formGroup]="collectionForm" (ngSubmit)="saveCollection()">
+    <!-- Select library -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Link collection to a library</h4>
+        </div>
+        <select formControlName="library">
+            <option value="" disabled>Choose library</option>
+            <option *ngFor="let library of libraries" [ngValue]="library">{{library}}</option>
+        </select>
+    </div>
+
+    <!-- Library location -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Collection name</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <input formControlName="name" type="text" class="form-control" placeholder="Library name">
+            </div>
+        </div>
+    </div>
+    <!-- Default file type -->
+    <div class="card spacing-card">
+        <div class="card-header">
+            <h4>Default file type</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-check">
+                <input formControlName="backup" type="text" class="form-control" placeholder="Backup flow name">
+                <input formControlName="base" type="text" class="form-control" placeholder="Base flow name">
+                <input formControlName="preview" type="text" class="form-control" placeholder="Preview flow name">
+                <input formControlName="files" type="text" class="form-control" placeholder="Files flow name">
+                <input formControlName="edited" type="text" class="form-control" placeholder="Edited flow name">
+                <input formControlName="socialMedia" type="text" class="form-control" placeholder="Social-media flow name">
+                <input formControlName="selection" type="text" class="form-control" placeholder="Selection flow name">
+            </div>
+        </div>
+    </div>
+    <!-- Button save -->
+    <div class="row spacing-card">
+        <!-- Right button spacing by placing an empty placeholder value on the left side -->
+        <div class="col">
+            <h3 class="one"></h3>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary bmd-btn-fab">
+                <i class="material-icons">save</i>
+            </button>
+        </div>
+    </div>
+</form>

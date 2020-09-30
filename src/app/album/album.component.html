@@ -1,0 +1,65 @@
+<form [formGroup]="albumForm" (ngSubmit)="saveAlbum()">
+    <!-- Select -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Link collection to a library</h4>
+        </div>
+        <select formControlName="collection">
+            <option value="" disabled>Choose collection</option>
+            <option *ngFor="let collection of collections" [ngValue]="collection">{{collection}}</option>
+        </select>
+    </div>
+
+    <!-- Library location -->
+    <div class="card">
+        <div class="card-header">
+            <h4>Album name</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <input formControlName="name" type="text" class="form-control" placeholder="Enter name of the album">
+            </div>
+        </div>
+    </div>
+    <!-- Default file type -->
+    <div class="card spacing-card">
+        <div class="card-header">
+            <h4>Album date</h4>
+        </div>
+        <div class="card-body">
+            <div>
+                <input formControlName="date" type="date" class="form-control" data-date-format="dd/MM/YYYY">
+            </div>
+        </div>
+    </div>
+
+    <!-- Dropzone -->
+    <div class="card spacing-card">
+        <div class="card-header">
+            <h4>Dropzone</h4>
+        </div>
+        <div class="card-body">
+            <ngx-dropzone (change)="onSelect($event)">
+                <ngx-dropzone-label>Drop it, baby!</ngx-dropzone-label>
+                <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+                    <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                </ngx-dropzone-preview>
+            </ngx-dropzone>
+        </div>
+    </div>
+    <!-- Button save -->
+    <div class="row spacing-card">
+        <!-- Right button spacing by placing an empty placeholder value on the left side -->
+        <div class="col">
+            <h3 class="one"></h3>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary bmd-btn-fab">
+                <i class="material-icons">save</i>
+            </button>
+        </div>
+    </div>
+</form>
+
+
+
