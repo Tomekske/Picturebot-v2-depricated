@@ -13,7 +13,7 @@
       <div class="col-md-4" style="background-color: #c82c2c;max-width: 8%;min-width: 8%;">
         <app-menu (sendIsShowSettings)="receiveState($event)" 
                   (sendIsShowDisplay)="receiveWorkspaceState($event)" 
-                  (sendIsShowShoot)="receiveShootState($event)"
+                  (sendIsShowAlbum)="receiveAlbumState($event)"
                   (sendIsShowCollection)="receiveCollectionState($event)"
                   (sendIsShowLibrary)="receiveLibraryState($event)">
         </app-menu>
@@ -26,10 +26,10 @@
       <div class="col-md-4" style="background-color: #CCFFCC;max-width: 68%;min-width: 68%;">
         <app-window></app-window>
         <!-- <app-add-workspace ></app-add-workspace> -->
-        <app-settings *ngIf="!isShowSettings"></app-settings>
-        <app-library *ngIf="!isShowLibrary"></app-library>
-        <app-album *ngIf="!isShowShoot"></app-album>
-        <app-collection *ngIf="!isShowCollection"></app-collection>
+        <app-settings *ngIf="!isShowSettings" (sendIsShowSettings)="receiveState($event)"></app-settings>
+        <app-library *ngIf="!isShowLibrary" (sendIsShowLibrary)="receiveLibraryState($event)"></app-library>
+        <app-album *ngIf="!isShowAlbum" (sendIsShowAlbum)="receiveAlbumState($event)"></app-album>
+        <app-collection *ngIf="!isShowCollection" (sendIsShowCollection)="receiveCollectionState($event)"></app-collection>
       </div>
       <!-- Flow selector -->
       <div class="col-md-4" style="background-color: #b510ef;max-width: 16%;min-width: 16%;">

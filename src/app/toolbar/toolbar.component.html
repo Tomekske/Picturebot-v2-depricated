@@ -1,6 +1,12 @@
 <div class="col-md-4"></div>
 <!-- ComboBox  -->
-<div class="col-md-4 col-xl-5 offset-xl-0 d-lg-flex align-self-center justify-content-lg-center"><select style="width: 250px;"><optgroup label="Select a picture library"><option value="12" selected=""> Library 1</option><option value="13">Library 2</option><option value="14">Library 3</option></optgroup></select></div>
+<div class="col-md-4 col-xl-5 offset-xl-0 d-lg-flex align-self-center justify-content-lg-center">
+  <select style="width: 250px;" [(ngModel)]="collection">
+    <option value="" disabled>Choose collection</option>
+    <option *ngFor="let collection of collections" [ngValue]="collection">{{collection}}</option>
+  </select>
+</div>
+
 <!-- ToolBar -->
 <div class="col-md-4 col-xl-3 align-self-center">
   <nav class="navbar navbar-light navbar-expand-md">

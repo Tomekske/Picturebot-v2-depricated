@@ -11,26 +11,18 @@ import { AppConfig } from '../environments/environment';
 export class AppComponent {
   constructor(private electron: ElectronService, private translate: TranslateService) {
     this.translate.setDefaultLang('en');
-
-    //logger.Log().warn("Logger TEST");
-
   }
 
   ngOnInit() {
     console.log("ngOnInit");
-    //this.electronService.ipcRenderer.send("get-settings", "");
-    // this.electronService.ipcRenderer.on('parse-settings', (event, args) => {
-    //   console.log("Data zou normaalgezien moeten toekomen! :(")
-    //   console.log(args);     
-    // });
-
   }
 
-  isShowSettings = true;
-  isShowDisplay = true;
-  isShowShoot = true;
-  isShowCollection = true;
-  isShowLibrary = true;
+  isShowSettings: boolean = true;
+  isShowDisplay: boolean = true;
+  isShowAlbum: boolean = true;
+  isShowCollection: boolean = true;
+  isShowLibrary: boolean = true;
+  sendAlbums: string[] = [];
 
   receiveState($event) {
     console.log("receiveState");
@@ -44,10 +36,10 @@ export class AppComponent {
     console.log(this.isShowDisplay);
   }
 
-  receiveShootState($event) {
-    console.log("receiveShootState");
-    this.isShowShoot = $event;
-    console.log(this.isShowShoot);
+  receiveAlbumState($event) {
+    console.log("receiveAlbumState");
+    this.isShowAlbum = $event;
+    console.log(this.isShowAlbum);
   }
 
   receiveCollectionState($event) {
@@ -62,12 +54,9 @@ export class AppComponent {
     console.log(this.isShowLibrary);
   }
 
-  ngAfterViewInit() {
-    console.log('weeerkt');
-    this.electron.ipcRenderer.on('msg', (event, text) => {
-      console.log(`WORKS: ${text}`);
-    });
-  }
-
-
+  // receivedLibraries($event) {
+  //   console.log('receivedLibraries');
+  //   this.sendAlbums = $event;
+  //   console.error(this.sendAlbums);
+  // }
 }

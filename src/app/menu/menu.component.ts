@@ -14,13 +14,13 @@ export class MenuComponent {
   //isShowSettings = new BehaviorSubject<boolean>(true);
   isShowSettings: boolean = true;
   isShowDisplay: boolean = true;
-  isShowShoot: boolean = true;
+  isShowAlbum: boolean = true;
   isShowCollection: boolean = true;
   isShowLibrary: boolean = true;
 
   @Output() sendIsShowSettings = new EventEmitter<boolean>();
   @Output() sendIsShowDisplay = new EventEmitter<boolean>();
-  @Output() sendIsShowShoot = new EventEmitter<boolean>();
+  @Output() sendIsShowAlbum = new EventEmitter<boolean>();
   @Output() sendIsShowCollection = new EventEmitter<boolean>();
   @Output() sendIsShowLibrary = new EventEmitter<boolean>();
 
@@ -37,10 +37,10 @@ export class MenuComponent {
     this.sendIsShowDisplay.emit(this.isShowDisplay);
   }
 
-  showShoot() {
+  showAlbum() {
     console.log("SHOOOOOOOOOOOOT");
-    this.isShowShoot = !this.isShowShoot;
-    this.sendIsShowShoot.emit(this.isShowShoot);
+    this.isShowAlbum = !this.isShowAlbum;
+    this.sendIsShowAlbum.emit(this.isShowAlbum);
   }
 
   showCollection() {

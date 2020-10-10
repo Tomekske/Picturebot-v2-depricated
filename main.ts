@@ -2,20 +2,22 @@ import { app, BrowserWindow, screen, ipcMain, remote } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import * as fs from 'fs';
-
-//import * as sqlite from 'sqlite3';
+import * as cp from 'child_process';
 import * as sqlite from 'better-sqlite3';
+
 import { Logger } from './logger';
-import { Settings } from './shared/database/settings';
-import { Library } from './shared/database/library';
+import { DbSettings } from './shared/database/dbSettings';
+import { DbLibrary } from './shared/database/dbLibrary';
 import { ILibrary, ISettings, ICollection, IAlbum, IFlow, IBase } from './shared/database/interfaces';
 import { fstat } from 'fs';
-import { Collection } from './shared/database/collection';
-import { Album } from './shared/database/album';
+import { DbCollection } from './shared/database/dbCollection';
+import { DbAlbum } from './shared/database/dbAlbum';
 import { cpuUsage, electron } from 'process';
-import { BaseFlow } from './shared/database/baseFlow';
+import { DbBaseFlow } from './shared/database/dbBaseFlow';
 import { autoUpdater } from 'electron-updater';
 import { Updater } from './shared/updater/updater';
+import { DbBackupFlow } from './shared/database/dbBackupFlow';
+import { DbPreviewFlow } from './shared/database/dbPreviewFlow';
 
 let win: BrowserWindow = null;
 let sendStatus = null;
@@ -107,90 +109,55 @@ try {
   updater.downloadProgress();
   updater.updateDownloaded();
   Logger.Log().debug("HET WERKTTTTTTTTTTTTT");
-  // autoUpdater.on('checking-for-update', () => {
-  //   console.log("Checking for updates");
-  //   Logger.Log().debug("Checking for updates");
-  // });
-
-  // autoUpdater.on('update-available', (info) => {
-  //   console.log("Update available");
-  //   Logger.Log().debug("Update available");
-  // });
-
-  // autoUpdater.on('update-not-available', (info) => {
-  //   console.log("Update not available");
-  //   Logger.Log().debug("Update not available");
-  // });
-
-  // autoUpdater.on('error', (error) => {
-  //   console.log("error");
-  //   Logger.Log().debug("error");
-  // });
-
-  // autoUpdater.on('download-progress', (progress) => {
-  //   console.log(`Download speed: ${progress.bytesPerSecond} - Download ${progress.percent}`);
-  //   Logger.Log().debug(`Download speed: ${progress.bytesPerSecond} - Download ${progress.percent}`);
-  // });
-
-  // autoUpdater.on('update-downloaded', (info) => {
-  //   console.log("Update will be installed");
-  //   Logger.Log().debug("Update will be installed");
-  //   autoUpdater.quitAndInstall();
-  // });
-
 
   ipcMain.on('save-settings', (event, args) => {
-    Logger.Log().debug('SAVE SETTINGS');
+    Logger.Log().debug('Saving settings');
     // Create database
-    const db = new Settings();
-    const dbCon = db.dbConnection();
+    const db = new DbSettings();
 
     // If table exists update database
-    if(db.tableExists(dbCon)) {
-      db.updateRow(dbCon, args);
+    if(db.isEmpty()) {
+      Logger.Log().debug('Saving settings: table exists');
+      db.insertRow(args);
     }
     // Else create a new table
     else {
-      db.createTable(dbCon);
-      db.insertRow(dbCon, args);
+      Logger.Log().debug('Saving settings: new table');
+      db.updateRow(args);
     }
     
     //const row: ISettings = db.queryAll(dbCon);
-    db.dbClose(dbCon);
+    db.dbClose();
   });
 
   ipcMain.on('get-settings', (event) => {
     Logger.Log().debug("get-settings");
 
-    const db = new Settings();
-    const dbCon = db.dbConnection();
+    const db = new DbSettings();
 
-    const row: ISettings = db.queryAll(dbCon);
+    const row: ISettings = db.queryAll();
     event.returnValue = row;
   });
   
 
-  ipcMain.on('check-tableExists', (event) => {
+  ipcMain.on('check-settings-empty', (event) => {
     Logger.Log().debug('');
-    const db = new Settings();
-    const dbCon = db.dbConnection();
+    const db = new DbSettings();
 
-    event.returnValue = db.tableExists(dbCon);
+    event.returnValue = db.isEmpty();
   });
 
   ipcMain.on('save-library', (event, args: ILibrary) => {
     Logger.Log().debug('SAVE library');
 
     // Create database
-    const db = new Library();
-    const dbcon = db.dbConnection();
+    const db = new DbLibrary();
 
-    db.createTable(dbcon);
-    db.insertRow(dbcon, args);
-    db.dbClose(dbcon);
+    db.insertRow(args);
+    db.dbClose();
 
-    if (!fs.existsSync(args.path)){
-      fs.mkdirSync(args.path);
+    if (!fs.existsSync(args.library)){
+      fs.mkdirSync(args.library);
     }
   });
 
@@ -198,18 +165,13 @@ try {
     Logger.Log().debug('SAVE collection');
 
     // Create database
-    const db = new Collection();
-    const dbcon = db.dbConnection();
+    const db = new DbCollection();
 
-    if(!db.tableExists(dbcon)) {
-      db.createTable(dbcon);
-    }
+    db.insertRow(args);
+    db.dbClose();
 
-    db.insertRow(dbcon, args);
-    db.dbClose(dbcon);
-
-    if (!fs.existsSync(args.path)){
-      fs.mkdir(args.path, err => {
+    if (!fs.existsSync(args.collection)){
+      fs.mkdir(args.collection, err => {
         console.log(err);
       });
     }
@@ -219,89 +181,112 @@ try {
     Logger.Log().debug('SAVE album');
 
     // Create database
-    const db = new Library();
-    const dbcon = db.dbConnection();
+    const db = new DbLibrary();
 
-    db.createTable(dbcon);
-    db.insertRow(dbcon, args);
-    db.dbClose(dbcon);
+    db.insertRow(args);
+    db.dbClose();
 
-    if (!fs.existsSync(args.path)){
-      fs.mkdirSync(args.path);
+    if (!fs.existsSync(args.album)){
+      fs.mkdirSync(args.album);
     }
   });
 
   ipcMain.on('save-pictures', (event, args, y: IAlbum) => {
     Logger.Log().debug('save-pictures');
+
+    const dbSettings = new DbSettings();
+
     // Create database
-    const db = new Album();
-    const dbcon = db.dbConnection();
+    const albumDb = new DbAlbum();
 
-    if(!db.tableExists(dbcon)) {
-      db.createTable(dbcon);
-    }
+    albumDb.insertRow(y);
+    albumDb.dbClose();
 
-    db.insertRow(dbcon, y);
-    db.dbClose(dbcon);
-
-    if (!fs.existsSync(y.path)){
-      fs.mkdir(y.path, err => {
+    // Create album
+    if (!fs.existsSync(y.album)) {
+      fs.mkdir(y.album, err => {
         console.log(err);
       });
+    
 
-      const dbb = new Collection();
-      const dbbcon = dbb.dbConnection();
-      let flows: IFlow = dbb.queryFlows(dbbcon, y.collection);
+      const collectionDb = new DbCollection();
+      let flows: IFlow = collectionDb.queryFlows(y.collection);
 
+      // Creating flow directories
       Object.values(flows).forEach(flow => {
         if(flow != flows.selection) {
+          console.log(`FLOW: ${flow} - path: ${path.join(y.album, flow)}`);
+          //console.log(`FLOW: ${flow}`);
 
-          console.log(`FLOW: ${flow} - path: ${path.join(y.path, flow)}`);
-
-          fs.mkdir(path.join(y.path, flow), err => {
+          fs.mkdir(path.join(y.album, flow), err => {
             console.log(err);
           });
         }
-
       });
-      db.dbClose(dbbcon);
+      collectionDb.dbClose();
 
-      // pictures
-      const picDb = new BaseFlow();
-      const conPic = picDb.dbConnection();
-
-      if(!picDb.tableExists(conPic)) {
-        picDb.createTable(conPic);
-      }
-      
+      // // pictures
+      const picDb = new DbBaseFlow();
+      const backupDb = new DbBackupFlow();
+      const dbPreview = new DbPreviewFlow();
+   
+      // // pipeline
       args.forEach((picture: IBase) => {
-        const dest: string = path.join(y.collection,`${y.name} ${y.date}`, flows.base, picture.name);
-        console.log(`src: ${picture.source},dest: ${dest}`);
+        const destBase: string = path.join(y.collection,`${y.name} ${y.date}`, flows.base, picture.hashed);
+        const destBackup: string = path.join(y.collection,`${y.name} ${y.date}`, flows.backup, picture.hashed);
+        const destPreview: string = path.join(y.collection,`${y.name} ${y.date}`, flows.preview, `${picture.hashed.split('.')[0]}.jpg`);
+        
+        let dataBaseFlow: IBase = { collection: y.collection, album: y.album, source: picture.source, name: picture.name, destination: destBase, selection: 0};
+        let dataBackupFlow: IBase = { collection: y.collection, album: y.album, source: picture.source, name: picture.name, destination: destBackup};
+        let dataPreviewFlow: IBase = { collection: y.collection, album: y.album ,source: picture.source, destination: destPreview}; 
 
-        let x: IBase = { source: picture.source, name: picture.name, destination: dest, selection: 0};
-        picDb.insertRow(conPic, x);
-        fs.copyFile(picture.source, dest, (err) => {
+        console.log(`Base: ${destBase} - ${dataBaseFlow.name}`);
+        console.log(`Backup: ${destBackup} - ${dataBackupFlow}`);
+        console.log(`Preview: ${destPreview} - ${dataPreviewFlow}`);
+        Logger.Log().debug(`Preview: ${destPreview} - ${dataPreviewFlow}`);
+
+        // copy base
+        fs.copyFile(picture.source, path.join(path.dirname(destBase), picture.hashed), (err) => {
           if (err) throw err;
-          console.log(`Picture: ${x.destination}`);
+          console.log(`Picture: ${dataBaseFlow.destination}`);
         });
+        // Inserting data into database
+        picDb.insertRow(dataBaseFlow);
+
+        // copy backup
+        fs.copyFile(picture.source, path.join(path.dirname(destBackup), picture.hashed), (err) => {
+          if (err) throw err;
+          console.log(`Picture: ${dataBackupFlow.destination}`);
+        });
+        backupDb.insertRow(dataBackupFlow);
+        
+
+        // convert preview
+        const strr = `magick convert \"${picture.source}\" -quality ${dbSettings.queryConversion()} -verbose \"${destPreview}\"`
+        const data = cp.execSync(strr);
+        dbPreview.insertRow(dataPreviewFlow);  
       });
 
-      picDb.dbClose(conPic);
+      picDb.dbClose();
+      backupDb.dbClose();
+      dbPreview.dbClose();
     }
+
+    event.returnValue = "";
   });
+  
 
   ipcMain.on('get-libraries', (event, args: ILibrary) => {
     Logger.Log().debug('get-libraries');
 
         // Create database
-    const db = new Library();
-    const dbCon = db.dbConnection();
+    const db = new DbLibrary();
 
-    const exists = db.tableExists(dbCon);
+    const exists = db.tableExists();
 
     if(exists) {
-      console.log(db.queryLibraries(dbCon));
-      event.returnValue = db.queryLibraries(dbCon);
+      console.log(db.queryLibraries());
+      event.returnValue = db.queryLibraries();
     }
     //event.returnValue = db.tableExists(dbCon);
   });
@@ -310,16 +295,24 @@ try {
     Logger.Log().debug('get-collections');
 
         // Create database
-    const db = new Collection();
-    const dbCon = db.dbConnection();
+    const db = new DbCollection();
 
-    const exists = db.tableExists(dbCon);
+    const exists = db.tableExists();
 
     if(exists) {
-      console.log(db.queryCollections(dbCon));
-      event.returnValue = db.queryCollections(dbCon);
+      console.log(db.queryCollections());
+      event.returnValue = db.queryCollections();
     }
     //event.returnValue = db.tableExists(dbCon);
+  });
+
+  ipcMain.on('get-albums', (event, args) => {
+    Logger.Log().debug('get-albums');
+
+    // Create database
+    const db = new DbAlbum();
+
+    event.returnValue = db.queryAlbums(args);
   }); 
 
 } catch (e) {

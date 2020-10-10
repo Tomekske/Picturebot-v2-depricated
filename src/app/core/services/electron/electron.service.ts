@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as bodyParser  from 'body-parser';
 import * as db from 'better-sqlite3';
 import * as path from 'path';
+import * as crypto from 'crypto';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class ElectronService {
   bodyParser: typeof bodyParser;
   db: typeof db;
   path: typeof path;
+  crypto: typeof crypto;
 
   get isElectron(): boolean {
     return !!(window && window.process && window.process.type);
@@ -39,6 +41,7 @@ export class ElectronService {
       this.bodyParser = window.require('body-parser');
       this.db = window.require('better-sqlite3');
       this.path = window.require('path');
+      this.crypto = window.require('crypto');
     }
   }
 }

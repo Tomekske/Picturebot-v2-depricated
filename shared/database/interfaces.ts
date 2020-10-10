@@ -1,7 +1,7 @@
 export interface ILibrary {
     name: string;
     base: string;
-    path?: string;
+    library?: string;
 }
 
 export interface ISettings {
@@ -27,20 +27,24 @@ export interface IFlow {
 export interface ICollection extends IFlow {
     library: string,
     name: string,
-    path?: string
+    collection?: string
 }
 
 export interface IAlbum {
     collection: string,
     name: string,
     date: string,
-    path: string
+    album: string,
 }
 
 interface IPicture {
     name?: string,
     source: string,
-    destination?: string
+    destination?: string,
+    modification?: Date,
+    hashed?: string,
+    collection?: string,
+    album?: string
 }
 
 export interface IBase extends IPicture {

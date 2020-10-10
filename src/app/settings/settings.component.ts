@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { Logger } from '../../../logger';
@@ -12,18 +12,19 @@ import { ILibrary } from '../../../shared/database/interfaces';
 /** settings component*/
 export class SettingsComponent implements OnInit { 
   settingsForm: FormGroup;
+  isShowSettings: boolean = false;
+  @Output() sendIsShowSettings = new EventEmitter<boolean>();
 
   constructor(private electron: ElectronService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
     let xxx = {};
-    const tableExists = this.electron.ipcRenderer.sendSync("check-tableExists");
+    console.log("WEEEEERKT");
+    const isEmpty = this.electron.ipcRenderer.sendSync("check-settings-empty");
+    console.log(`NOG STEEEEEDS: ${isEmpty}`);
 
-    if (tableExists) {
-      xxx = this.electron.ipcRenderer.sendSync("get-settings");
-    }
-
-    else {
+    if (isEmpty) {
+      console.log("TABEL LEEEG");
       xxx = {
         uploadEdited: '',
         uploadSocialMedia: '',
@@ -35,12 +36,19 @@ export class SettingsComponent implements OnInit {
       };
     }
 
+    else {
+      console.log("TABEL NIEEET LEEG");
+      xxx = this.electron.ipcRenderer.sendSync("get-settings");
+    }
+
     this.settingsForm = this.fb.group(xxx);
   }
 
   saveSettings() {
-    Logger.Log().debug("Logger TEST");
-    console.log(this.settingsForm.value);
+    Logger.Log().debug("Save settings");
     this.electron.ipcRenderer.send("save-settings", this.settingsForm.value);
+
+    this.isShowSettings = !this.isShowSettings;
+    this.sendIsShowSettings.emit(this.isShowSettings);
   }
 }

@@ -106,6 +106,7 @@
     "body-parser": "1.19.0",
     "bootstrap-material-design": "4.1.1",
     "electron-updater": "4.3.5",
+    "hasha": "5.2.1",
     "log4js": "6.3.0",
     "material-icons": "0.3.1",
     "ngx-dropzone": "2.2.2"
