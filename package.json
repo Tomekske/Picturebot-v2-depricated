@@ -101,6 +101,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.14.0",
+    "@syncfusion/ej2-angular-lists": "18.3.35",
     "@types/better-sqlite3": "5.4.0",
     "better-sqlite3": "7.1.0",
     "body-parser": "1.19.0",

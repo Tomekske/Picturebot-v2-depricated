@@ -53,10 +53,4 @@ export class AppComponent {
     this.isShowLibrary = $event;
     console.log(this.isShowLibrary);
   }
-
-  // receivedLibraries($event) {
-  //   console.log('receivedLibraries');
-  //   this.sendAlbums = $event;
-  //   console.error(this.sendAlbums);
-  // }
 }

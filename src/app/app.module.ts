@@ -8,6 +8,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { ListViewModule } from '@syncfusion/ej2-angular-lists';
 // NG Translate
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -41,6 +42,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     CoreModule,
     SharedModule,
     NgxDropzoneModule,
+    ListViewModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
