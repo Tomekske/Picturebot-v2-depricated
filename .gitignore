@@ -8,6 +8,7 @@
 /release
 main.js
 src/**/*.js
+shared/**/*.js
 !src/karma.conf.js
 *.js.map
 
@@ -172,3 +173,5 @@ baseline.json
 .history
 
 *.tgz
+
+*.js

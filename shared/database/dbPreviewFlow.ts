@@ -39,4 +39,9 @@ export class DbPreviewFlow extends Sqlite {
         const stmt = this.connection.prepare('SELECT DISTINCT * FROM previewFlow;');
         return stmt.get();
     }
+
+    queryAllWhere(album) {
+        const stmt = this.connection.prepare(`SELECT DISTINCT * FROM previewFlow WHERE album='${album}';`);
+        return stmt.all();
+    }
 }

@@ -55,7 +55,7 @@ function createWindow(): BrowserWindow {
     win.loadURL(url.format({
       pathname: path.join(__dirname, 'dist/index.html'),
       protocol: 'file:',
-      slashes: true
+      slashes: false
     }));
   }
 
@@ -315,6 +315,14 @@ try {
     event.returnValue = db.queryAlbums(args);
   }); 
 
+  ipcMain.on('get-preview-pictures', (event, args) => {
+    Logger.Log().debug('get-preview-pictures');
+
+    // Create database
+    const db = new DbPreviewFlow();
+
+    event.returnValue = db.queryAllWhere(args);
+  });
 } catch (e) {
   // Catch Error
   // throw e;

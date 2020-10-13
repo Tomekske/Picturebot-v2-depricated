@@ -1,7 +1,7 @@
 <p>shoot-selector works!</p>
 
 <ul>
-    <li *ngFor="let b of a">
-        {{ b }}
+    <li *ngFor="let b of a" (click)="selectedAlbum(b)">
+        {{ b.name }}
     </li>
 </ul>
