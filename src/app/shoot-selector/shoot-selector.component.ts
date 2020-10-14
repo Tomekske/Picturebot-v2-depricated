@@ -1,12 +1,7 @@
-import { Component, OnInit, Output, EventEmitter, HostListener, ViewChild } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { ElectronService } from '../core/services/electron/electron.service';
-import { AlbumsService } from '../albums.service';
-import { PicturesService } from '../pictures.service';
-
-interface IListView {
-  text: string,
-  id: string
-}
+import { DataService } from '../data.service';
+import { IAlbum } from '../../../shared/database/interfaces';
 
 @Component({
   selector: 'app-shoot-selector',
@@ -14,29 +9,28 @@ interface IListView {
   styleUrls: ['./shoot-selector.component.css']
 })
 export class ShootSelectorComponent implements OnInit {
-  a: IListView[] = [];
-  @ViewChild("listview") element: any;
-  constructor(private electron: ElectronService, private albums: AlbumsService, private preview: PicturesService) { }
+  a: IAlbum[] = [];
+  albums: IAlbum[] = [];
+  selected: string;
+
+  constructor(private _electron: ElectronService, private _data: DataService) { }
 
   ngOnInit(): void {
-    console.log("ngOnInit shooooooooot");
-    //this.albums.getAlbums();
-    this.albums.observable$.subscribe(aa => {
-      this.a = [];
-      this.albums.getAlbums().forEach(album => {
-        this.a.push({id: album, text:this.electron.path.basename(album)});
-      });
+    this._data.ctxCollection.subscribe((collection) => {
+      this.albums = [];
+      this.albums = this._electron.ipcRenderer.sendSync("get-albums", collection);
+      console.log(this.albums);
+
+      this._data.albumsInCollection = this.albums;
+      if(this.albums.length != 0) {
+        this.selected = this.albums[0].album;
+        this.selectedAlbum(this.albums[0]);
+      }
     });
-
-
-    // this.a = this.albums.getAlbums();
-    // console.log(this.a);
   }
-  @HostListener("click")
-  selectedAlbum() {
-    let album: IListView = this.element.getSelectedItems();
 
-    console.log(album);
-    this.preview.setPreviewPictures(album["data"].id);
+  selectedAlbum(album: IAlbum) {
+    this.selected = album.album;
+    this._data.selectedAlbum = album;
   }
 }

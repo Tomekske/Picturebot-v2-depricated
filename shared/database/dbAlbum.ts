@@ -46,7 +46,7 @@ export class DbAlbum extends Sqlite {
     }
 
     queryAlbums(collection) {
-        const stmt = this.connection.prepare(`SELECT album FROM Album WHERE collection='${collection}';`);
+        const stmt = this.connection.prepare(`SELECT album, name, date FROM Album WHERE collection='${collection}';`);
         return stmt.all();
     }
 }

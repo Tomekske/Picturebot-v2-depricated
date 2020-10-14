@@ -55,10 +55,10 @@ export class DbCollection extends Sqlite {
         return stmt.all();
     }
 
-    queryFlows(collection) {
+    queryFlows(collection: string) {
         const q = `SELECT backup, base, preview, files, edited, socialMedia, selection FROM Collection WHERE collection='${collection}';`;
         console.log(`QUERY === ${q}`);
-        const stmt = this.connection.prepare(`SELECT backup, base, preview, files, edited, socialMedia, selection FROM Collection WHERE collection='${collection}';`);
+        const stmt = this.connection.prepare(`SELECT preview, edited, socialMedia FROM Collection WHERE collection='${collection}';`);
         return stmt.get();
     }
 }

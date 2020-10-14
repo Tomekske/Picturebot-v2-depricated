@@ -1,10 +1,17 @@
-<p>shoot-selector works!</p>
-<!-- 
-<ul>
-    <li *ngFor="let b of a" (click)="selectedAlbum(b)">
-        {{ b.name }}
-    </li>
-</ul> -->
-
-
-<ejs-listview #listview id='sample-list' [dataSource]='a'></ejs-listview>
+<div class="card">
+    <div class="card-body">
+        <div class="card-header">
+            Album selector
+        </div>
+        <ul class="list-group bmd-list-group-sm">
+            <div *ngFor="let album of (albums)" (click)="selectedAlbum(album)">
+                <a class="list-group-item" [ngClass]="{'active' : album.album == selected}">
+                    <div class="bmd-list-group-col">
+                      <p class="list-group-item-heading">{{ album.name }}</p>
+                      <p class="list-group-item-text">{{ album.date }}</p>
+                    </div>
+                </a>
+            </div>
+        </ul>    
+    </div>
+</div>

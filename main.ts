@@ -138,7 +138,14 @@ try {
     const row: ISettings = db.queryAll();
     event.returnValue = row;
   });
-  
+
+  ipcMain.on('get-flows', (event, collection: string) => {
+    Logger.Log().debug("get-flows");
+
+    const db = new DbCollection();
+
+    event.returnValue = db.queryFlows(collection);
+  });
 
   ipcMain.on('check-settings-empty', (event) => {
     Logger.Log().debug('');

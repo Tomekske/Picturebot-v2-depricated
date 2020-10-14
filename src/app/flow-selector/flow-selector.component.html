@@ -1,1 +1,14 @@
-<p>flow</p>
+<!-- <ejs-listview #listview id='sample-list' [dataSource]='flows'></ejs-listview> -->
+
+<div class="card" style="width: 18rem;">
+    <div class="card-body">
+        <div class="card-header">
+            Flow selector
+        </div>
+        <ul class="list-group bmd-list-group-sm">
+            <div *ngFor="let flow of flows" (click)="selectedFlow(flow)">
+                <li class="list-group-item" [ngClass]="{'active' : flow == selected}">{{ flow }}</li>
+            </div>
+        </ul>    
+    </div>
+</div>

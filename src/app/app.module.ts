@@ -25,7 +25,7 @@ import { LibraryComponent } from './library/library.component';
 import { AlbumComponent } from './album/album.component';
 import { CollectionComponent } from './collection/collection.component';
 
-import { AlbumsService } from './albums.service';
+import { DataService } from './data.service';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -51,7 +51,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
       }
     })
   ],
-  providers: [AlbumsService],
+  providers: [DataService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

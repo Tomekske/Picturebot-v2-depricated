@@ -10,7 +10,7 @@
   <div class="container-fluid h-100 d-flex flex-column">
     <div class="row h-100">
       <!-- Left menu -->
-      <div class="col-md-4" style="background-color: #c82c2c;max-width: 8%;min-width: 8%;">
+      <div class="col-md-4" style="background-color: #c82c2c;max-width: 4%;min-width: 4%;">
         <app-menu (sendIsShowSettings)="receiveState($event)" 
                   (sendIsShowDisplay)="receiveWorkspaceState($event)" 
                   (sendIsShowAlbum)="receiveAlbumState($event)"
@@ -19,11 +19,11 @@
         </app-menu>
       </div>
       <!-- Shoot selector -->
-      <div class="col-md-4" style="background-color: #cb9595;max-width: 8%;min-width: 8%;">
+      <div class="col-md-4" style="background-color: #cb9595;max-width: 12%;min-width: 12%;">
         <app-shoot-selector></app-shoot-selector>
       </div>
       <!-- Picture display -->
-      <div class="col-md-4" style="background-color: #CCFFCC;max-width: 68%;min-width: 68%;">
+      <div class="col-md-4" style="background-color: #CCFFCC;max-width: 66%;min-width: 66%;">
         <app-window></app-window>
         <!-- <app-add-workspace ></app-add-workspace> -->
         <app-settings *ngIf="!isShowSettings" (sendIsShowSettings)="receiveState($event)"></app-settings>

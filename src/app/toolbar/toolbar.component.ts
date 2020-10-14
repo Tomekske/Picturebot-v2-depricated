@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection } from '../../../shared/database/interfaces';
 import { Logger } from '../../../logger';
-import { AlbumsService } from '../albums.service';
+import { DataService } from '../data.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -14,17 +14,15 @@ export class ToolbarComponent implements OnInit {
   collections = [];
   collection: string;
 
-  constructor(private electron: ElectronService, private albums: AlbumsService) { }
+  constructor(private electron: ElectronService, private _data: DataService) { }
 
   ngOnInit(): void {
-    console.log("CHOOOOOSE");
-
   }
 
   @HostListener("click")
   click() {
     this.collections = [];
-    console.log("User Click using Host Listener");
+
     this.electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
@@ -33,14 +31,8 @@ export class ToolbarComponent implements OnInit {
   @HostListener("change")
   change() {
     this.collections = [];
-    console.log("CHANGEEED");
-
-
     console.log(`SELECTED: ${this.collection}`);
-    this.albums.setCollection(this.collection);
-    // this.electron.ipcRenderer.sendSync("get-albums", this.collection).forEach((album: IAlbum) => {
-    //   console.log(`ALBUM: ${album.album}`);
-    //   this.albums.push(album.album);
-    // });
+    
+    this._data.selectedCollection = this.collection;
   }
 }

@@ -15,13 +15,13 @@ export interface ISettings {
 }
 
 export interface IFlow {
-    backup: string,
+    backup?: string,
     base: string,
     preview: string,
-    files: string,
+    files?: string,
     edited: string,
     socialMedia: string,
-    selection: string
+    selection?: string
 }
 
 export interface ICollection extends IFlow {
@@ -31,7 +31,7 @@ export interface ICollection extends IFlow {
 }
 
 export interface IAlbum {
-    collection: string,
+    collection?: string,
     name: string,
     date: string,
     album: string,
