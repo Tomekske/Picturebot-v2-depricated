@@ -1,3 +1,10 @@
+<mat-tab-group animationDuration="0ms" (selectedTabChange)="selectedFlowEvent($event)">
+  <div *ngFor="let flow of flows" >
+    <mat-tab label="{{ flow }}">{{ flow }}</mat-tab>
+  </div>
+</mat-tab-group>
+
 <div *ngFor="let p of base64List">
     <img src="{{ p }}" width="500" height="600">
 </div>
+

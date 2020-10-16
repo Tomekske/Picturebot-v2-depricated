@@ -1,14 +1,14 @@
-<div class="col-md-4"></div>
+<!-- <div class="col-md-4"></div> -->
 <!-- ComboBox  -->
-<div class="col-md-4 col-xl-5 offset-xl-0 d-lg-flex align-self-center justify-content-lg-center">
+<!-- <div class="col-md-4 col-xl-5 offset-xl-0 d-lg-flex align-self-center justify-content-lg-center">
   <select style="width: 250px;" [(ngModel)]="collection">
     <option value="" disabled>Choose collection</option>
     <option *ngFor="let collection of collections" [ngValue]="collection">{{collection}}</option>
   </select>
-</div>
+</div> -->
 
 <!-- ToolBar -->
-<div class="col-md-4 col-xl-3 align-self-center">
+<!-- <div class="col-md-4 col-xl-3 align-self-center">
   <nav class="navbar navbar-light navbar-expand-md">
     <div class="container-fluid">
       <div class="collapse navbar-collapse" id="navcol-1">
@@ -21,4 +21,32 @@
       </div>
     </div>
   </nav>
+</div> -->
+
+<div fxLayout="column">
+  <div fxLayout="row">
+    <div fxFlex="35" style="background-color: blue;">
+      <p></p>
+    </div>
+    <div fxFlex="30" style="background-color: lightcoral;" fxLayoutAlign="center center">
+      <form>
+        <mat-form-field appearance="fill">
+          <mat-label>Select collection</mat-label>
+          <mat-select [(ngModel)]="selectedCollection" name="collection" (selectionChange)="selectedCollectionEvent($event)">
+            <mat-option *ngFor="let collection of collections" [value]="collection">
+              {{ collection }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </form>
+    </div>
+    <div fxFlex="35" style="background-color: green;">
+      <p>JOOO {{ selectedCollection }}</p>
+    </div>
+  </div>
 </div>
+
+
+
+
+

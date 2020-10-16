@@ -18,40 +18,55 @@ export class MenuComponent {
   isShowCollection: boolean = true;
   isShowLibrary: boolean = true;
 
-  @Output() sendIsShowSettings = new EventEmitter<boolean>();
-  @Output() sendIsShowDisplay = new EventEmitter<boolean>();
-  @Output() sendIsShowAlbum = new EventEmitter<boolean>();
-  @Output() sendIsShowCollection = new EventEmitter<boolean>();
-  @Output() sendIsShowLibrary = new EventEmitter<boolean>();
+
+  appitems = [
+    {
+      label: 'Library',
+      icon: 'library_books',
+      items: [
+        {
+          label: 'Add',
+          link: '/addLibrary',
+          icon: 'add_box'
+        }
+      ]
+    },
+    {
+      label: 'Collection',
+      icon: 'perm_media',
+      items: [
+        {
+          label: 'Add',
+          link: '/addCollection',
+          icon: 'add_box'
+        }
+      ]
+    },
+    {
+      label: 'Album',
+      link: '/addAlbum',
+      icon: 'photo_album'
+    },
+    {
+      label: 'Settings',
+      link: '/settings',
+      icon: 'settings'
+    }
+  ];
+  
+  config = {
+    paddingAtStart: false,
+    interfaceWithRoute: true,
+    classname: 'my-custom-class',
+    listBackgroundColor: `rgb(208, 241, 239)`,
+    fontColor: `rgb(8, 54, 71)`,
+    backgroundColor: `rgb(208, 241, 239)`,
+    selectedListFontColor: `red`,
+    highlightOnSelect: true,
+    collapseOnSelect: true,
+    useDividers: false,
+    rtlLayout: false
+};
 
   constructor() { }
-
-  showSettings() {
-    this.isShowSettings = !this.isShowSettings;
-    this.sendIsShowSettings.emit(this.isShowSettings);
-  }
-
-  showWorkspace() {
-    console.log("WORKSPAaaaaaaaaaCE");
-    this.isShowDisplay = !this.isShowDisplay;
-    this.sendIsShowDisplay.emit(this.isShowDisplay);
-  }
-
-  showAlbum() {
-    console.log("SHOOOOOOOOOOOOT");
-    this.isShowAlbum = !this.isShowAlbum;
-    this.sendIsShowAlbum.emit(this.isShowAlbum);
-  }
-
-  showCollection() {
-    console.log("Collection");
-    this.isShowCollection = !this.isShowCollection;
-    this.sendIsShowCollection.emit(this.isShowCollection);
-  }
-
-  showLibrary() {
-    console.log("library");
-    this.isShowLibrary = !this.isShowLibrary;
-    this.sendIsShowLibrary.emit(this.isShowLibrary);
-  }
 }

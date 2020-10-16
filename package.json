@@ -100,17 +100,30 @@
     "node": ">=10.13.0"
   },
   "dependencies": {
+    "@angular/animations": "^10.0.0 || ^11.0.0-0",
+    "@angular/cdk": "10.2.5",
+    "@angular/flex-layout": "10.0.0-beta.32",
+    "@angular/forms": "^10.0.0 || ^11.0.0-0",
+    "@angular/localize": "10.1.6",
+    "@angular/material": "10.2.5",
     "@fortawesome/fontawesome-free": "5.14.0",
+    "@ng-bootstrap/ng-bootstrap": "7.0.0",
+    "@ng-bootstrap/schematics": "2.0.0-alpha.1",
+    "@popperjs/core": "2.5.3",
     "@syncfusion/ej2-angular-lists": "18.3.35",
     "@types/better-sqlite3": "5.4.0",
     "better-sqlite3": "7.1.0",
     "body-parser": "1.19.0",
+    "bootstrap": "4.5.3",
     "bootstrap-material-design": "4.1.1",
     "electron-updater": "4.3.5",
     "hasha": "5.2.1",
+    "jquery": "3.5.1",
     "log4js": "6.3.0",
     "material-icons": "0.3.1",
-    "ngx-dropzone": "2.2.2"
+    "ng-material-multilevel-menu": "4.12.2",
+    "ngx-dropzone": "2.2.2",
+    "popper.js": "1.16.1"
   },
   "build": {
     "appId": "Picturebot",

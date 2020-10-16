@@ -12,7 +12,7 @@ import { DataService } from '../data.service';
 })
 export class ToolbarComponent implements OnInit {
   collections = [];
-  collection: string;
+  selectedCollection: string;
 
   constructor(private electron: ElectronService, private _data: DataService) { }
 
@@ -28,11 +28,9 @@ export class ToolbarComponent implements OnInit {
     });
   }
 
-  @HostListener("change")
-  change() {
+  selectedCollectionEvent($event) {
     this.collections = [];
-    console.log(`SELECTED: ${this.collection}`);
-    
-    this._data.selectedCollection = this.collection;
+    console.log(`SELECTED: ${this.selectedCollection}`);
+    this._data.selectedCollection = this.selectedCollection;
   }
 }

@@ -17,19 +17,23 @@ export class ShootSelectorComponent implements OnInit {
 
   ngOnInit(): void {
     this._data.ctxCollection.subscribe((collection) => {
+      console.warn(collection);
       this.albums = [];
       this.albums = this._electron.ipcRenderer.sendSync("get-albums", collection);
       console.log(this.albums);
-
+      
       this._data.albumsInCollection = this.albums;
+
       if(this.albums.length != 0) {
         this.selected = this.albums[0].album;
         this.selectedAlbum(this.albums[0]);
       }
+
     });
   }
 
   selectedAlbum(album: IAlbum) {
+    console.log(`SELECTED ALBUM - SHOOT SELECTOR: ${album.album}`);
     this.selected = album.album;
     this._data.selectedAlbum = album;
   }
