@@ -1,17 +1,10 @@
-<div class="card">
-    <div class="card-body">
-        <div class="card-header">
-            Album selector
-        </div>
-        <ul class="list-group bmd-list-group-sm">
-            <div *ngFor="let album of (albums)" (click)="selectedAlbum(album)">
-                <a class="list-group-item" [ngClass]="{'active' : album.album == selected}">
-                    <div class="bmd-list-group-col">
-                      <p class="list-group-item-heading">{{ album.name }}</p>
-                      <p class="list-group-item-text">{{ album.date }}</p>
-                    </div>
-                </a>
-            </div>
-        </ul>    
-    </div>
-</div>
+<mat-card>
+    <mat-selection-list [multiple]="false" (selectionChange)="selectedAlbumEvent($event)">
+        <div mat-subheader>Select album</div>
+        <mat-list-option  *ngFor="let album of albums, let i = index" [selected]="album && i == 0" [value]="album">
+        <!-- <mat-icon mat-list-icon>folder</mat-icon> -->
+        <div mat-line>{{album.name}}</div>
+        <div mat-line> {{album.date | date}} </div>
+        </mat-list-option>
+    </mat-selection-list>
+</mat-card>

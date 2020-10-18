@@ -1,20 +1,16 @@
-<div fxLayout="column"  fxFlex="6" style="background-color: darkorange;">
-  <!-- ToolBar -->
-  <div fxLayout="row">
+<div fxLayout="column" fxFlex="100" style="background-color: pink;" fxFlexFill>
+  <div fxLayout="row" fxFlex="6" fxFlexFill>
     <div fxFlex="100">
       <app-toolbar></app-toolbar>
     </div>
-  </div>  
-</div>
-<div fxLayout="column" fxFlex="94" style="background-color: pink;" fxFlexFill>
-  <div fxLayout="row" fxFlexFill>
+  </div>
+  <div fxLayout="row" fxFlex="94" fxFlexFill>
     <!-- Left menu -->
     <div fxFlex="15" style="background-color: red;">
       <app-menu></app-menu>
     </div>
     <!-- Main window-->
     <div fxFlex="70" style="background-color: burlywood;">
-      <app-window></app-window>
       <router-outlet></router-outlet>
     </div>
     <!-- Album selector-->

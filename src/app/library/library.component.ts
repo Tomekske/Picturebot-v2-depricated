@@ -2,6 +2,8 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { ILibrary } from '../../../shared/database/interfaces';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-library',
@@ -11,29 +13,28 @@ import { ILibrary } from '../../../shared/database/interfaces';
 export class LibraryComponent implements OnInit {
   libraryForm: FormGroup;
 
-  isShowLibrary: boolean = false;
-  @Output() sendIsShowLibrary = new EventEmitter<boolean>();
-
-  constructor(private electron: ElectronService, private fb: FormBuilder) { }
+  constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
 
   ngOnInit(): void {
     this.libraryForm = this.fb.group({
-      name: '',
       base: '',
-      path: ''
+      name: ''
     });
   }
 
   saveLibrary() {
-    let x: ILibrary = this.libraryForm.value;
-    let y: ILibrary = {name: x.name, base: x.base, library: this.electron.path.join(x.base, x.name)};
+    let form: ILibrary = this.libraryForm.value;
+    let data: ILibrary = {name: form.name, base: form.base, library: this.electron.path.join(form.base, form.name)};
     
     console.log("Library Saved");
     console.log(this.libraryForm.value);
-    
-    this.electron.ipcRenderer.send("save-library", y);
 
-    this.isShowLibrary = !this.isShowLibrary;
-    this.sendIsShowLibrary.emit(this.isShowLibrary);
+    this.electron.ipcRenderer.send("save-library", data);
+
+    this._snack.open(`Library '${this.electron.path.join(form.base, form.name)}' saved!`, "Dismiss", {
+      duration: 2000,
+      horizontalPosition: "end"
+    });
+    this._router.navigateByUrl('/main');
   }
 }

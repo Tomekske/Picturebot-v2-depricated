@@ -1,70 +1,62 @@
-<button mat-icon-button color="warn" aria-label="Example icon button with a heart icon">
-    <a routerLink="/main">
-      <mat-icon>arrow_back</mat-icon>
-    </a>
-</button>
-<form [formGroup]="albumForm" (ngSubmit)="saveAlbum()">
-    <!-- Select -->
-    <div class="card">
-        <div class="card-header">
-            <h4>Link album to a library</h4>
-        </div>
-        <select formControlName="collection">
-            <option value="" disabled>Choose collection</option>
-            <option *ngFor="let collection of collections" [ngValue]="collection">{{collection}}</option>
-        </select>
-    </div>
-
-    <!-- Library location -->
-    <div class="card">
-        <div class="card-header">
-            <h4>Album name</h4>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <input formControlName="name" type="text" class="form-control" placeholder="Enter name of the album">
-            </div>
-        </div>
-    </div>
-    <!-- Default file type -->
-    <div class="card spacing-card">
-        <div class="card-header">
-            <h4>Album date</h4>
-        </div>
-        <div class="card-body">
-            <div>
-                <input formControlName="date" type="date" class="form-control" data-date-format="dd/MM/YYYY">
-            </div>
-        </div>
-    </div>
-
-    <!-- Dropzone -->
-    <div class="card spacing-card">
-        <div class="card-header">
-            <h4>Dropzone</h4>
-        </div>
-        <div class="card-body">
-            <ngx-dropzone (change)="onSelect($event)">
-                <ngx-dropzone-label>Drop it, baby!</ngx-dropzone-label>
-                <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
-                    <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
-                </ngx-dropzone-preview>
-            </ngx-dropzone>
-        </div>
-    </div>
-    <!-- Button save -->
-    <div class="row spacing-card">
-        <!-- Right button spacing by placing an empty placeholder value on the left side -->
-        <div class="col">
-            <h3 class="one"></h3>
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary bmd-btn-fab">
-                <i class="material-icons">save</i>
-            </button>
-        </div>
-    </div>
-</form>
-
+<div fxLayout="column" fxFlex="33" style="background-color: aqua;" fxFlexFill>
+    <p></p>
+</div>
+<div fxLayout="column" fxFlex="33" style="background-color: chartreuse;" fxFlexFill fxLayoutAlign="center center">
+    <mat-card>
+        <button mat-icon-button color="primary" aria-label="Example icon button with a heart icon">
+            <a routerLink="/main">
+              <mat-icon color="primary">arrow_back</mat-icon>
+            </a>
+        </button>
+        <!-- form -->
+        <form class="example-form" [formGroup]="albumForm" (ngSubmit)="saveAlbum()">
+            <table class="example-full-width" cellspacing="0">  
+                <p>Link library to a collection</p>
+                <tr>
+                    <mat-form-field appearance="fill">
+                        <mat-label>Select collection</mat-label>
+                        <mat-select formControlName="collection">
+                            <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </tr>
+                <tr>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Album name</mat-label>
+                            <input formControlName="name" matInput type="text">
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field appearance="fill">
+                            <mat-label>Select date</mat-label>
+                            <input matInput [matDatepicker]="picker" formControlName="date" disabled>
+                            <mat-datepicker-toggle matSuffix [for]="picker" disabled="false"></mat-datepicker-toggle>
+                            <mat-datepicker #picker disabled="false"></mat-datepicker>
+                        </mat-form-field>
+                    </td>
+                </tr> 
+                <tr>
+                    <ngx-dropzone (change)="onSelect($event)">
+                        <ngx-dropzone-label>Drop pictures</ngx-dropzone-label>
+                        <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+                            <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                        </ngx-dropzone-preview>
+                    </ngx-dropzone>
+                </tr>
+                <tr>
+                    <div align="end">
+                        <button  mat-fab color="primary" aria-label="Example icon-button with a heart icon" >
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </div>
+                </tr>
+            </table>
+        </form>
+    </mat-card>    
+</div>
+<div fxLayout="column" fxFlex="33" style="background-color: pink;" fxFlexFill>
+    <p></p>
+</div>
 
 

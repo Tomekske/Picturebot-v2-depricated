@@ -12,6 +12,8 @@ export class ShootSelectorComponent implements OnInit {
   a: IAlbum[] = [];
   albums: IAlbum[] = [];
   selected: string;
+  sel: string;
+  //selectedAlbum: string;
 
   constructor(private _electron: ElectronService, private _data: DataService) { }
 
@@ -24,17 +26,18 @@ export class ShootSelectorComponent implements OnInit {
       
       this._data.albumsInCollection = this.albums;
 
-      if(this.albums.length != 0) {
-        this.selected = this.albums[0].album;
-        this.selectedAlbum(this.albums[0]);
-      }
+      // if(this.albums.length != 0) {
+      //   this.selected = this.albums[0].album;
+      //   this.selectedAlbum(this.albums[0]);
+      // }
 
     });
   }
 
-  selectedAlbum(album: IAlbum) {
-    console.log(`SELECTED ALBUM - SHOOT SELECTOR: ${album.album}`);
+  selectedAlbumEvent($event) {
+    let album: IAlbum = $event.option['_value'];
     this.selected = album.album;
+    console.log(`SELECTED ALBUM: ${album.album}`);
     this._data.selectedAlbum = album;
   }
 }

@@ -11,14 +11,6 @@ import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 export class MenuComponent {
 /** menu ctor */
 
-  //isShowSettings = new BehaviorSubject<boolean>(true);
-  isShowSettings: boolean = true;
-  isShowDisplay: boolean = true;
-  isShowAlbum: boolean = true;
-  isShowCollection: boolean = true;
-  isShowLibrary: boolean = true;
-
-
   appitems = [
     {
       label: 'Library',
@@ -55,7 +47,7 @@ export class MenuComponent {
   ];
   
   config = {
-    paddingAtStart: false,
+    paddingAtStart: true,
     interfaceWithRoute: true,
     classname: 'my-custom-class',
     listBackgroundColor: `rgb(208, 241, 239)`,

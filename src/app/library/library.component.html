@@ -1,34 +1,46 @@
-<button mat-icon-button color="warn" aria-label="Example icon button with a heart icon">
-    <a routerLink="/main">
-      <mat-icon>arrow_back</mat-icon>
-    </a>
-</button>
-<form [formGroup]="libraryForm" (ngSubmit)="saveLibrary()">
-    <!-- Conversion percentage -->
-    <div class="card spacing-card">
-        <div class="card-header">
-        <h4>Add new library</h4>
-        </div>
-        <div class="card-body">
-            <div class="form-group">
-                <input formControlName="base" type="text" class="form-control" placeholder="Base path">
-                <input formControlName="name" type="text" class="form-control" placeholder="Library name">
-            </div>
-        </div>
-    </div>
-
-    <!-- Button save -->
-    <div class="row spacing-card">
-        <!-- Right button spacing by placing an empty placeholder value on the left side -->
-        <div class="col">
-        <h3 class="one"></h3>
-        </div>
-        <div class="col-auto">
-        <button type="submit" class="btn btn-primary bmd-btn-fab">
-            <i class="material-icons">save</i>
+<div fxLayout="column" fxFlex="33" style="background-color: aqua;" fxFlexFill>
+    <p></p>
+</div>
+<div fxLayout="column" fxFlex="33" style="background-color: chartreuse;" fxFlexFill>
+    <mat-card>
+        <button mat-icon-button color="primary" aria-label="Example icon button with a heart icon">
+            <a routerLink="/main">
+              <mat-icon color="primary">arrow_back</mat-icon>
+            </a>
         </button>
-        </div>
-    </div>
-</form>
-  
+        <form class="example-form" [formGroup]="libraryForm" (ngSubmit)="saveLibrary()">
+            <table class="example-full-width" cellspacing="0">
+                <tr>
+                </tr>
+                <tr>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Base path</mat-label>
+                            <input matInput formControlName="base" type="text">
+                        </mat-form-field>
+                    </td>
+                    <td>
+                        <mat-form-field class="example-full-width">
+                            <mat-label>Library name</mat-label>
+                            <input matInput formControlName="name" type="text">
+                        </mat-form-field>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <div align="end">
+                            <button  mat-fab color="primary" aria-label="Example icon-button with a heart icon">
+                                <mat-icon>save</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </mat-card>
+</div>
+<div fxLayout="column" fxFlex="33" style="background-color: pink;" fxFlexFill>
+    <p></p>
+</div>
   

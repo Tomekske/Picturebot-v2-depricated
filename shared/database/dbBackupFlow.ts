@@ -3,6 +3,14 @@ import { Logger } from '../../logger';
 import { Sqlite } from './sqlite';
 
 export class DbBackupFlow extends Sqlite {
+    constructor() {
+        super();
+        
+        if(!this.tableExists()) {
+            this.createTable();
+        }
+    }
+    
     createTable() {
         this.connection.exec(`CREATE TABLE IF NOT EXISTS backupFlow(
             "collection" varchar(400) NOT NULL,
@@ -14,7 +22,7 @@ export class DbBackupFlow extends Sqlite {
     }
 
     tableExists() {
-        const count = this.connection.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='backupFlow'").pluck().get();;
+        const count = this.connection.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='backupFlow'").pluck().get();
         return ((count == 1) ? true : false);
     }
 

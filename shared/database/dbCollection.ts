@@ -56,9 +56,17 @@ export class DbCollection extends Sqlite {
     }
 
     queryFlows(collection: string) {
-        const q = `SELECT backup, base, preview, files, edited, socialMedia, selection FROM Collection WHERE collection='${collection}';`;
+        const q = `SELECT preview, edited, socialMedia FROM Collection WHERE collection='${collection}';`;
         console.log(`QUERY === ${q}`);
-        const stmt = this.connection.prepare(`SELECT preview, edited, socialMedia FROM Collection WHERE collection='${collection}';`);
+        const stmt = this.connection.prepare(q);
         return stmt.get();
     }
+
+    queryAllFlows(collection: string) {
+        const q = `SELECT backup, base, preview, files, edited, socialMedia, selection FROM Collection WHERE collection='${collection}';`;
+        console.log(`QUERY === ${q}`);
+        const stmt = this.connection.prepare(q);
+        return stmt.get();
+    }
+
 }

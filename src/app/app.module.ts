@@ -31,6 +31,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { FlexLayoutModule } from '@angular/flex-layout'
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -66,7 +68,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
       {path: 'addLibrary', component: LibraryComponent}
     ])
   ],
-  providers: [DataService],
+  providers: [DataService, {provide: MAT_DATE_LOCALE, useValue: 'en-GB'}],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

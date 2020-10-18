@@ -13,8 +13,8 @@ export class DbPreviewFlow extends Sqlite {
 
     createTable() {
         this.connection.exec(`CREATE TABLE IF NOT EXISTS previewFlow(
-            "collection" varchar(400) NOT NULL,,
-            "album" varchar(200) NOT NULL
+            "collection" varchar(400) NOT NULL,
+            "album" varchar(200) NOT NULL,
             "source" varchar(400) NOT NULL,
             "destination" varchar(400) NOT NULL PRIMARY KEY)`
         );

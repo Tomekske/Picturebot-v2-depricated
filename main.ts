@@ -209,7 +209,7 @@ try {
     albumDb.insertRow(y);
     albumDb.dbClose();
 
-    // Create album
+    //Create album
     if (!fs.existsSync(y.album)) {
       fs.mkdir(y.album, err => {
         console.log(err);
@@ -217,7 +217,7 @@ try {
     
 
       const collectionDb = new DbCollection();
-      let flows: IFlow = collectionDb.queryFlows(y.collection);
+      let flows: IFlow = collectionDb.queryAllFlows(y.collection);
 
       // Creating flow directories
       Object.values(flows).forEach(flow => {
@@ -232,12 +232,12 @@ try {
       });
       collectionDb.dbClose();
 
-      // // pictures
+      // pictures
       const picDb = new DbBaseFlow();
       const backupDb = new DbBackupFlow();
       const dbPreview = new DbPreviewFlow();
    
-      // // pipeline
+      // pipeline
       args.forEach((picture: IBase) => {
         const destBase: string = path.join(y.collection,`${y.name} ${y.date}`, flows.base, picture.hashed);
         const destBackup: string = path.join(y.collection,`${y.name} ${y.date}`, flows.backup, picture.hashed);
@@ -248,9 +248,9 @@ try {
         let dataPreviewFlow: IBase = { collection: y.collection, album: y.album ,source: picture.source, destination: destPreview}; 
 
         console.log(`Base: ${destBase} - ${dataBaseFlow.name}`);
-        console.log(`Backup: ${destBackup} - ${dataBackupFlow}`);
-        console.log(`Preview: ${destPreview} - ${dataPreviewFlow}`);
-        Logger.Log().debug(`Preview: ${destPreview} - ${dataPreviewFlow}`);
+        console.log(`Backup: ${destBackup} - ${dataBackupFlow.name}`);
+        console.log(`Preview: ${destPreview} - ${dataPreviewFlow.name}`);
+        Logger.Log().debug(`Preview: ${destPreview} - ${dataPreviewFlow.name}`);
 
         // copy base
         fs.copyFile(picture.source, path.join(path.dirname(destBase), picture.hashed), (err) => {
@@ -267,7 +267,6 @@ try {
         });
         backupDb.insertRow(dataBackupFlow);
         
-
         // convert preview
         const strr = `magick convert \"${picture.source}\" -quality ${dbSettings.queryConversion()} -verbose \"${destPreview}\"`
         const data = cp.execSync(strr);
@@ -295,7 +294,6 @@ try {
       console.log(db.queryLibraries());
       event.returnValue = db.queryLibraries();
     }
-    //event.returnValue = db.tableExists(dbCon);
   });
 
   ipcMain.on('get-collections', (event, args: ILibrary) => {

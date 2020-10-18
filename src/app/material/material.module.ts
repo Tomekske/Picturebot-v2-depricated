@@ -10,6 +10,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+
+
 const MaterialComponents = [
   NgMaterialMultilevelMenuModule,
   MatButtonModule,
@@ -20,7 +26,11 @@ const MaterialComponents = [
   MatFormFieldModule,
   MatSelectModule,
   ScrollingModule,
-  MatTabsModule
+  MatTabsModule,
+  MatInputModule,
+  MatSnackBarModule,
+  MatDatepickerModule,
+  MatNativeDateModule
 ];
 
 

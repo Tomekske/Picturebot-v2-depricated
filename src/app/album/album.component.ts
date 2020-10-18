@@ -4,6 +4,8 @@ import { ElectronService } from '../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection } from '../../../shared/database/interfaces';
 import { Logger } from '../../../logger';
 import * as hasha from 'hasha';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-album',
@@ -13,10 +15,8 @@ import * as hasha from 'hasha';
 export class AlbumComponent implements OnInit {
   albumForm: FormGroup;
   collections = [];
-  isShowAlbum: boolean;
-  @Output() sendIsShowAlbum = new EventEmitter<boolean>();
 
-  constructor(private electron: ElectronService, private fb: FormBuilder) { }
+  constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
   files: File[] = [];
   pics: IBase[] = [];
   newpics: IBase[] = [];
@@ -29,16 +29,18 @@ export class AlbumComponent implements OnInit {
     });
 
     this.electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
-      console.log(collection.collection);
       this.collections.push(collection.collection);
     });
   }
 
-  saveAlbum() {
-    console.log("SAVEEEE");
+  saveAlbum() {   
     let dropzone: IAlbum = this.albumForm.value;
-    let y: IAlbum = { collection: dropzone.collection, name: dropzone.name, date: dropzone.date, album: this.electron.path.join(dropzone.collection, `${dropzone.name} ${dropzone.date}`)};
+    console.log(dropzone);
+    this.formatDate(dropzone.date);
 
+    let y: IAlbum = { collection: dropzone.collection, name: dropzone.name, date: this.formatDate(dropzone.date), album: this.electron.path.join(dropzone.collection, `${dropzone.name} ${this.formatDate(dropzone.date)}`)};
+    console.log('yyyyyyyyyyyyyyyyyy');
+    console.log(y);
     this.files.forEach((element) => {
      const stats = this.electron.fs.statSync(element.path);
      this.pics.push({source: element.path, name: element.name, modification: stats.mtime});
@@ -50,15 +52,16 @@ export class AlbumComponent implements OnInit {
     this.pics.forEach((e, i) => {
       const hash = hasha.fromFileSync(e.source).substring(0, 10);
       const hasedName = `pb_${(i + 1).toString().padStart(5, '0')}_${hash}${this.electron.path.extname(e.name)}`;
-      console.log(`hassssh: ${hash}`);
       that.newpics.push({source: e.source, name: e.name, hashed: hasedName});
-      console.log(`AMOUNT PICS333333: ${this.newpics.length}`);
     });
 
     this.electron.ipcRenderer.sendSync("save-pictures", this.newpics, y);
-
-    this.isShowAlbum = !this.isShowAlbum;
-    this.sendIsShowAlbum.emit(this.isShowAlbum);
+    
+    this._snack.open(`Album '${y.album}' saved!`, "Dismiss", {
+      duration: 4000,
+      horizontalPosition: "end"
+    });
+    this._router.navigateByUrl('/main');
   }
 
 	onSelect(event) {
@@ -78,5 +81,10 @@ export class AlbumComponent implements OnInit {
   
   compare(a, b) {
     return a.modification - b.modification;
+  }
+
+  formatDate(isoDate: string): string {
+    const date = new Date(isoDate);
+    return date.toLocaleDateString('en-GB', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-');
   }
 }

@@ -2,6 +2,8 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { ICollection, ILibrary } from '../../../shared/database/interfaces';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-collection',
@@ -11,10 +13,8 @@ import { ICollection, ILibrary } from '../../../shared/database/interfaces';
 export class CollectionComponent implements OnInit {
   collectionForm: FormGroup;
   libraries: any = [];
-  isShowCollection: boolean = false;
-  @Output() sendIsShowCollection = new EventEmitter<boolean>();
 
-  constructor(private electron: ElectronService, private fb: FormBuilder) { }
+  constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
 
   ngOnInit(): void {
     this.collectionForm = this.fb.group({
@@ -42,9 +42,12 @@ export class CollectionComponent implements OnInit {
       selection: x.selection, collection: this.electron.path.join(x.library, x.name)
     };
 
-    this.electron.ipcRenderer.send("save-collection", y);
+    this._snack.open(`Collection '${this.electron.path.join(x.library, x.name)}' saved!`, "Dismiss", {
+      duration: 2000,
+      horizontalPosition: "end"
+    });
 
-    this.isShowCollection = !this.isShowCollection;
-    this.sendIsShowCollection.emit(this.isShowCollection);
+    this.electron.ipcRenderer.send("save-collection", y);
+    this._router.navigateByUrl('/main');
   }
 }
