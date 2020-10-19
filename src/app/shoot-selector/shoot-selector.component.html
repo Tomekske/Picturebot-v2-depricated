@@ -2,9 +2,9 @@
     <mat-selection-list [multiple]="false" (selectionChange)="selectedAlbumEvent($event)">
         <div mat-subheader>Select album</div>
         <mat-list-option  *ngFor="let album of albums, let i = index" [selected]="album && i == 0" [value]="album">
-        <!-- <mat-icon mat-list-icon>folder</mat-icon> -->
-        <div mat-line>{{album.name}}</div>
-        <div mat-line> {{album.date | date}} </div>
+            <!-- <mat-icon mat-list-icon>folder</mat-icon> -->
+            <div mat-line>{{album.name}}</div>
+            <div mat-line> {{album.date | date}} </div>
         </mat-list-option>
     </mat-selection-list>
 </mat-card>

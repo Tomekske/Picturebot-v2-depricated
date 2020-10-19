@@ -4,6 +4,7 @@ import { ElectronService } from '../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection } from '../../../shared/database/interfaces';
 import { Logger } from '../../../logger';
 import { DataService } from '../data.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-toolbar',
@@ -14,7 +15,7 @@ export class ToolbarComponent implements OnInit {
   collections = [];
   selectedCollection: string;
 
-  constructor(private electron: ElectronService, private _data: DataService) { }
+  constructor(private electron: ElectronService, private _data: DataService, private _router: Router) { }
 
   ngOnInit(): void {
     console.log(this.collections);
@@ -46,5 +47,8 @@ export class ToolbarComponent implements OnInit {
     // this.collections = [];
     console.log(`SELECTED: ${this.selectedCollection}`);
     this._data.selectedCollection = this.selectedCollection;
+
+    this._router.navigateByUrl('/main');
+
   }
 }

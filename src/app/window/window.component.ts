@@ -3,6 +3,7 @@ import { ElectronService } from '../core/services/electron/electron.service';
 import { IAlbum, IBase, IFlow } from '../../../shared/database/interfaces';
 import { DataService } from '../data.service';
 import { threadId } from 'worker_threads';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-window',
@@ -19,17 +20,17 @@ export class WindowComponent implements OnInit {
   ff: IFlow;
   album: IAlbum;
 
-  constructor(private electron: ElectronService, private _data: DataService) { }
+  constructor(private electron: ElectronService, private _data: DataService, private _router: Router) { }
 
   ngOnInit(): void {
     this._data.ctxSelectedAlbum.subscribe((album: IAlbum) => {
-      this.album = album;
+        this.album = album;
         console.log("JOEPIEEEE");
         console.log(album);
         console.log(this._data.selectedCollection);
 
         this.flows = [];
-        // //this.selectedFlow = flow;
+        //this.selectedFlow = flow;
         // console.log(`SELECTED ALBUM - windoooow: ${this.album.album}`);
         this.ff = this.electron.ipcRenderer.sendSync("get-flows", this._data.selectedCollection);
         console.log(this.ff);
@@ -37,6 +38,8 @@ export class WindowComponent implements OnInit {
         this.flows.push(this.ff.preview);
         this.flows.push(this.ff.edited);
         this.flows.push(this.ff.socialMedia);
+
+        this.displayImages();
     });
   }
 
@@ -48,26 +51,34 @@ export class WindowComponent implements OnInit {
 
   selectedFlowEvent(event) {
     this.selectedFlow = event.tab.textLabel;
-    console.log(event);
-    console.log(event.tab.textLabel);
 
-      if(this.selectedFlow == this.ff.preview) {
-        console.log("previewwwwwwwwwwwwwwwwwwwwwwwwwwwww");
-        this._data.selectedFlow = this.selectedFlow;
+    this.displayImages();
 
-        this.electron.ipcRenderer.sendSync("get-preview-pictures", this.album.album).forEach((picture: IBase) => {
-          this.base64List.push(this.base64_encode(picture.destination));
-        });
-
-      } else if(this.selectedFlow == this.ff.edited) {
-        this.base64List = [];
-        console.log("editedddddddddddddddddddddddd");
-      } else if(this.selectedFlow == this.ff.socialMedia) {
-        this.base64List = [];
-        console.log("socialMediaaaaaaaaaaaaaaaaaaaaaaaa");
-      } else {
-        this.base64List = [];
-        console.log("OEEEEEEEEEEEEEEEEEPS");
-      }
   }
+
+
+  displayImages() {
+    this.base64List = [];
+    if(this.selectedFlow == this.ff.preview) {
+      console.log("previewwwwwwwwwwwwwwwwwwwwwwwwwwwww");
+      this._data.selectedFlow = this.selectedFlow;
+      console.log(this.album.album);
+      
+      this.electron.ipcRenderer.sendSync("get-preview-pictures", this.album.album).forEach((picture: IBase) => {
+        console.log(`PICSSS: ${picture.destination}`);
+        this.base64List.push(this.base64_encode(picture.destination));
+      });
+
+    } else if(this.selectedFlow == this.ff.edited) {
+      console.log("editedddddddddddddddddddddddd");
+    } else if(this.selectedFlow == this.ff.socialMedia) {
+      console.log("socialMediaaaaaaaaaaaaaaaaaaaaaaaa");
+    } else {
+
+      console.log("OEEEEEEEEEEEEEEEEEPS");
+    }
+
+  }
+
+
 }

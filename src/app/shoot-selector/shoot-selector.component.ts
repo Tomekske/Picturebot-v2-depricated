@@ -26,18 +26,19 @@ export class ShootSelectorComponent implements OnInit {
       
       this._data.albumsInCollection = this.albums;
 
-      // if(this.albums.length != 0) {
-      //   this.selected = this.albums[0].album;
-      //   this.selectedAlbum(this.albums[0]);
-      // }
-
+      // Select the first album
+      this.setAlbum(this.albums[0]);
     });
   }
 
   selectedAlbumEvent($event) {
     let album: IAlbum = $event.option['_value'];
+    this.setAlbum(album);
+  }
+
+  setAlbum(album: IAlbum) {
     this.selected = album.album;
-    console.log(`SELECTED ALBUM: ${album.album}`);
+    console.log(`SELECTED ALBUMMMM: ${album.album}`);
     this._data.selectedAlbum = album;
   }
 }
