@@ -42,12 +42,12 @@ export class CollectionComponent implements OnInit {
       selection: x.selection, collection: this.electron.path.join(x.library, x.name)
     };
 
+    this.electron.ipcRenderer.send("save-collection", y);
+    
     this._snack.open(`Collection '${this.electron.path.join(x.library, x.name)}' saved!`, "Dismiss", {
       duration: 2000,
       horizontalPosition: "end"
     });
-
-    this.electron.ipcRenderer.send("save-collection", y);
     this._router.navigateByUrl('/main');
   }
 }

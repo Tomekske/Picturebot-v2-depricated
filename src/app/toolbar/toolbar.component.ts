@@ -17,11 +17,25 @@ export class ToolbarComponent implements OnInit {
   constructor(private electron: ElectronService, private _data: DataService) { }
 
   ngOnInit(): void {
+    console.log(this.collections);
+  }
+
+  ngAfterViewInit() {
+    console.log('afteeer');
+
+    this.electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
+      this.collections.push(collection.collection);
+    });
   }
 
   @HostListener("click")
   click() {
-    this.collections = [];
+    console.log(`CNT: ${this.collections.length}`);
+    //this.collections = [];
+
+    if(this.collections.length != 0) {
+      this.collections = [];
+    }
 
     this.electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
@@ -29,7 +43,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   selectedCollectionEvent($event) {
-    this.collections = [];
+    // this.collections = [];
     console.log(`SELECTED: ${this.selectedCollection}`);
     this._data.selectedCollection = this.selectedCollection;
   }

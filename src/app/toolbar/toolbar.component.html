@@ -1,20 +1,15 @@
 <div fxLayout="column">
   <div fxLayout="row">
-    <div fxFlex="35" style="background-color: blue;">
-      <p></p>
-    </div>
+    <div fxFlex="35" style="background-color: blue;"></div>
     <div fxFlex="30" style="background-color: lightcoral;" fxLayoutAlign="center center">
-      <form>
-        <mat-form-field appearance="fill">
-          <mat-label>Select collection</mat-label>
-          <mat-select [(ngModel)]="selectedCollection" name="collection" (selectionChange)="selectedCollectionEvent($event)">
-              <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </form>
+      <mat-form-field appearance="fill">
+        <mat-label>Select collection</mat-label>
+        <mat-select [(ngModel)]="selectedCollection" name="collection" (selectionChange)="selectedCollectionEvent($event)">
+          <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div fxFlex="35" style="background-color: green;">
-    </div>
+    <div fxFlex="35" style="background-color: green;"></div>
   </div>
 </div>
 

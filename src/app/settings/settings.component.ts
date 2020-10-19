@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { Logger } from '../../../logger';
 import { ILibrary } from '../../../shared/database/interfaces';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -12,10 +14,8 @@ import { ILibrary } from '../../../shared/database/interfaces';
 /** settings component*/
 export class SettingsComponent implements OnInit { 
   settingsForm: FormGroup;
-  isShowSettings: boolean = false;
-  @Output() sendIsShowSettings = new EventEmitter<boolean>();
 
-  constructor(private electron: ElectronService, private fb: FormBuilder) { }
+  constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
 
   ngOnInit(): void {
     let xxx = {};
@@ -48,7 +48,10 @@ export class SettingsComponent implements OnInit {
     Logger.Log().debug("Save settings");
     this.electron.ipcRenderer.send("save-settings", this.settingsForm.value);
 
-    this.isShowSettings = !this.isShowSettings;
-    this.sendIsShowSettings.emit(this.isShowSettings);
+    this._snack.open(`Settings saved!`, "Dismiss", {
+      duration: 4000,
+      horizontalPosition: "end"
+    });
+    this._router.navigateByUrl('/main');
   }
 }

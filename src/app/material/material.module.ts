@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-
+import { MatRadioModule } from '@angular/material/radio';
 
 const MaterialComponents = [
   NgMaterialMultilevelMenuModule,
@@ -30,7 +30,8 @@ const MaterialComponents = [
   MatInputModule,
   MatSnackBarModule,
   MatDatepickerModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatRadioModule
 ];
 
 

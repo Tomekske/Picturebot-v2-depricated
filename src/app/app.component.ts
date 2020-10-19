@@ -9,6 +9,7 @@ import { AppConfig } from '../environments/environment';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
   constructor(private electron: ElectronService, private translate: TranslateService) {
     this.translate.setDefaultLang('en');
   }
