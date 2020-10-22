@@ -4,6 +4,14 @@
   </div>
 </mat-tab-group>
 
-<div *ngFor="let p of base64List">
-    <img src="{{ p }}" width="500" height="600">
-</div>
+<mat-grid-list cols="3" rowHeight="6:4">
+  <div>
+  <div class="images" photoGalleryGroup *ngFor="let p of base64List">
+    <mat-grid-tile>
+      <div class="images-item" [photoGallery]="p">
+        <img style="width: 100%; height: auto;" [src]="p"/>
+      </div>
+    </mat-grid-tile>
+  </div>
+  </div>
+</mat-grid-list>

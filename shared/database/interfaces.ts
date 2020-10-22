@@ -31,16 +31,15 @@ export interface ICollection extends IFlow {
 }
 
 export interface IAlbum {
-    collection?: string,
+    collection: string,
     name: string,
     date: string,
     album: string,
+    started: number
 }
 
 interface IPicture {
     name?: string,
-    source: string,
-    destination?: string,
     modification?: Date,
     hashed?: string,
     collection?: string,
@@ -48,5 +47,12 @@ interface IPicture {
 }
 
 export interface IBase extends IPicture {
-    selection?: number
+    selection?: number,
+    source?: string,
+    destination?: string
+}
+
+export interface IPreview extends IPicture {
+    base: string,
+    preview: string
 }

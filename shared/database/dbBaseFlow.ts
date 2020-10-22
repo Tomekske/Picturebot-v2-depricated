@@ -37,8 +37,23 @@ export class DbBaseFlow extends Sqlite {
         stmt.run(args);
     }
 
+    updateName(update) {
+        const stmt = this.connection.prepare(`UPDATE baseFlow SET name='${update.name}' WHERE destination='${update.destination}' AND album='${update.album}';`);
+        stmt.run();
+    }
+
+    updateDestination(update) {
+        const stmt = this.connection.prepare(`UPDATE baseFlow SET destination='${update.dest}' WHERE name='${update.name}' AND album='${update.album}';`);
+        stmt.run();
+    }
+
     queryAll() {
         const stmt = this.connection.prepare('SELECT DISTINCT * FROM baseFlow;');
         return stmt.get();
+    }
+
+    queryBaseFlow(album: string) {
+        const stmt = this.connection.prepare(`SELECT * FROM baseFlow where album='${album}';`);
+        return stmt.all();  
     }
 }

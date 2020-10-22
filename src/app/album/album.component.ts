@@ -38,9 +38,14 @@ export class AlbumComponent implements OnInit {
     console.log(dropzone);
     this.formatDate(dropzone.date);
 
-    let y: IAlbum = { collection: dropzone.collection, name: dropzone.name, date: this.formatDate(dropzone.date), album: this.electron.path.join(dropzone.collection, `${dropzone.name} ${this.formatDate(dropzone.date)}`)};
-    console.log('yyyyyyyyyyyyyyyyyy');
-    console.log(y);
+    let y: IAlbum = { 
+      collection: dropzone.collection, 
+      name: dropzone.name, 
+      date: this.formatDate(dropzone.date), 
+      album: this.electron.path.join(dropzone.collection, `${dropzone.name} ${this.formatDate(dropzone.date)}`), 
+      started: 0
+    };
+
     this.files.forEach((element) => {
      const stats = this.electron.fs.statSync(element.path);
      this.pics.push({source: element.path, name: element.name, modification: stats.mtime});

@@ -40,4 +40,9 @@ export class DbBackupFlow extends Sqlite {
         const stmt = this.connection.prepare('SELECT DISTINCT * FROM backupFlow;');
         return stmt.get();
     }
+
+    queryBackupFlow(album: string) {
+        const stmt = this.connection.prepare(`SELECT * FROM backupFlow where album='${album}';`);
+        return stmt.all();  
+    }
 }

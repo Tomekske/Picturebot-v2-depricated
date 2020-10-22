@@ -17,6 +17,7 @@ export class DbAlbum extends Sqlite {
             "collection" varchar(250) NOT NULL,
             "name" varchar(50) NOT NULL,
             "date" date NOT NULL,
+            "started" INTEGER NULL,
             "album" varchar(250) NOT NULL PRIMARY KEY)`
         );
     }
@@ -28,16 +29,21 @@ export class DbAlbum extends Sqlite {
 
     insertRow(args) {
         const stmt = this.connection.prepare(`INSERT INTO Album VALUES (
-            @collection, @name, @date, @album);`
+            @collection, @name, @date, @started, @album);`
         );
         stmt.run(args);
     }
 
     updateRow(args) {
         const stmt = this.connection.prepare(`UPDATE Album set 
-            collection=@collection, name=@name, date=@date, album=@album;`
+            collection=@collection, name=@name, date=@date, started=@started, album=@album;`
         );
         stmt.run(args);
+    }
+
+    updateStartedRecord(value, album) {
+        const stmt = this.connection.prepare(`UPDATE album SET started=${value} WHERE album='${album}'`);
+        stmt.run();
     }
 
     queryAll() {
@@ -46,7 +52,16 @@ export class DbAlbum extends Sqlite {
     }
 
     queryAlbums(collection) {
-        const stmt = this.connection.prepare(`SELECT album, name, date FROM Album WHERE collection='${collection}';`);
+        const stmt = this.connection.prepare(`SELECT album, name, date, started FROM Album WHERE collection='${collection}';`);
         return stmt.all();
+    }
+
+    querySingleAlbum(collection) {
+        const stmt = this.connection.prepare(`SELECT * FROM Album WHERE collection='${collection}';`);
+        return stmt.get();
+    }
+    queryStarted(album) {
+        const started = this.connection.prepare(`SELECT started FROM Album WHERE album='${album}';`).pluck().get();;
+        return ((started == 1) ? true : false);
     }
 }

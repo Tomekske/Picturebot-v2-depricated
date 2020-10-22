@@ -4,12 +4,20 @@
     <div fxFlex="30" style="background-color: lightcoral;" fxLayoutAlign="center center">
       <mat-form-field appearance="fill">
         <mat-label>Select collection</mat-label>
-        <mat-select [(ngModel)]="selectedCollection" name="collection" (selectionChange)="selectedCollectionEvent($event)">
+        <mat-select [(ngModel)]="selectedCollection" name="collection" (selectionChange)="selectedCollectionEvent($event)" (click)="selectionClickEvent()">
           <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
-    <div fxFlex="35" style="background-color: green;"></div>
+    <div fxFlex="35" style="background-color: green;">
+      <mat-toolbar>
+        <!-- <div *ngIf="!isStarted"> -->
+          <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="startClickEvent()">
+            <mat-icon>play_arrow</mat-icon>
+          </button>
+        <!-- </div> -->
+      </mat-toolbar>
+  </div>
   </div>
 </div>
 

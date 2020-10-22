@@ -2,7 +2,7 @@ import { ThrowStmt } from '@angular/compiler';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs';
-import { IAlbum, IFlow } from '../../shared/database/interfaces';
+import { IAlbum, IBase, IFlow } from '../../shared/database/interfaces';
 import { ElectronService } from './core/services/electron/electron.service';
 
 @Injectable({
@@ -14,6 +14,8 @@ export class DataService {
   private _selectedAlbum: IAlbum;
   private _selectedFlow: string;
   private _flows: IFlow;
+  private _dictStarted = new Object();
+  private _pictures: IBase[] = [];
 
   private _srcCollection = new Subject<string>();
   private _srcAlbums = new Subject<IAlbum[]>();
@@ -77,4 +79,24 @@ export class DataService {
   get flowsInCollection(): IFlow {
     return this._flows;
   }
+
+ //=======================
+  setAlbumStarted(album: string, state: boolean) {
+    this._dictStarted[album] = state;
+  }
+
+  getAlbumStarted(album: string): boolean {
+    return this._dictStarted[album];
+  }
+
+
+   //=======================
+
+   set picturesList(pictures: IBase[]) {
+    this._pictures = pictures;
+   }
+
+   get picturesList(): IBase[] {
+     return this._pictures;
+   }
 }

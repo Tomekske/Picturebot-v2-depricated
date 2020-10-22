@@ -62,6 +62,13 @@ export class DbCollection extends Sqlite {
         return stmt.get();
     }
 
+    queryRenameStartedFlows(collection: string) {
+        const q = `SELECT base, preview FROM Collection WHERE collection='${collection}';`;
+        console.log(`QUERY === ${q}`);
+        const stmt = this.connection.prepare(q);
+        return stmt.get();  
+    }
+
     queryAllFlows(collection: string) {
         const q = `SELECT backup, base, preview, files, edited, socialMedia, selection FROM Collection WHERE collection='${collection}';`;
         console.log(`QUERY === ${q}`);

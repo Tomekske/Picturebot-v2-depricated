@@ -8,7 +8,7 @@ import * as sqlite from 'better-sqlite3';
 import { Logger } from './logger';
 import { DbSettings } from './shared/database/dbSettings';
 import { DbLibrary } from './shared/database/dbLibrary';
-import { ILibrary, ISettings, ICollection, IAlbum, IFlow, IBase } from './shared/database/interfaces';
+import { ILibrary, ISettings, ICollection, IAlbum, IFlow, IBase, IPreview } from './shared/database/interfaces';
 import { fstat } from 'fs';
 import { DbCollection } from './shared/database/dbCollection';
 import { DbAlbum } from './shared/database/dbAlbum';
@@ -147,6 +147,12 @@ try {
     event.returnValue = db.queryFlows(collection);
   });
 
+  ipcMain.on('get-started-flow', (event, collection: string) => {
+    const db = new DbCollection();
+
+    event.returnValue = db.queryRenameStartedFlows(collection);
+  });
+
   ipcMain.on('check-settings-empty', (event) => {
     Logger.Log().debug('');
     const db = new DbSettings();
@@ -183,6 +189,19 @@ try {
       });
     }
   });
+
+  ipcMain.on("get-album-started", (event, album: string) => {
+    const db = new DbAlbum();
+
+    event.returnValue = db.queryStarted(album);
+  });
+
+  ipcMain.on("update-album-started", (event, album: IAlbum) => {
+    const db = new DbAlbum();
+    
+    db.updateStartedRecord(1, album.album);
+    event.returnValue = "";
+  });
  
   ipcMain.on('save-album', (event, args: IAlbum) => {
     Logger.Log().debug('SAVE album');
@@ -196,6 +215,21 @@ try {
     if (!fs.existsSync(args.album)){
       fs.mkdirSync(args.album);
     }
+  });
+
+  ipcMain.on('get-baseFLow-pictures', (event, album: string) => {
+    const db = new DbBaseFlow();
+    event.returnValue = db.queryBaseFlow(album);
+  });
+
+  ipcMain.on('get-backupFLow-pictures', (event, album: string) => {
+    const db = new DbBackupFlow();
+    event.returnValue = db.queryBackupFlow(album);
+  });
+
+  ipcMain.on('get-previewFLow-pictures', (event, album: string) => {
+    const db = new DbPreviewFlow();
+    event.returnValue = db.queryPreviewFlow(album);
   });
 
   ipcMain.on('save-pictures', (event, args, y: IAlbum) => {
@@ -245,7 +279,7 @@ try {
         
         let dataBaseFlow: IBase = { collection: y.collection, album: y.album, source: picture.source, name: picture.name, destination: destBase, selection: 0};
         let dataBackupFlow: IBase = { collection: y.collection, album: y.album, source: picture.source, name: picture.name, destination: destBackup};
-        let dataPreviewFlow: IBase = { collection: y.collection, album: y.album ,source: picture.source, destination: destPreview}; 
+        let dataPreviewFlow: IPreview = { collection: y.collection, album: y.album ,base: picture.source, name: picture.name, preview: destPreview}; 
 
         console.log(`Base: ${destBase} - ${dataBaseFlow.name}`);
         console.log(`Backup: ${destBackup} - ${dataBackupFlow.name}`);
@@ -280,7 +314,25 @@ try {
 
     event.returnValue = "";
   });
+
+
+  ipcMain.on('update-name-baseFlow', (event, update) => {
+    const db = new DbBaseFlow();
+    db.updateName(update);
+    db.updateDestination(update);
+    db.dbClose();
+    
+    event.returnValue = "";
+  });
   
+  ipcMain.on('update-name-previewFlow', (event, update) => {
+    const db = new DbPreviewFlow();
+    db.updateName(update);
+    db.updateDestination(update);
+    db.dbClose();
+    
+    event.returnValue = "";
+  });
 
   ipcMain.on('get-libraries', (event, args: ILibrary) => {
     Logger.Log().debug('get-libraries');
@@ -318,6 +370,16 @@ try {
     const db = new DbAlbum();
 
     event.returnValue = db.queryAlbums(args);
+  });
+
+
+  ipcMain.on('get-single-album', (event, collection: string) => {
+    Logger.Log().debug('get-album');
+
+    // Create database
+    const db = new DbAlbum();
+
+    event.returnValue = db.querySingleAlbum(collection);
   }); 
 
   ipcMain.on('get-preview-pictures', (event, args) => {
