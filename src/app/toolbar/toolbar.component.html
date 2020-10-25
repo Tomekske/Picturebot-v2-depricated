@@ -1,26 +1,23 @@
-<div fxLayout="column">
+<div fxLayout="column" style="background-color: #222;">
   <div fxLayout="row">
-    <div fxFlex="35" style="background-color: blue;"></div>
-    <div fxFlex="30" style="background-color: lightcoral;" fxLayoutAlign="center center">
-      <mat-form-field appearance="fill">
-        <mat-label>Select collection</mat-label>
+    <div fxFlex="35"></div>
+    <div fxFlex="30" fxLayoutAlign="center center">
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label align="end">Select collection</mat-label>
         <mat-select [(ngModel)]="selectedCollection" name="collection" (selectionChange)="selectedCollectionEvent($event)" (click)="selectionClickEvent()">
           <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
-    <div fxFlex="35" style="background-color: green;">
+    <div fxFlex="35">
       <mat-toolbar>
         <!-- <div *ngIf="!isStarted"> -->
-          <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon" (click)="startClickEvent()">
+          <button mat-icon-button class="example-icon" (click)="startClickEvent()" matTooltip="Start organizing">
             <mat-icon>play_arrow</mat-icon>
           </button>
         <!-- </div> -->
       </mat-toolbar>
   </div>
   </div>
+  <mat-divider></mat-divider>
 </div>
-
-
-
-

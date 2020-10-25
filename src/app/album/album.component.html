@@ -1,15 +1,15 @@
-<div fxLayout="column" fxFlex="33" style="background-color: aqua;" fxFlexFill>
+<!-- <div fxLayout="column" fxFlex="33" fxFlexFill>
     <p></p>
 </div>
-<div fxLayout="column" fxFlex="33" style="background-color: chartreuse;" fxFlexFill fxLayoutAlign="center center">
+<div fxLayout="column" fxFlex="33" fxFlexFill fxLayoutAlign="center center">
     <mat-card>
         <button mat-icon-button color="primary" aria-label="Example icon button with a heart icon">
             <a routerLink="/main">
               <mat-icon color="primary">arrow_back</mat-icon>
             </a>
-        </button>
+        </button> -->
         <!-- form -->
-        <form class="example-form" [formGroup]="albumForm" (ngSubmit)="saveAlbum()">
+        <!-- <form class="example-form" [formGroup]="albumForm" (ngSubmit)="saveAlbum()">
             <table class="example-full-width" cellspacing="0">  
                 <p>Link library to a collection</p>
                 <tr>
@@ -55,8 +55,64 @@
         </form>
     </mat-card>    
 </div>
-<div fxLayout="column" fxFlex="33" style="background-color: pink;" fxFlexFill>
+<div fxLayout="column" fxFlex="33" fxFlexFill>
     <p></p>
+</div> -->
+
+
+<div fxLayout="column" fxFlex="25"></div>
+<div fxLayout="column" fxFlex="50">
+  <mat-card style="width: fit-content; height: 55px;" fxLayoutAlign="center center">
+      <button mat-icon-button color="primary">
+        <a routerLink="/main">
+          <mat-icon color="primary">arrow_back</mat-icon>
+        </a>
+      </button>
+  </mat-card>
+  <form class="example-form" [formGroup]="albumForm" (ngSubmit)="saveAlbum()">
+    <div style="padding-top: 1%;">
+      <mat-card>
+        <h4>Link library to a collection</h4>
+        <mat-form-field appearance="fill" style="width: 100%;">
+            <mat-label>Select collection</mat-label>
+            <mat-select formControlName="library">
+                <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <p>
+            <mat-form-field class="example-full-width" style="width: 70%;">
+                <mat-label>Album name</mat-label>
+                <input formControlName="name" matInput type="text">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" style="width: 25%; padding-left: 5%;"> 
+                <mat-label>Select date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date" disabled>
+                <mat-datepicker-toggle matSuffix [for]="picker" disabled="false"></mat-datepicker-toggle>
+                <mat-datepicker #picker disabled="false"></mat-datepicker>
+            </mat-form-field>
+        </p>
+        <p>
+            <ngx-dropzone (change)="onSelect($event)">
+                <ngx-dropzone-label>Drop pictures</ngx-dropzone-label>
+                <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+                    <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                </ngx-dropzone-preview>
+            </ngx-dropzone>
+        </p>
+        <div align="end">
+            <button  mat-fab color="primary" aria-label="Example icon-button with a heart icon">
+                <mat-icon>save</mat-icon>
+            </button>
+        </div>
+      </mat-card>
+    </div>
+  </form>
 </div>
+<div fxLayout="column" fxFlex="25"></div>
 
 
+
+
+
+ 

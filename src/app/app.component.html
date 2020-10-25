@@ -1,22 +1,22 @@
-<div fxLayout="column" fxFlex="100" style="background-color: pink;" fxFlexFill>
-  <div fxLayout="row" fxFlex="6" fxFlexFill>
+<div fxLayout="column" fxFlex="100" fxFlexFill>
+  <div fxLayout="row" fxFlex="6.75" fxFlexFill>
     <div fxFlex="100">
       <app-toolbar></app-toolbar>
     </div>
   </div>
   <div fxLayout="row" fxFlex="94" fxFlexFill>
     <!-- Left menu -->
-    <div fxFlex="15" style="background-color: red;">
+    <div fxFlex="15" class="sides" style="padding-top: 3.25%; padding-right: 0.5%; padding-left: 0.5%">
       <app-menu></app-menu>
     </div>
     <!-- Main window-->
-    <div fxFlex="70" style="background-color: burlywood; overflow: auto;">
+    <div fxFlex="70" style="overflow: auto;" class="window">
       <!-- <app-window></app-window> -->
       <router-outlet></router-outlet>
     </div>
 
     <!-- Album selector-->
-    <div fxFlex="15" style="background-color: darkgoldenrod;">
+    <div fxFlex="15" class="sides" style="padding-top: 3.25%; padding-right: 0.5%; padding-left: 0.5%">
       <app-shoot-selector></app-shoot-selector>
     </div>
   </div>

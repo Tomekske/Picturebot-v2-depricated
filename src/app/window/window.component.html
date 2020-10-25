@@ -1,17 +1,20 @@
 <mat-tab-group  animationDuration="0ms" (selectedTabChange)="selectedFlowEvent($event)">
-  <div *ngFor="let flow of flows" style="background-color: black;">
-    <mat-tab label="{{ flow }}">{{ flow }} - {{ album.album }}</mat-tab>
+  <div *ngFor="let flow of flows">
+    <mat-tab label="{{ flow }}"></mat-tab>
   </div>
 </mat-tab-group>
 
-<mat-grid-list cols="3" rowHeight="6:4">
-  <div>
-  <div class="images" photoGalleryGroup *ngFor="let p of base64List">
-    <mat-grid-tile>
-      <div class="images-item" [photoGallery]="p">
-        <img style="width: 100%; height: auto;" [src]="p"/>
+<div style="padding-top: 1%;">
+  <mat-grid-list cols="3" rowHeight="6:4">
+    <div>
+      <div class="images" photoGalleryGroup *ngFor="let p of base64List">
+        <mat-grid-tile>
+          <div class="images-item" [photoGallery]="p">
+            <img style="width: 100%; height: auto;" [src]="p"/>
+          </div>
+        </mat-grid-tile>
       </div>
-    </mat-grid-tile>
-  </div>
-  </div>
-</mat-grid-list>
+    </div>
+  </mat-grid-list>
+</div>
+

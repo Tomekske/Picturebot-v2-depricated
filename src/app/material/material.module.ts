@@ -17,6 +17,8 @@ import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } f
 import { MatRadioModule } from '@angular/material/radio';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDividerModule } from '@angular/material/divider';
 
 const MaterialComponents = [
   NgMaterialMultilevelMenuModule,
@@ -35,7 +37,9 @@ const MaterialComponents = [
   MatNativeDateModule,
   MatRadioModule,
   MatGridListModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatTooltipModule,
+  MatDividerModule
 ];
 
 

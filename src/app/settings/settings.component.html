@@ -1,96 +1,81 @@
-<div fxLayout="column" fxFlex="33" style="background-color: aqua;" fxFlexFill>
-  <p></p>
-</div>
-<div fxLayout="column" fxFlex="33" style="background-color: chartreuse;" fxFlexFill>
-    <button mat-icon-button color="primary" aria-label="Example icon button with a heart icon">
-      <a routerLink="/main">
-        <mat-icon color="primary">arrow_back</mat-icon>
-      </a>
-    </button>
-    <form class="example-form" [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+<div fxLayout="column" fxFlex="25"></div>
+<div fxLayout="column" fxFlex="50">
+  <mat-card style="width: fit-content; height: 55px;" fxLayoutAlign="center center">
+      <button mat-icon-button color="primary">
+        <a routerLink="/main">
+          <mat-icon color="primary">arrow_back</mat-icon>
+        </a>
+      </button>
+  </mat-card>
+  <form class="example-form" [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+    <div style="padding-top: 1%;">
       <mat-card>
         <h4>Upload settings</h4>
-        <tr>
-          <td>
-            <mat-form-field class="example-full-width">
-                <mat-label>Upload pictures from the edited flow</mat-label>
-                <input matInput formControlName="uploadEdited" type="text">
-            </mat-form-field>
-          </td>
-        </tr>
-        <tr>
-          <td>
-              <mat-form-field class="example-full-width">
-                  <mat-label>Upload pictures from the social-media flow</mat-label>
-                  <input matInput formControlName="uploadSocialMedia" type="text">
-              </mat-form-field>
-          </td>
-        </tr>
+        <mat-form-field style="width: 100%;">
+          <mat-label>Upload pictures from the edited flow</mat-label>
+          <input matInput formControlName="uploadEdited" type="text">
+        </mat-form-field>
+        <p>
+          <mat-form-field style="width: 100%;">
+            <mat-label>Upload pictures from the social-media flow</mat-label>
+            <input matInput formControlName="uploadSocialMedia" type="text">
+          </mat-form-field>
+        </p>
       </mat-card>
+    </div>
+    <div style="padding-top: 1%;">
       <mat-card>
         <h4>Software settings</h4>
-        <tr>
-          <td>
-            <mat-form-field class="example-full-width">
-                <mat-label>Editing software</mat-label>
-                <input matInput formControlName="sofwareEditing" type="text">
-            </mat-form-field>
-          </td>
-        </tr>
-        <tr>
-          <td>
-              <mat-form-field class="example-full-width">
-                  <mat-label>Upload pictures from the social-media flow</mat-label>
-                  <input matInput formControlName="sofwarePostProcessing" type="text">
-              </mat-form-field>
-          </td>
-        </tr>
+        <mat-form-field style="width: 100%;">
+          <mat-label>Editing software</mat-label>
+          <input matInput formControlName="sofwareEditing" type="text">
+        </mat-form-field>
+        <p>
+          <mat-form-field style="width: 100%;">
+            <mat-label>Upload pictures from the social-media flow</mat-label>
+            <input matInput formControlName="sofwarePostProcessing" type="text">
+          </mat-form-field>
+        </p>
       </mat-card>
+    </div>
+    <div style="padding-top: 1%;">
       <mat-card>
         <h4>Default file type</h4>
-        <mat-radio-group formControlName="fileType" aria-label="Select an option" color="primary">
-          <tr>
-              <mat-radio-button name="fileType" value="RAW">RAW</mat-radio-button>
-          </tr>
-          <tr>
-            <mat-radio-button name="fileType" value="Compressed">Compressed</mat-radio-button>
-          </tr>
+        <mat-radio-group formControlName="fileType" color="primary" style="display: flex; flex-direction: column; margin: 15px 0;">
+          <mat-radio-button name="fileType" value="RAW" style="margin: 3px;">RAW</mat-radio-button>
+          <mat-radio-button name="fileType" value="Compressed" style="margin: 3px;">Compressed</mat-radio-button>
         </mat-radio-group>
-      </mat-card>
+      </mat-card>  
+    </div>
+    <div style="padding-top: 1%;">
       <mat-card>
         <h4>Default logging level</h4>
-        <mat-radio-group formControlName="logLevel" aria-label="Select an option" color="primary">
-          <tr>
-              <mat-radio-button name="logLevel" value="Error">Error</mat-radio-button>
-          </tr>
-          <tr>
-            <mat-radio-button name="logLevel" value="Debug">Debug</mat-radio-button>
-          </tr>
+        <mat-radio-group formControlName="logLevel" color="primary" style="display: flex; flex-direction: column; margin: 15px 0;">
+          <mat-radio-button name="logLevel" value="Error" style="margin: 3px;">Error</mat-radio-button>
+          <mat-radio-button name="logLevel" value="Debug" style="margin: 3px;">Debug</mat-radio-button>
         </mat-radio-group>
-      </mat-card>
+      </mat-card>        
+    </div>
+    <div style="padding-top: 1%;">
       <mat-card>
         <h4>Conversion</h4>
-        <tr>
-          <td>
-            <mat-form-field class="example-full-width">
-                <mat-label>Conversion percentage</mat-label>
-                <input matInput formControlName="conversion" type="text">
-            </mat-form-field>
-          </td>
-        </tr>
-        <tr>
-          <td>
-              <div align="end">
-                  <button  mat-fab color="primary" aria-label="Example icon-button with a heart icon">
-                      <mat-icon>save</mat-icon>
-                  </button>
-              </div>
-          </td>
-      </tr>
-      </mat-card>
-    </form>
+        <mat-form-field style="width: 100%;">
+            <mat-label>Conversion percentage</mat-label>
+            <input matInput formControlName="conversion" type="text">
+        </mat-form-field>
+        <div align="end">
+          <button  mat-fab color="primary" aria-label="Example icon-button with a heart icon">
+              <mat-icon>save</mat-icon>
+          </button>
+        </div>
+      </mat-card>  
+    </div>
+  </form>
 </div>
-<div fxLayout="column" fxFlex="33" style="background-color: pink;" fxFlexFill>
-  <p></p>
-</div>
+<div fxLayout="column" fxFlex="25"></div>
 
+
+
+
+
+ 
