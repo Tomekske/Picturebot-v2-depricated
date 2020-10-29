@@ -2,7 +2,7 @@ import { Component, OnInit, Output, EventEmitter, HostListener } from '@angular/
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection, IFlow, IPreview } from '../../../shared/database/interfaces';
-import { Logger } from '../../../logger';
+import { Logger } from '../../../shared/logger/logger';
 import { DataService } from '../data.service';
 import { Router } from '@angular/router';
 

@@ -1,67 +1,112 @@
 import * as sqlite from 'better-sqlite3';
-import { Logger } from '../../logger';
+import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
 
 export class DbAlbum extends Sqlite {
 
+    /**
+     * DbAlbum constructor
+     */
     constructor() {
         super();
-
-        if(!this.tableExists()) {
-            this.createTable();
-        }
     }
 
+    /**
+     * Method to create the album table
+     */
     createTable() {
-        this.connection.exec(`CREATE TABLE IF NOT EXISTS Album(
+        let query: string = `CREATE TABLE IF NOT EXISTS Album(
             "collection" varchar(250) NOT NULL,
             "name" varchar(50) NOT NULL,
             "date" date NOT NULL,
             "started" INTEGER NULL,
-            "album" varchar(250) NOT NULL PRIMARY KEY)`
-        );
+            "album" varchar(250) NOT NULL PRIMARY KEY)`;
+        
+        this.connection.exec(query);
+        Logger.Log().debug(`Query: ${query}`);
     }
-
+    
+    /**
+     * Method to check whether the album table exists
+     */
     tableExists() {
-        const count = this.connection.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Album'").pluck().get();;
+        let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Album'";
+        const count = this.connection.prepare(query).pluck().get();
+
+        Logger.Log().debug(`Query: ${query}`);
         return ((count == 1) ? true : false);
     }
 
+    /**
+     * Method to insert data into table's row
+     * @param args Data needed to insert into the table's row
+     */
     insertRow(args) {
         const stmt = this.connection.prepare(`INSERT INTO Album VALUES (
             @collection, @name, @date, @started, @album);`
         );
+
         stmt.run(args);
+        Logger.Log().debug(`Query: INSERT INTO Album VALUES ("${JSON.stringify(args)}")`);
     }
 
-    updateRow(args) {
-        const stmt = this.connection.prepare(`UPDATE Album set 
-            collection=@collection, name=@name, date=@date, started=@started, album=@album;`
-        );
-        stmt.run(args);
-    }
+    /**
+     * Method to update the started record in the table's row
+     * @param isStarted Updated started value
+     * @param album Select the album where the started value will get updated
+     */
+    updateStartedRecord(isStarted, album) {
+        let query: string = `UPDATE album SET started=${isStarted} WHERE album='${album}'`;
+        const stmt = this.connection.prepare(query);
 
-    updateStartedRecord(value, album) {
-        const stmt = this.connection.prepare(`UPDATE album SET started=${value} WHERE album='${album}'`);
         stmt.run();
+        Logger.Log().debug(`Query: ${query}`);
     }
 
+    /**
+     * Method to query all values from the album table
+     */
     queryAll() {
-        const stmt = this.connection.prepare('SELECT DISTINCT * FROM Album;');
+        let query: string = 'SELECT DISTINCT * FROM Album;';
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.get();
     }
 
+    /**
+     * Method to query certain records from a specified album
+     * @param collection Collection from which certain records are queried
+     */
     queryAlbums(collection) {
-        const stmt = this.connection.prepare(`SELECT album, name, date, started FROM Album WHERE collection='${collection}';`);
+        let query: string = `SELECT album, name, date, started FROM Album WHERE collection='${collection}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.all();
     }
 
+    /**
+     * Method to query all records from a specified album
+     * @param collection Collection from which all records is queried
+     */
     querySingleAlbum(collection) {
-        const stmt = this.connection.prepare(`SELECT * FROM Album WHERE collection='${collection}';`);
+        let query: string = `SELECT * FROM Album WHERE collection='${collection}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.get();
     }
+
+    /**
+     * Method to query the started record from a specified album
+     * @param album Album from which the started record is selected
+     */
     queryStarted(album) {
-        const started = this.connection.prepare(`SELECT started FROM Album WHERE album='${album}';`).pluck().get();;
+        let query: string = `SELECT started FROM Album WHERE album='${album}';`;
+        const started = this.connection.prepare(query).pluck().get();
+
+        Logger.Log().debug(`Query: ${query}`);
         return ((started == 1) ? true : false);
     }
 }

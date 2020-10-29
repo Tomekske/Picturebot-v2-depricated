@@ -1,59 +1,98 @@
 import * as sqlite from 'better-sqlite3';
-import { Logger } from '../../logger';
+import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
 
 export class DbBaseFlow extends Sqlite {
+
+    /**
+     * DbBaseFlow constructor
+     */
     constructor() {
         super();
-        
-        if(!this.tableExists()) {
-            this.createTable();
-        }
     }
 
+    /**
+     * Method to create the baseFlow table
+     */
     createTable() {
-        this.connection.exec(`CREATE TABLE IF NOT EXISTS baseFlow(
+        let query: string = `CREATE TABLE IF NOT EXISTS baseFlow(
             "collection" varchar(400) NOT NULL,
             "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
             "selection" INTEGER NULL,
             "source" varchar(400) NOT NULL,
-            "destination" varchar(400) NOT NULL PRIMARY KEY)`
-        );
+            "destination" varchar(400) NOT NULL PRIMARY KEY)`;
+
+        this.connection.exec(query);
+        Logger.Log().debug(`Query: ${query}`);
     }
 
+    /**
+     * Method to check whether the baseFlow table exists
+     */
     tableExists() {
-        const count = this.connection.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='baseFlow'").pluck().get();;
+        let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='baseFlow'";
+        const count = this.connection.prepare(query).pluck().get();
+
+        Logger.Log().debug(`Query: ${query}`);
         return ((count == 1) ? true : false);
     }
 
+    /**
+     * Method to insert data into table's row
+     * @param args Data needed to insert into the table's row
+     */
     insertRow(args) {
         const stmt = this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @selection, @source, @destination);");
+
         stmt.run(args);
+        Logger.Log().debug(`Query: INSERT INTO baseFlow VALUES ("${JSON.stringify(args)}")`);
     }
 
-    updateRow(args) {
-        const stmt = this.connection.prepare("UPDATE baseFlow set collection=@collection, name=@name, album=@album, selection=@selection, source=@source, destination=@destination;");
-        stmt.run(args);
-    }
-
+    /**
+     * Method to update the album name of a specified album
+     * @param update updated values
+     */
     updateName(update) {
-        const stmt = this.connection.prepare(`UPDATE baseFlow SET name='${update.name}' WHERE destination='${update.destination}' AND album='${update.album}';`);
+        let query: string = `UPDATE baseFlow SET name='${update.name}' WHERE destination='${update.destination}' AND album='${update.album}';`;
+        const stmt = this.connection.prepare(query);
+
         stmt.run();
+        Logger.Log().debug(`Query: ${query}`);
     }
 
+    /**
+     * Method to update the destination location
+     * @param update updated values
+     */
     updateDestination(update) {
-        const stmt = this.connection.prepare(`UPDATE baseFlow SET destination='${update.dest}' WHERE name='${update.name}' AND album='${update.album}';`);
+        let query: string = `UPDATE baseFlow SET destination='${update.dest}' WHERE name='${update.name}' AND album='${update.album}';`;
+        const stmt = this.connection.prepare(query);
+
         stmt.run();
+        Logger.Log().debug(`Query: ${query}`);
     }
 
+    /**
+     * Method to query all values from the baseFlow table
+     */
     queryAll() {
-        const stmt = this.connection.prepare('SELECT DISTINCT * FROM baseFlow;');
+        let query: string = 'SELECT DISTINCT * FROM baseFlow;';
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.get();
     }
 
+    /**
+     * Method to query all records from the baseFlow table
+     * @param album Select the album where all the records will get queried
+     */
     queryBaseFlow(album: string) {
-        const stmt = this.connection.prepare(`SELECT * FROM baseFlow where album='${album}';`);
+        let query: string = `SELECT * FROM baseFlow where album='${album}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.all();  
     }
 }

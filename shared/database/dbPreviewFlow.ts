@@ -1,63 +1,97 @@
 import * as sqlite from 'better-sqlite3';
-import { Logger } from '../../logger';
+import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
 
 export class DbPreviewFlow extends Sqlite {
+
+    /**
+     * DbPreviewFlow constructor
+     */
     constructor() {
         super();
-        
-        if(!this.tableExists()) {
-            this.createTable();
-        }
     }
 
+    /**
+     * Method to create the previewFlow table
+     */
     createTable() {
-        this.connection.exec(`CREATE TABLE IF NOT EXISTS previewFlow(
+        let query: string = `CREATE TABLE IF NOT EXISTS previewFlow(
             "collection" varchar(400) NOT NULL,
             "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
             "base" varchar(400) NOT NULL,
-            "preview" varchar(400) NOT NULL PRIMARY KEY)`
-        );
+            "preview" varchar(400) NOT NULL PRIMARY KEY)`;
+
+        this.connection.exec(query);
+        Logger.Log().debug(`Query: ${query}`);
     }
 
+    /**
+     * Method to check whether the previewFlow table exists
+     */
     tableExists() {
-        const count = this.connection.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='previewFlow'").pluck().get();;
+        let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='previewFlow'";
+        const count = this.connection.prepare(query).pluck().get();
+
+        Logger.Log().debug(`Query: ${query}`);
         return ((count == 1) ? true : false);
     }
 
+    /**
+     * Method to update the name record
+     * @param update Updated values
+     */
     updateName(update) {
-        const stmt = this.connection.prepare(`UPDATE previewFlow SET name='${update.name}' WHERE preview='${update.destination}' AND album='${update.album}';`);
+        let query: string = `UPDATE previewFlow SET name='${update.name}' WHERE preview='${update.destination}' AND album='${update.album}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         stmt.run();
     }
 
+    /**
+     * Method to update the destination record
+     * @param update Updated values
+     */
     updateDestination(update) {
-        const stmt = this.connection.prepare(`UPDATE previewFlow SET preview='${update.dest}' WHERE name='${update.name}' AND album='${update.album}';`);
+        let query: string = `UPDATE previewFlow SET preview='${update.dest}' WHERE name='${update.name}' AND album='${update.album}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         stmt.run();
     }
 
+    /**
+     * Method to insert data into table's row
+     * @param args Data needed to insert into the table's row
+     */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO previewFlow VALUES (@collection, @name, @album, @base, @preview);");
+        const stmt = this.connection.prepare("INSERT INTO PreviewFlow VALUES (@collection, @name, @album, @base, @preview);");
+
         stmt.run(args);
+        Logger.Log().debug(`Query: INSERT INTO PreviewFlow VALUES ("${JSON.stringify(args)}")`);
     }
 
-    updateRow(args) {
-        const stmt = this.connection.prepare("UPDATE previewFlow set collection=@collection, name=@name, album=@album, base=@base, preview=@preview;");
-        stmt.run(args);
-    }
-
+    /**
+     * Method to query all values from the previewFlow table
+     */
     queryAll() {
-        const stmt = this.connection.prepare('SELECT DISTINCT * FROM previewFlow;');
+        let query: string = 'SELECT DISTINCT * FROM previewFlow;';
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.get();
     }
 
+    /**
+     * Method to query all records from a certain album
+     * @param album Selected album
+     */
     queryAllWhere(album) {
-        const stmt = this.connection.prepare(`SELECT DISTINCT * FROM previewFlow WHERE album='${album}';`);
-        return stmt.all();
-    }
+        let query: string = `SELECT DISTINCT * FROM previewFlow WHERE album='${album}';`;
+        const stmt = this.connection.prepare(query);
 
-    queryPreviewFlow(album: string) {
-        const stmt = this.connection.prepare(`SELECT * FROM previewFlow where album='${album}';`);
-        return stmt.all();  
+        Logger.Log().debug(`Query: ${query}`);
+        return stmt.all();
     }
 }

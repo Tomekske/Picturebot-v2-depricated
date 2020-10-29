@@ -1,3 +1,6 @@
+import { Helper } from '../helper/helper';
+import * as path from 'path';
+
 export class Logger {
   static Log(): any {
       var log4js = require('log4js');
@@ -9,7 +12,7 @@ export class Logger {
               },
               "file": {
                   "type": "fileSync",
-                  "filename": "C:\\Users\\joost\\Documents\\Log\\app.log",
+                  "filename": path.join(Helper.pathMyDocuments(), Helper.app, "app.log"),
                   "maxLogSize": 16384,
                   "numBackups": 3,
                   "pattern": "%d{dd-MM-yyyy HH:mm:ss} %-5p [%m]",

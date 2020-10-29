@@ -1,48 +1,73 @@
 import * as sqlite from 'better-sqlite3';
-import { Logger } from '../../logger';
+import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
 
 export class DbBackupFlow extends Sqlite {
+
+    /**
+     * DbBackupFlow constructor
+     */
     constructor() {
         super();
-        
-        if(!this.tableExists()) {
-            this.createTable();
-        }
     }
     
+    /**
+     * Method to create the backupFlow table
+     */
     createTable() {
-        this.connection.exec(`CREATE TABLE IF NOT EXISTS backupFlow(
+        let query: string = `CREATE TABLE IF NOT EXISTS backupFlow(
             "collection" varchar(400) NOT NULL,
             "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
             "source" varchar(400) NOT NULL,
-            "destination" varchar(400) NOT NULL PRIMARY KEY)`
-        );
+            "destination" varchar(400) NOT NULL PRIMARY KEY)`;
+
+        this.connection.exec(query);
+        Logger.Log().debug(`Query: ${query}`);
     }
 
+    /**
+     * Method to check whether the backupFlow table exists
+     */
     tableExists() {
-        const count = this.connection.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='backupFlow'").pluck().get();
+        let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='backupFlow'";
+        const count = this.connection.prepare(query).pluck().get();
+
+        Logger.Log().debug(`Query: ${query}`);
         return ((count == 1) ? true : false);
     }
 
+    /**
+     * Method to insert data into table's row
+     * @param args Data needed to insert into the table's row
+     */
     insertRow(args) {
         const stmt = this.connection.prepare("INSERT INTO backupFlow VALUES (@collection, @name, @album, @source, @destination);");
+
         stmt.run(args);
+        Logger.Log().debug(`Query: INSERT INTO backupFlow VALUES ("${JSON.stringify(args)}")`);
     }
 
-    updateRow(args) {
-        const stmt = this.connection.prepare("UPDATE backupFlow set collection=@collection, name=@name, album=@album, source=@source, destination=@destination;");
-        stmt.run(args);
-    }
-
+    /**
+     * Method to query all values from the backupFlow table
+     */
     queryAll() {
-        const stmt = this.connection.prepare('SELECT DISTINCT * FROM backupFlow;');
+        let query: string = 'SELECT DISTINCT * FROM backupFlow;';
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.get();
     }
 
+    /**
+     * Method to query all records from the backupFlow from a specified album
+     * @param album Album from which all records are queried
+     */
     queryBackupFlow(album: string) {
-        const stmt = this.connection.prepare(`SELECT * FROM backupFlow where album='${album}';`);
+        let query: string = `SELECT * FROM backupFlow where album='${album}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.all();  
     }
 }

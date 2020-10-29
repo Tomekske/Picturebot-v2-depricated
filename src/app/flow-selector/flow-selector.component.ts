@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { IFlow, IBase } from '../../../shared/database/interfaces';
-import { Logger } from '../../../logger';
+import { Logger } from '../../../shared/logger/logger';
 import { DataService } from '../data.service';
 
 @Component({

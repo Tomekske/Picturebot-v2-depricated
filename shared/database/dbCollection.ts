@@ -1,18 +1,21 @@
 import * as sqlite from 'better-sqlite3';
-import { Logger } from '../../logger';
+import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
 
 export class DbCollection extends Sqlite {
+
+    /**
+     * DbCollection constructor
+     */
     constructor() {
         super();
-        
-        if(!this.tableExists()) {
-            this.createTable();
-        }
     }
     
+    /**
+     * Method to collection the album table
+     */
     createTable() {
-        this.connection.exec(`CREATE TABLE IF NOT EXISTS Collection(
+        let query: string = `CREATE TABLE IF NOT EXISTS Collection(
             "library" varchar(200) NOT NULL, 
             "name" varchar(50) NOT NULL, 
             "backup" varchar(40), 
@@ -22,58 +25,91 @@ export class DbCollection extends Sqlite {
             "edited" varchar(40) NOT NULL, 
             "socialMedia" varchar(40) NOT NULL,
             "selection" varchar(40) NOT NULL,
-            "collection" varchar(250) NOT NULL PRIMARY KEY)`
-        );
+            "collection" varchar(250) NOT NULL PRIMARY KEY)`;
+
+        this.connection.exec(query);
+        Logger.Log().debug(`Query: ${query}`);
     }
 
+    /**
+     * Method to check whether the collection table exists
+     */
     tableExists() {
-        const count = this.connection.prepare("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Collection'").pluck().get();;
+        let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Collection'";
+        const count = this.connection.prepare(query).pluck().get();
+
+        Logger.Log().debug(`Query: ${query}`);
         return ((count == 1) ? true : false);
     }
 
+    /**
+     * Method to insert data into table's row
+     * @param args Data needed to insert into the table's row
+     */
     insertRow(args) {
         const stmt = this.connection.prepare(`INSERT INTO Collection VALUES (
             @library, @name, @backup, @base, @preview, @files, @edited, @socialMedia, @selection, @collection);`
         );
+
         stmt.run(args);
+        Logger.Log().debug(`Query: INSERT INTO Collection VALUES ("${JSON.stringify(args)}")`);
     }
 
-    updateRow(args) {
-        const stmt = this.connection.prepare(`UPDATE Collection set 
-            library=@library, name=@name, base=@base, preview=@preview, files=@files, edited=@edited, socialMedia=@socialMedia, selection=@selection, base=@base, collection=@collection;`
-        );
-        stmt.run(args);
-    }
-
+    /**
+     * Method to query all values from the collection table
+     */
     queryAll() {
-        const stmt = this.connection.prepare('SELECT DISTINCT * FROM Collection;');
+        let query: string = 'SELECT DISTINCT * FROM Collection;';
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.all();
     }
 
+    /**
+     * Method to query all collections
+     */
     queryCollections() {
-        const stmt = this.connection.prepare('SELECT DISTINCT collection FROM Collection DESC;');
+        let query: string = 'SELECT DISTINCT collection FROM Collection DESC;';
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.all();
     }
 
+    /**
+     * Method to query certain flows from a specified collection
+     * @param collection Collection from which the flows are queried
+     */
     queryFlows(collection: string) {
-        const q = `SELECT preview, edited, socialMedia FROM Collection WHERE collection='${collection}';`;
-        console.log(`QUERY === ${q}`);
-        const stmt = this.connection.prepare(q);
+        let query: string = `SELECT preview, edited, socialMedia FROM Collection WHERE collection='${collection}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.get();
     }
 
+    /**
+     * Method to query the base and preview record from a certain collection
+     * @param collection Collection from which the records are queried
+     */
     queryRenameStartedFlows(collection: string) {
-        const q = `SELECT base, preview FROM Collection WHERE collection='${collection}';`;
-        console.log(`QUERY === ${q}`);
-        const stmt = this.connection.prepare(q);
+        let query: string = `SELECT base, preview FROM Collection WHERE collection='${collection}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.get();  
     }
 
+    /**
+     * Method to query all flows from a specified collection
+     * @param collection Collection from which the flows are queried
+     */
     queryAllFlows(collection: string) {
-        const q = `SELECT backup, base, preview, files, edited, socialMedia, selection FROM Collection WHERE collection='${collection}';`;
-        console.log(`QUERY === ${q}`);
-        const stmt = this.connection.prepare(q);
+        let query: string = `SELECT backup, base, preview, files, edited, socialMedia, selection FROM Collection WHERE collection='${collection}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
         return stmt.get();
     }
-
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../core/services/electron/electron.service';
-import { Logger } from '../../../logger';
+import { Logger } from '../../../shared/logger/logger';
 import { ILibrary } from '../../../shared/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';

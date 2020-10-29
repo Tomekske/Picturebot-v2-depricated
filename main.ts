@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as cp from 'child_process';
 import * as sqlite from 'better-sqlite3';
 
-import { Logger } from './logger';
+import { Logger } from './shared/logger/logger';
 import { DbSettings } from './shared/database/dbSettings';
 import { DbLibrary } from './shared/database/dbLibrary';
 import { ILibrary, ISettings, ICollection, IAlbum, IFlow, IBase, IPreview } from './shared/database/interfaces';
@@ -18,6 +18,7 @@ import { autoUpdater } from 'electron-updater';
 import { Updater } from './shared/updater/updater';
 import { DbBackupFlow } from './shared/database/dbBackupFlow';
 import { DbPreviewFlow } from './shared/database/dbPreviewFlow';
+import { Helper } from './shared/helper/helper';
 
 let win: BrowserWindow = null;
 let sendStatus = null;
@@ -72,8 +73,6 @@ function createWindow(): BrowserWindow {
 
 try {
   app.allowRendererProcessReuse = true;
-  Logger.Log().debug('TRYYYYYYYY'); 
-
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
@@ -98,8 +97,6 @@ try {
     }
   });
 
-
-  //autoUpdater.checkForUpdates();
   const updater = new Updater();
 
   updater.checkForUpdates();
@@ -108,13 +105,12 @@ try {
   updater.error();
   updater.downloadProgress();
   updater.updateDownloaded();
-  Logger.Log().debug("HET WERKTTTTTTTTTTTTT");
 
   ipcMain.on('save-settings', (event, args) => {
     Logger.Log().debug('Saving settings');
     // Create database
     const db = new DbSettings();
-
+    
     // If table exists update database
     if(db.isEmpty()) {
       Logger.Log().debug('Saving settings: table exists');
@@ -126,12 +122,12 @@ try {
       db.updateRow(args);
     }
     
-    //const row: ISettings = db.queryAll(dbCon);
     db.dbClose();
   });
 
   ipcMain.on('get-settings', (event) => {
     Logger.Log().debug("get-settings");
+    Logger.Log().debug(`qqqqqqqqqqqqqqqqqqq: ${Helper.pathMyDocuments()}`);
 
     const db = new DbSettings();
 
@@ -229,7 +225,7 @@ try {
 
   ipcMain.on('get-previewFLow-pictures', (event, album: string) => {
     const db = new DbPreviewFlow();
-    event.returnValue = db.queryPreviewFlow(album);
+    event.returnValue = db.queryAllWhere(album);
   });
 
   ipcMain.on('save-pictures', (event, args, y: IAlbum) => {

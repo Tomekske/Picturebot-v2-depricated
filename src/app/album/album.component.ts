@@ -2,7 +2,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection } from '../../../shared/database/interfaces';
-import { Logger } from '../../../logger';
+import { Logger } from '../../../shared/logger/logger';
 import * as hasha from 'hasha';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';

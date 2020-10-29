@@ -1,6 +1,6 @@
 import { autoUpdater } from 'electron-updater';
 import { truncateSync } from 'fs';
-import { Logger } from '../../logger';
+import { Logger } from '../logger/logger';
 
 export class Updater { 
     constructor() {

@@ -1,58 +1,112 @@
+/**
+ * Interface containing library properties
+ */
 export interface ILibrary {
+    /** Library name */
     name: string;
+    /** Library base path */
     base: string;
+    /** Library full path (~/base/name) */
     library?: string;
 }
 
+/**
+ * Interface containing settings properties
+ */
 export interface ISettings {
+    /** Upload URL for pictures within the edited flow */
     uploadEdited?: string;
+    /** Upload URL for pictures within the edited flow */
     uploadSocialMedia?: string;
+    /** Path to the software used to edit pictures */
     sofwareEditing?: string;
+    /** Path to the software used to post-process pictures */
     sofwarePostProcessing?: string;
+    /** Default file type */
     fileType?: string;
+    /** Default error logging level */
     logLevel?: string;
+    /** Default RAW picture conversion percentage */
     conversion?: string;
 }
 
+/**
+ * Interface containing flow properties
+ */
 export interface IFlow {
-    backup?: string,
-    base: string,
-    preview: string,
-    files?: string,
-    edited: string,
-    socialMedia: string,
-    selection?: string
+    /** Backup flow name */
+    backup?: string;
+    /** Base flow name */
+    base: string;
+    /** Preview flow name */
+    preview: string;
+    /** files flow name */
+    files?: string;
+    /** Edited flow name */
+    edited: string;
+    /** Social-media flow name */
+    socialMedia: string;
+    /** Selection flow name */
+    selection?: string;
 }
 
+/**
+ * Interface containing collection properties
+ */
 export interface ICollection extends IFlow {
-    library: string,
-    name: string,
-    collection?: string
+    /** The library where the collection is located in */
+    library: string;
+    /** Collection name */
+    name: string;
+    /** Collection full path (~/library/name) */
+    collection?: string;
 }
 
+/**
+ * Interface containing album properties
+ */
 export interface IAlbum {
-    collection: string,
-    name: string,
-    date: string,
-    album: string,
-    started: number
+    /** The collection where the album is located in */
+    collection: string;
+    /** Album name */
+    name: string;
+    /** Album date */
+    date: string;
+    /** Album full path (~/collection/name_date) */
+    album: string;
+    /** Checks if organizing has started */
+    started: number;
 }
 
+/**
+ * Interface containing picture properties
+ */
 interface IPicture {
-    name?: string,
-    modification?: Date,
-    hashed?: string,
-    collection?: string,
-    album?: string
+    /** Picture name */
+    name?: string;
+    /** Date when the picture was taken */
+    modification?: Date;
+    /** Hashed file name */
+    hashed?: string;
+    /** Collection where the picture is located in */
+    collection?: string;
+    /** Album where the picture is located in */
+    album?: string;
 }
 
+/**
+ * Interface containing baseFLow properties
+ */
 export interface IBase extends IPicture {
-    selection?: number,
-    source?: string,
-    destination?: string
+    selection?: number;
+    source?: string;
+    destination?: string;
 }
 
+/**
+ * Interface containing previewFlow properties
+ */
 export interface IPreview extends IPicture {
-    base: string,
-    preview: string
+    base: string;
+    preview: string;
 }
