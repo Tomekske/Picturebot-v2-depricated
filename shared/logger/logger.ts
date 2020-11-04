@@ -1,6 +1,9 @@
 import { Helper } from '../helper/helper';
 import * as path from 'path';
 
+/**
+ * Static class logger
+ */
 export class Logger {
   static Log(): any {
       var log4js = require('log4js');

@@ -1,9 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection, IFlow, IPreview } from '../../../shared/database/interfaces';
-import { Logger } from '../../../shared/logger/logger';
-import { DataService } from '../data.service';
+import { Helper } from '../../../shared/helper/helper';
+import { DataService } from '../services/data.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -18,78 +17,87 @@ export class ToolbarComponent implements OnInit {
 
   constructor(private _electron: ElectronService, private _data: DataService, private _router: Router) { }
 
+  /**
+   * On init lifecycle hook
+   */
   ngOnInit(): void {
     this.isStarted = true;
-    console.log(this.collections);
   }
 
+  /**
+   * After view lifecycle hook
+   */
   ngAfterViewInit() {
-    console.log('afteeer');
-
+    // Push the collections to the collection array in order to display all collection on the selector component
     this._electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
   }
 
-  // Selecting item within the selection component
+  /**
+   * Selecting item within the selection component
+   * @param $event Selection events
+   */
   selectedCollectionEvent($event) {
-    // this.collections = [];
-    console.log(`SELECTED: ${this.selectedCollection}`);
     let selectedAlbum = this._electron.ipcRenderer.sendSync("get-single-album", this.selectedCollection);
     this._data.selectedCollection = this.selectedCollection;
     this.isStarted = Boolean(Number(selectedAlbum.started));
-    console.log(`BAAAAAAAAAAL: ${this.isStarted}`);
 
     this._router.navigateByUrl('/main');
   }
 
+  /**
+   * Start organizing pictures within the base flow and preview flow
+   */
   startClickEvent() {
-    console.log(this._data.selectedAlbum);
-
     let album: IAlbum = this._data.selectedAlbum;
+
     album.collection = this._data.selectedCollection;
-    
+
+    // Update the is organized to true
     this._electron.ipcRenderer.sendSync("update-album-started", this._data.selectedAlbum);
-    
+
     // value must be set to true
     this._data.setAlbumStarted(this._data.selectedAlbum.album, true);
-    
-    // renaming algo
-    let x: IFlow = this._electron.ipcRenderer.sendSync("get-started-flow", this.selectedCollection);
 
+    // Get the preview and base flow from a certain collection
+    let startFlows: IFlow = this._electron.ipcRenderer.sendSync("get-started-flow", this.selectedCollection);
 
-    for (const [key, value] of Object.entries(x)) {
+    // Iterate over every key-value pair in the startFlows array
+    for (const [key, flow] of Object.entries(startFlows)) {
+      // Counter is used as picture indexer
       let counter = 0;
-      //console.log(`${key}: ${value}`);
-      if(value == x.base) {
-        this._electron.ipcRenderer.sendSync("get-baseFLow-pictures", album.album).forEach((pic: IBase) => {
-          let dirname = this._electron.path.basename(pic.album);
-          let destination = this._electron.path.join(pic.album, value, `${dirname.split(" ")[0]}_${dirname.split(" ")[1]}_${(++counter).toString().padStart(5, '0')}${this._electron.path.extname(pic.destination)}`);
-          console.log(`${value}: ${pic.destination} - ${destination}`);
 
-          this._electron.fs.rename(pic.destination, destination, function(err) {
-              if ( err ) console.log('ERROR: ' + err);
+      // Get all the base flow pictures
+      if (flow == startFlows.base) {
+
+        this._electron.ipcRenderer.sendSync("get-baseFLow-pictures", album.album).forEach((picture: IBase) => {
+          // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
+          let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5));
+
+          // Rename pictures with the new file name
+          this._electron.fs.rename(picture.destination, destination, function (err) {
+            if (err) console.log('ERROR: ' + err);
           });
 
-          let update = { name: this._electron.path.basename(destination), destination: pic.destination, album: pic.album, dest: destination};
-          console.log(update);
+          let update = { name: this._electron.path.basename(destination), destination: picture.destination, album: picture.album, dest: destination };
 
           this._electron.ipcRenderer.sendSync("update-name-baseFlow", update);
         });
       }
 
-      else if(value == x.preview) {
-        this._electron.ipcRenderer.sendSync("get-previewFLow-pictures", album.album).forEach((pic: IPreview) => {
-          let dirname = this._electron.path.basename(pic.album);
-          let destination = this._electron.path.join(pic.album, value, `${dirname.split(" ")[0]}_${dirname.split(" ")[1]}_${(++counter).toString().padStart(5, '0')}${this._electron.path.extname(pic.preview)}`);
-          console.log(`${value}: ${pic.preview} - ${destination}`);
+      // Get all the preview flow pictures
+      else if (flow == startFlows.preview) {
+        this._electron.ipcRenderer.sendSync("get-previewFLow-pictures", album.album).forEach((picture: IPreview) => {
+          // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
+          let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5, true));
 
-          this._electron.fs.rename(pic.preview, destination, function(err) {
-            if ( err ) console.log('ERROR: ' + err);
+          // Rename pictures with the new file name
+          this._electron.fs.rename(picture.preview, destination, function (err) {
+            if (err) console.log('ERROR: ' + err);
           });
 
-          let update = { name: this._electron.path.basename(destination), destination: pic.preview, album: pic.album, dest: destination};
-          console.log(update);
+          let update = { name: this._electron.path.basename(destination), destination: picture.preview, album: picture.album, dest: destination };
 
           this._electron.ipcRenderer.sendSync("update-name-previewFlow", update);
         });
@@ -97,17 +105,16 @@ export class ToolbarComponent implements OnInit {
     }
   }
 
-  // Opening selection box
+  /**
+   * Get all collections when clicking on the selection box
+   */
   selectionClickEvent() {
-    console.log(`CNT: ${this.collections.length}`);
-    //this.collections = [];
-
-    if(this.collections.length != 0) {
+    if (this.collections.length != 0) {
       this.collections = [];
     }
 
     this._electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
-    });  
+    });
   }
 }

@@ -1,8 +1,8 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ElectronService } from '../core/services/electron/electron.service';
-import { Logger } from '../../../shared/logger/logger';
-import { ILibrary } from '../../../shared/database/interfaces';
+import { ElectronService } from '../../core/services/electron/electron.service';
+import { Logger } from '../../../../shared/logger/logger';
+import { ILibrary } from '../../../../shared/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
@@ -17,15 +17,16 @@ export class SettingsComponent implements OnInit {
 
   constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
 
+  /**
+   * On init lifecycle hook
+   */
   ngOnInit(): void {
-    let xxx = {};
-    console.log("WEEEEERKT");
+    let formData = {};
     const isEmpty = this.electron.ipcRenderer.sendSync("check-settings-empty");
-    console.log(`NOG STEEEEEDS: ${isEmpty}`);
 
+    // If the settings row is empty initialize the object with empty values
     if (isEmpty) {
-      console.log("TABEL LEEEG");
-      xxx = {
+      formData = {
         uploadEdited: '',
         uploadSocialMedia: '',
         sofwareEditing: '',
@@ -34,24 +35,24 @@ export class SettingsComponent implements OnInit {
         logLevel: '',
         conversion: ''
       };
+    } else {
+      formData = this.electron.ipcRenderer.sendSync("get-settings");
     }
 
-    else {
-      console.log("TABEL NIEEET LEEG");
-      xxx = this.electron.ipcRenderer.sendSync("get-settings");
-    }
-
-    this.settingsForm = this.fb.group(xxx);
+    this.settingsForm = this.fb.group(formData);
   }
 
+  /**
+   * Function to save data into the database
+   */
   saveSettings() {
-    Logger.Log().debug("Save settings");
     this.electron.ipcRenderer.send("save-settings", this.settingsForm.value);
 
     this._snack.open(`Settings saved!`, "Dismiss", {
       duration: 4000,
       horizontalPosition: "end"
     });
+
     this._router.navigateByUrl('/main');
   }
 }

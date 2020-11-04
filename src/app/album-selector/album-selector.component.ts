@@ -1,29 +1,26 @@
-import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ElectronService } from '../core/services/electron/electron.service';
-import { DataService } from '../data.service';
+import { DataService } from '../services/data.service';
 import { IAlbum } from '../../../shared/database/interfaces';
 
 @Component({
-  selector: 'app-shoot-selector',
-  templateUrl: './shoot-selector.component.html',
-  styleUrls: ['./shoot-selector.component.css']
+  selector: 'app-album-selector',
+  templateUrl: './album-selector.component.html',
+  styleUrls: ['./album-selector.component.css']
 })
-export class ShootSelectorComponent implements OnInit {
-  a: IAlbum[] = [];
+export class AlbumSelectorComponent implements OnInit {
   albums: IAlbum[] = [];
-  selected: string;
-  sel: string;
-  //selectedAlbum: string;
+  selectedAlbum: string;
 
   constructor(private _electron: ElectronService, private _data: DataService) { }
 
+  /**
+   * On init lifecycle hook
+   */
   ngOnInit(): void {
+    // Observer which listens to selected collection changes
     this._data.ctxCollection.subscribe((collection) => {
-      console.warn(collection);
-      this.albums = [];
       this.albums = this._electron.ipcRenderer.sendSync("get-albums", collection);
-      console.log(this.albums);
-      
       this._data.albumsInCollection = this.albums;
 
       // Select the first album
@@ -31,14 +28,22 @@ export class ShootSelectorComponent implements OnInit {
     });
   }
 
+  /**
+   * Select an album from the list
+   * @param $event List events
+   */
   selectedAlbumEvent($event) {
+    // Get the selected list value
     let album: IAlbum = $event.option['_value'];
     this.setAlbum(album);
   }
 
+  /**
+   * Set the selected album
+   * @param album Album which will be set
+   */
   setAlbum(album: IAlbum) {
-    this.selected = album.album;
-    console.log(`SELECTED ALBUMMMM: ${album.album}`);
+    this.selectedAlbum = album.album;
     this._data.selectedAlbum = album;
   }
 }

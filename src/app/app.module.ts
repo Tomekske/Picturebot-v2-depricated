@@ -15,18 +15,16 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AppComponent } from './app.component';
-import { MenuComponent } from './menu/menu.component';
-import { FooterComponent } from './footer/footer.component';
-import { SettingsComponent } from './settings/settings.component';
+import { MenuComponent } from './menu-component/menu/menu.component';
+import { SettingsComponent } from './menu-component/settings/settings.component';
 import { WindowComponent } from './window/window.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-import { ShootSelectorComponent } from './shoot-selector/shoot-selector.component';
-import { FlowSelectorComponent } from './flow-selector/flow-selector.component';
-import { LibraryComponent } from './library/library.component';
-import { AlbumComponent } from './album/album.component';
-import { CollectionComponent } from './collection/collection.component';
+import { AlbumSelectorComponent } from './album-selector/album-selector.component';
+import { LibraryComponent } from './menu-component/library/library.component';
+import { AlbumComponent } from './menu-component/album/album.component';
+import { CollectionComponent } from './menu-component/collection/collection.component';
 
-import { DataService } from './data.service';
+import { DataService } from './services/data.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
@@ -40,7 +38,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 }
 
 @NgModule({
-  declarations: [AppComponent, MenuComponent, FooterComponent, SettingsComponent, WindowComponent, ToolbarComponent, ShootSelectorComponent, FlowSelectorComponent, LibraryComponent, AlbumComponent, CollectionComponent],
+  declarations: [AppComponent, MenuComponent, SettingsComponent, WindowComponent, ToolbarComponent, AlbumSelectorComponent, LibraryComponent, AlbumComponent, CollectionComponent],
   imports: [
     BrowserModule,
     FormsModule,

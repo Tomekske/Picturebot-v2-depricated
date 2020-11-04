@@ -1,7 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ElectronService } from '../core/services/electron/electron.service';
-import { ICollection, ILibrary } from '../../../shared/database/interfaces';
+import { ElectronService } from '../../core/services/electron/electron.service';
+import { ICollection, ILibrary } from '../../../../shared/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 
@@ -16,6 +16,9 @@ export class CollectionComponent implements OnInit {
 
   constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
 
+  /**
+   * On init lifecycle hook
+   */
   ngOnInit(): void {
     this.collectionForm = this.fb.group({
       library: '',
@@ -35,19 +38,24 @@ export class CollectionComponent implements OnInit {
     });
   }
 
+  /**
+   * Function to save a collection in the database
+   */
   saveCollection() {
-    let x: ICollection = this.collectionForm.value;
-    let y: ICollection = { library: x.library, name: x.name, backup: x.backup, base: x.base,
-      preview: x.preview, files: x.files, edited: x.edited, socialMedia: x.socialMedia,
-      selection: x.selection, collection: this.electron.path.join(x.library, x.name)
+    let form: ICollection = this.collectionForm.value;
+    let data: ICollection = {
+      library: form.library, name: form.name, backup: form.backup, base: form.base,
+      preview: form.preview, files: form.files, edited: form.edited, socialMedia: form.socialMedia,
+      selection: form.selection, collection: this.electron.path.join(form.library, form.name)
     };
 
-    this.electron.ipcRenderer.send("save-collection", y);
-    
-    this._snack.open(`Collection '${this.electron.path.join(x.library, x.name)}' saved!`, "Dismiss", {
+    this.electron.ipcRenderer.send("save-collection", data);
+
+    this._snack.open(`Collection '${this.electron.path.join(form.library, form.name)}' saved!`, "Dismiss", {
       duration: 2000,
       horizontalPosition: "end"
     });
+    
     this._router.navigateByUrl('/main');
   }
 }

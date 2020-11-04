@@ -98,8 +98,11 @@ interface IPicture {
  * Interface containing baseFLow properties
  */
 export interface IBase extends IPicture {
+    /** Check wether a picture is selected for editing */
     selection?: number;
+    /** Source where the file is located */
     source?: string;
+    /** Destination where the file gets stored */
     destination?: string;
 }
 
@@ -107,6 +110,8 @@ export interface IBase extends IPicture {
  * Interface containing previewFlow properties
  */
 export interface IPreview extends IPicture {
+    /** Destination of the RAW picture */
     base: string;
+    /** Location of the converted picture */
     preview: string;
 }

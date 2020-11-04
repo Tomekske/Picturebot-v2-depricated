@@ -1,17 +1,14 @@
-import { Injectable, Component, Input, Output, EventEmitter } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'app-menu',
     templateUrl: './menu.component.html',
     styleUrls: ['./menu.component.css']
 })
-
-/** menu component*/
 export class MenuComponent {
-/** menu ctor */
 
-  appitems = [
+  // Construct side bar menu
+  menuItems = [
     {
       label: 'Library',
       icon: 'library_books',

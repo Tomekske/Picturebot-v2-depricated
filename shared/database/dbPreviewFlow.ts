@@ -87,7 +87,7 @@ export class DbPreviewFlow extends Sqlite {
      * Method to query all records from a certain album
      * @param album Selected album
      */
-    queryAllWhere(album) {
+    queryAllWhereAlbum(album) {
         let query: string = `SELECT DISTINCT * FROM previewFlow WHERE album='${album}';`;
         const stmt = this.connection.prepare(query);
 
