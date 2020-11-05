@@ -11,7 +11,9 @@ import { IAlbum } from '../../../shared/database/interfaces';
 export class AlbumSelectorComponent implements OnInit {
   albums: IAlbum[] = [];
   selectedAlbum: string;
+  isVisible: boolean = false;
 
+  
   constructor(private _electron: ElectronService, private _data: DataService) { }
 
   /**
@@ -25,6 +27,11 @@ export class AlbumSelectorComponent implements OnInit {
 
       // Select the first album
       this.setAlbum(this.albums[0]);
+    });
+
+    // Observer which listens to the is visible state   
+    this._data.ctxAlbumSelectorVisible.subscribe((state) => {
+      this.isVisible = state;
     });
   }
 

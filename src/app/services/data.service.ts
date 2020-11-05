@@ -22,6 +22,10 @@ export class DataService {
   private _srcSelectedFlow = new Subject<string>();
   public ctxSelectedFlow = this._srcSelectedFlow.asObservable();
 
+  private _isAlbumSelectorVisible: boolean;
+  private _srcAlbumSelectorVisible = new Subject<boolean>();
+  public ctxAlbumSelectorVisible = this._srcAlbumSelectorVisible.asObservable();
+
   private _flows: IFlow;
   private _dictStarted = new Object();
   private _pictures: IBase[] = [];
@@ -131,5 +135,20 @@ export class DataService {
    */
   get picturesList(): IBase[] {
     return this._pictures;
+  }
+
+  /**
+   * Set the is album selector visible state
+   */
+  set isAlbumSelectorVisible(state: boolean) {
+    this._isAlbumSelectorVisible = state;
+    this._srcAlbumSelectorVisible.next(state);
+  }
+
+  /**
+   * Get the is album selector visible state
+   */
+  get isAlbumSelectorVisible(): boolean {
+    return this._isAlbumSelectorVisible;
   }
 }

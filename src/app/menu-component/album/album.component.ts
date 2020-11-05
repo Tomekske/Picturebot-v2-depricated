@@ -6,6 +6,7 @@ import { Logger } from '../../../../shared/logger/logger';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Helper } from '../../../../shared/helper/helper';
+import { DataService } from 'app/services/data.service';
 
 @Component({
   selector: 'app-album',
@@ -16,7 +17,7 @@ export class AlbumComponent implements OnInit {
   albumForm: FormGroup;
   collections = [];
 
-  constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
+  constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _data: DataService, private _router: Router) { }
   picturesDropzone: File[] = [];
   pictures: IBase[] = [];
   hashedPictures: IBase[] = [];
@@ -34,6 +35,8 @@ export class AlbumComponent implements OnInit {
     this.electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
+
+    this._data.isAlbumSelectorVisible = false;
   }
 
   /**

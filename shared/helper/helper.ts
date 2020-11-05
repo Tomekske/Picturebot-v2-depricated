@@ -2,6 +2,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as hasha from 'hasha';
+import * as cp from 'child_process';
 
 import { Logger } from '../../shared/logger/logger';
 import { IBase, IPreview } from '../database/interfaces';
@@ -102,5 +103,19 @@ export class Helper {
         let extname = isPreview ? path.extname(picture.preview) : path.extname(picture.destination);
 
         return `${dirname.split(" ")[0]}_${dirname.split(" ")[1]}_${(index).toString().padStart(padding, '0')}${extname}`;
+    }
+
+    /**
+     * Opens a directory in the explorer
+     * @param path Path to open in the explorer
+     */
+    static openInExplorer(path: string) {
+        // Only open the path in the explorer if the path exists
+        if(fs.existsSync(path)) {
+            cp.exec(`start "" "${path}"`);
+            Logger.Log().debug(`Explorer: opened '${path}' in explorer`);
+        } else {
+            Logger.Log().error(`Explorer: unable to open '${path}' in explorer`);
+        }
     }
 }

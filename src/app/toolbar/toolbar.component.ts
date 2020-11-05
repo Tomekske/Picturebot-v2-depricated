@@ -14,6 +14,8 @@ export class ToolbarComponent implements OnInit {
   collections = [];
   selectedCollection: string;
   isStarted: boolean;
+  explorerTooltip: string;
+  flowPath: string;
 
   constructor(private _electron: ElectronService, private _data: DataService, private _router: Router) { }
 
@@ -22,6 +24,14 @@ export class ToolbarComponent implements OnInit {
    */
   ngOnInit(): void {
     this.isStarted = true;
+
+    // Observers for changes in the selected flow variable
+    this._data.ctxSelectedFlow.subscribe((flow) => {
+      this.flowPath = this._electron.path.join(this._data.selectedAlbum.album, flow);
+      console.log(`FLOOOOOOOOOOOWPAAAAAAAAAATH: ${this.flowPath}`);
+
+      this.explorerTooltip = `Open ${flow} flow in explorer`;
+    });
   }
 
   /**
@@ -42,6 +52,7 @@ export class ToolbarComponent implements OnInit {
     let selectedAlbum = this._electron.ipcRenderer.sendSync("get-single-album", this.selectedCollection);
     this._data.selectedCollection = this.selectedCollection;
     this.isStarted = Boolean(Number(selectedAlbum.started));
+    this._data.isAlbumSelectorVisible = true;
 
     this._router.navigateByUrl('/main');
   }
@@ -116,5 +127,12 @@ export class ToolbarComponent implements OnInit {
     this._electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
+  }
+
+  /**
+   * Open flow in explorer
+   */
+  openInExplorerEvent() {
+    Helper.openInExplorer(this.flowPath);
   }
 }

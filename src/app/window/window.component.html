@@ -1,4 +1,4 @@
-<mat-tab-group  animationDuration="0ms" (selectedTabChange)="selectedFlowEvent($event)">
+<mat-tab-group  animationDuration="0ms" (selectedTabChange)="selectedFlowEvent($event)" #tabs>
   <div *ngFor="let flow of flows">
     <mat-tab label="{{ flow }}"></mat-tab>
   </div>

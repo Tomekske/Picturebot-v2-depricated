@@ -4,6 +4,7 @@ import { ElectronService } from '../../core/services/electron/electron.service';
 import { ICollection, ILibrary } from '../../../../shared/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { DataService } from 'app/services/data.service';
 
 @Component({
   selector: 'app-collection',
@@ -14,7 +15,7 @@ export class CollectionComponent implements OnInit {
   collectionForm: FormGroup;
   libraries: any = [];
 
-  constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
+  constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _data: DataService, private _router: Router) { }
 
   /**
    * On init lifecycle hook
@@ -36,6 +37,8 @@ export class CollectionComponent implements OnInit {
       console.log(library.library);
       this.libraries.push(library.library);
     });
+
+    this._data.isAlbumSelectorVisible = false;
   }
 
   /**
