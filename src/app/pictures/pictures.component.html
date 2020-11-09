@@ -1,0 +1,35 @@
+<div fxFlex="85" style="overflow: auto;" class="window">
+    <mat-tab-group  animationDuration="0ms" (selectedTabChange)="selectedFlowEvent($event)" #tab>
+    <div *ngFor="let flow of flows">
+        <mat-tab label="{{ flow }}"></mat-tab>
+    </div>
+    </mat-tab-group>
+    <!-- Display pictures -->
+    <div style="padding-top: 1%;">
+        <mat-grid-list cols="3" rowHeight="6:4">
+            <div>
+                <div class="images" photoGalleryGroup *ngFor="let p of base64List">
+                    <mat-grid-tile>
+                    <div class="images-item" [photoGallery]="p">
+                        <img style="width: 100%; height: auto;" [src]="p"/>
+                    </div>
+                    </mat-grid-tile>
+                </div>
+            </div>
+        </mat-grid-list>
+    </div>
+</div>
+<!-- Album selector -->
+<div fxFlex="15" style="overflow: auto; padding-top: 3.25%; padding-right: 0.5%; padding-left: 0.5%" class="window">
+    <div *ngIf="isVisible">
+        <mat-card>
+            <mat-selection-list [multiple]="false">
+                <div mat-subheader>Select album</div>
+                <mat-list-option *ngFor="let album of albums;let i = index" [value]="album" (click)="selectedAlbumEvent(album)" [selected]="i==0">
+                    <div mat-line>{{album.name}}</div>
+                    <div mat-line> {{album.date}} </div>
+                </mat-list-option>
+            </mat-selection-list>
+        </mat-card>
+    </div>
+</div>

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ElectronService } from '../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection, IFlow, IPreview } from '../../../shared/database/interfaces';
 import { Helper } from '../../../shared/helper/helper';
 import { DataService } from '../services/data.service';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-toolbar',
@@ -11,49 +12,42 @@ import { Router } from '@angular/router';
   styleUrls: ['./toolbar.component.css']
 })
 export class ToolbarComponent implements OnInit {
-  collections = [];
+  collections: string[] = [];
   selectedCollection: string;
-  isStarted: boolean;
   explorerTooltip: string;
   flowPath: string;
+  albums: IAlbum[] = [];
+  isOrganized: boolean;
 
-  constructor(private _electron: ElectronService, private _data: DataService, private _router: Router) { }
+  constructor(private _electron: ElectronService, private _data: DataService, private _router: Router, private _snack: MatSnackBar, private cdRef:ChangeDetectorRef) { }
 
   /**
    * On init lifecycle hook
    */
   ngOnInit(): void {
-    this.isStarted = true;
-
-    // Observers for changes in the selected flow variable
-    this._data.ctxSelectedFlow.subscribe((flow) => {
-      this.flowPath = this._electron.path.join(this._data.selectedAlbum.album, flow);
-      console.log(`FLOOOOOOOOOOOWPAAAAAAAAAATH: ${this.flowPath}`);
-
-      this.explorerTooltip = `Open ${flow} flow in explorer`;
-    });
-  }
-
-  /**
-   * After view lifecycle hook
-   */
-  ngAfterViewInit() {
-    // Push the collections to the collection array in order to display all collection on the selector component
+    this.isOrganized = true;
+    // Get all the collections
     this._electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
+
+    // Display a default collection when the collection array isn't empty
+    if(this.collections.length != 0) {
+      this.selectedCollection = this.collections[0];
+      this.selectedCollectionEvent();  
+    }
+
+    this._data.ctxSelectedAlbum.subscribe(album => album.started ? this.isOrganized = true : this.isOrganized = false);
   }
 
   /**
    * Selecting item within the selection component
    * @param $event Selection events
    */
-  selectedCollectionEvent($event) {
-    let selectedAlbum = this._electron.ipcRenderer.sendSync("get-single-album", this.selectedCollection);
-    this._data.selectedCollection = this.selectedCollection;
-    this.isStarted = Boolean(Number(selectedAlbum.started));
+  selectedCollectionEvent() {
     this._data.isAlbumSelectorVisible = true;
-
+    this._data.selectedCollection = this.selectedCollection;
+      
     this._router.navigateByUrl('/main');
   }
 
@@ -114,6 +108,11 @@ export class ToolbarComponent implements OnInit {
         });
       }
     }
+
+    // Making sure to update the album 
+    this.isOrganized = true;
+    // Updating the album, because the album won't be updated if the collection hasn't changed
+    this._data.selectedAlbum.started = 1;
   }
 
   /**
@@ -133,6 +132,8 @@ export class ToolbarComponent implements OnInit {
    * Open flow in explorer
    */
   openInExplorerEvent() {
-    Helper.openInExplorer(this.flowPath);
+    this.flowPath = this._electron.path.join(this._data.selectedAlbum.album, this._data.selectedFlow);
+
+    Helper.openInExplorer(this.flowPath, this._snack);
   }
 }

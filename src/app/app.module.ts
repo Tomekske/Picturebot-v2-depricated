@@ -9,7 +9,7 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { ListViewModule } from '@syncfusion/ej2-angular-lists';
-import { RouterModule, Routes } from '@angular/router';
+import { RouterModule } from '@angular/router';
 // NG Translate
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -17,9 +17,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu-component/menu/menu.component';
 import { SettingsComponent } from './menu-component/settings/settings.component';
-import { WindowComponent } from './window/window.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
-import { AlbumSelectorComponent } from './album-selector/album-selector.component';
 import { LibraryComponent } from './menu-component/library/library.component';
 import { AlbumComponent } from './menu-component/album/album.component';
 import { CollectionComponent } from './menu-component/collection/collection.component';
@@ -30,7 +28,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { FlexLayoutModule } from '@angular/flex-layout'
 import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery'
+import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery';
+import { PicturesComponent } from './pictures/pictures.component'
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -38,7 +37,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 }
 
 @NgModule({
-  declarations: [AppComponent, MenuComponent, SettingsComponent, WindowComponent, ToolbarComponent, AlbumSelectorComponent, LibraryComponent, AlbumComponent, CollectionComponent],
+  declarations: [AppComponent, MenuComponent, SettingsComponent, ToolbarComponent, LibraryComponent, AlbumComponent, CollectionComponent, PicturesComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -61,7 +60,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     MaterialModule,
     PhotoGalleryModule,
     RouterModule.forRoot([
-      {path: 'main', component: WindowComponent},
+      {path: 'main', component: PicturesComponent},
       {path: 'settings', component: SettingsComponent},
       {path: 'addAlbum', component: AlbumComponent},
       {path: 'addCollection', component: CollectionComponent},

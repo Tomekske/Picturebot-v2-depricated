@@ -5,7 +5,8 @@ import * as hasha from 'hasha';
 import * as cp from 'child_process';
 
 import { Logger } from '../../shared/logger/logger';
-import { IBase, IPreview } from '../database/interfaces';
+import { IBase } from '../database/interfaces';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 /**
  * Static helper class containing helper methods
@@ -109,13 +110,35 @@ export class Helper {
      * Opens a directory in the explorer
      * @param path Path to open in the explorer
      */
-    static openInExplorer(path: string) {
+    static openInExplorer(path: string, snack: MatSnackBar) {
+        let message: string;
+
         // Only open the path in the explorer if the path exists
         if(fs.existsSync(path)) {
+            message = `Opened '${path}' in explorer`;
+
             cp.exec(`start "" "${path}"`);
-            Logger.Log().debug(`Explorer: opened '${path}' in explorer`);
+            Logger.Log().debug(`Explorer: ${message}`);
         } else {
-            Logger.Log().error(`Explorer: unable to open '${path}' in explorer`);
+            message = `Unable to open '${path}' in explorer`;
+
+            Logger.Log().error(`Explorer: ${message}`);
         }
+
+        // Display message to the user
+        snack.open(message, "Dismiss", {
+            duration: 4000,
+            horizontalPosition: "end"
+        });
+    }
+
+    /**
+     * Encode a picture to base64
+     * @param path Absolute path to the picture
+     */
+    static encodeBase64(path) {
+        let base64 = fs.readFileSync(path).toString('base64');
+
+        return `data:image/jpg;base64,${ base64 }`
     }
 }

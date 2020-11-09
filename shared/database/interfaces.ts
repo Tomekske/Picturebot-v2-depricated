@@ -37,15 +37,15 @@ export interface IFlow {
     /** Backup flow name */
     backup?: string;
     /** Base flow name */
-    base: string;
+    base?: string;
     /** Preview flow name */
-    preview: string;
+    preview?: string;
     /** files flow name */
     files?: string;
     /** Edited flow name */
-    edited: string;
+    edited?: string;
     /** Social-media flow name */
-    socialMedia: string;
+    socialMedia?: string;
     /** Selection flow name */
     selection?: string;
 }
@@ -55,9 +55,9 @@ export interface IFlow {
  */
 export interface ICollection extends IFlow {
     /** The library where the collection is located in */
-    library: string;
+    library?: string;
     /** Collection name */
-    name: string;
+    name?: string;
     /** Collection full path (~/library/name) */
     collection?: string;
 }
@@ -67,15 +67,15 @@ export interface ICollection extends IFlow {
  */
 export interface IAlbum {
     /** The collection where the album is located in */
-    collection: string;
+    collection?: string;
     /** Album name */
-    name: string;
+    name?: string;
     /** Album date */
-    date: string;
+    date?: string;
     /** Album full path (~/collection/name_date) */
-    album: string;
+    album?: string;
     /** Checks if organizing has started */
-    started: number;
+    started?: number;
 }
 
 /**

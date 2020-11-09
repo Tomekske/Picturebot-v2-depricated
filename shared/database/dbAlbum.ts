@@ -1,4 +1,3 @@
-import * as sqlite from 'better-sqlite3';
 import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
 
@@ -79,7 +78,7 @@ export class DbAlbum extends Sqlite {
      * @param collection Collection from which certain records are queried
      */
     queryAlbums(collection) {
-        let query: string = `SELECT album, name, date, started FROM Album WHERE collection='${collection}';`;
+        let query: string = `SELECT album, collection, name, date, started FROM Album WHERE collection='${collection}';`;
         const stmt = this.connection.prepare(query);
 
         Logger.Log().debug(`Query: ${query}`);

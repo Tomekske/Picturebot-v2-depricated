@@ -1,29 +1,31 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { IAlbum, IBase, IFlow } from '../../../shared/database/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
-  private _collection: string;
-  private _srcCollection = new Subject<string>();
-  public ctxCollection = this._srcCollection.asObservable();
+  private _selectedCollection: string;
+  private _srcSelectedCollection = new BehaviorSubject<string>("");
+  public ctxSelectedCollection = this._srcSelectedCollection.asObservable();
+
+  private _selectedFlow: string;
+  private _srcSelectedFlow = new BehaviorSubject<string>("");
+  public ctxSelectedFlow = this._srcSelectedFlow.asObservable();
 
   private _albums: IAlbum[] = [];
   private _srcAlbums = new Subject<IAlbum[]>();
   public ctxAlbums = this._srcAlbums.asObservable();
 
   private _selectedAlbum: IAlbum;
-  private _srcSelectedAlbum = new Subject<IAlbum>();
+  private _srcSelectedAlbum = new BehaviorSubject<IAlbum>({});
   public ctxSelectedAlbum = this._srcSelectedAlbum.asObservable();
 
-  private _selectedFlow: string;
-  private _srcSelectedFlow = new Subject<string>();
-  public ctxSelectedFlow = this._srcSelectedFlow.asObservable();
+
 
   private _isAlbumSelectorVisible: boolean;
-  private _srcAlbumSelectorVisible = new Subject<boolean>();
+  private _srcAlbumSelectorVisible = new BehaviorSubject<boolean>(false);
   public ctxAlbumSelectorVisible = this._srcAlbumSelectorVisible.asObservable();
 
   private _flows: IFlow;
@@ -36,15 +38,15 @@ export class DataService {
    * Set the selected collection
    */
   set selectedCollection(collection) {
-    this._collection = collection;
-    this._srcCollection.next(collection);
+    this._selectedCollection = collection;
+    this._srcSelectedCollection.next(collection);
   }
 
   /**
    * Get the selected collection
    */
   get selectedCollection(): string {
-    return this._collection;
+    return this._selectedCollection;
   }
 
   /**
@@ -85,9 +87,9 @@ export class DataService {
     this._srcSelectedFlow.next(flow);
   }
 
-  /**
-   * Get the selected flow
-   */
+  // /**
+  //  * Get the selected flow
+  //  */
   get selectedFlow() {
     return this._selectedFlow;
   }

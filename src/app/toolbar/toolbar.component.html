@@ -4,23 +4,23 @@
     <div fxFlex="30" fxLayoutAlign="center center">
       <mat-form-field appearance="fill" style="width: 100%;">
         <mat-label align="end">Select collection</mat-label>
-        <mat-select [(ngModel)]="selectedCollection" name="collection" (selectionChange)="selectedCollectionEvent($event)" (click)="selectionClickEvent()">
-          <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
+        <mat-select [(ngModel)]="selectedCollection" name="collection" (ngModelChange)="selectedCollectionEvent($event)" (click)="selectionClickEvent()">
+          <mat-option *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
     <div fxFlex="35">
       <mat-toolbar>
-        <!-- <div *ngIf="!isStarted"> -->
+        <div *ngIf="!isOrganized">
           <button mat-icon-button class="example-icon" (click)="startClickEvent()" matTooltip="Start organizing">
             <mat-icon>play_arrow</mat-icon>
           </button>
-          <button mat-icon-button class="example-icon" (click)="openInExplorerEvent()" matTooltip="{{ explorerTooltip }}">
-            <mat-icon>open_in_new</mat-icon>
-          </button>
-        <!-- </div> -->
+        </div>
+        <button mat-icon-button class="example-icon" (click)="openInExplorerEvent()" matTooltip="{{ explorerTooltip }}">
+          <mat-icon>open_in_new</mat-icon>
+        </button>
       </mat-toolbar>
-  </div>
+    </div>
   </div>
   <mat-divider></mat-divider>
 </div>
