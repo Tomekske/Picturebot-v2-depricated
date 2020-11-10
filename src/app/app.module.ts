@@ -27,9 +27,9 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { FlexLayoutModule } from '@angular/flex-layout'
-import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { PhotoGalleryModule } from '@twogate/ngx-photo-gallery';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { PicturesComponent } from './pictures/pictures.component'
+import { CrystalLightboxModule } from '@crystalui/angular-lightbox';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -48,6 +48,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     NgxDropzoneModule,
     ListViewModule,
     NgbModule,
+    CrystalLightboxModule,
     FlexLayoutModule,
     TranslateModule.forRoot({
       loader: {
@@ -58,7 +59,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     }),
     BrowserAnimationsModule,
     MaterialModule,
-    PhotoGalleryModule,
     RouterModule.forRoot([
       {path: 'main', component: PicturesComponent},
       {path: 'settings', component: SettingsComponent},

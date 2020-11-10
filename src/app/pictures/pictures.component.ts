@@ -15,6 +15,7 @@ import { Logger } from '../../../shared/logger/logger';
 export class PicturesComponent implements OnInit {
   previewList: string[] = [];
   base64List: string[] = [];
+  _albums = [];
   selectedFlow: string;
   flows: string[] = [];
   tabFlows: IFlow;
@@ -26,7 +27,7 @@ export class PicturesComponent implements OnInit {
   isVisible: boolean = false;
   subsAlbumVisible: Subscription; 
   subsAlbums: Subscription; 
-
+  
   constructor(private _electron: ElectronService, private _data: DataService, private cdRef:ChangeDetectorRef, private ngZone: NgZone) { }
   
   /**
@@ -69,7 +70,7 @@ export class PicturesComponent implements OnInit {
     // Display pictures from a selected flow
     if(this.selectedFlow == this.tabFlows.preview) {
       this._electron.ipcRenderer.sendSync("get-preview-pictures", this.selectedAlbum.album).forEach((picture: IPreview) => {
-        this.base64List.push(Helper.encodeBase64(picture.preview));     
+        this.base64List.push(Helper.encodeBase64(picture.preview));
       });
     } else if(this.selectedFlow == this.tabFlows.edited) {
       // Edited flow is selected
