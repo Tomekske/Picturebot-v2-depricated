@@ -5,6 +5,7 @@ import { ICollection, ILibrary } from '../../../../shared/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DataService } from 'app/services/data.service';
+import { IpcFrontend } from '../../../../shared/ipc/frontend';
 
 @Component({
   selector: 'app-collection',
@@ -33,7 +34,7 @@ export class CollectionComponent implements OnInit {
       selection: ''
     });
 
-    this.electron.ipcRenderer.sendSync("get-libraries").forEach((library: ILibrary) => {
+    IpcFrontend.getLibraries().forEach((library: ILibrary) => {
       console.log(library.library);
       this.libraries.push(library.library);
     });
@@ -52,13 +53,13 @@ export class CollectionComponent implements OnInit {
       selection: form.selection, collection: this.electron.path.join(form.library, form.name)
     };
 
-    this.electron.ipcRenderer.send("save-collection", data);
+    IpcFrontend.saveCollection(data);
 
     this._snack.open(`Collection '${this.electron.path.join(form.library, form.name)}' saved!`, "Dismiss", {
       duration: 2000,
       horizontalPosition: "end"
     });
-    
+
     this._router.navigateByUrl('/main');
   }
 }

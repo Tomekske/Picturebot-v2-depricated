@@ -69,12 +69,22 @@ export class Helper {
 
     /**
      * Convert an ISO picture's date to dd-mm-YYYY
-     * @param iso a picture's ISO date
+     * @param iso a picture's ISO string
      */
     static formatDate(iso: string): string {
         const date = new Date(iso);
 
         return date.toLocaleDateString('en-GB', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+    }
+
+    /**
+     * Convert an ISO picture's time to HH:MM:ss
+     * @param iso a picture's ISO string
+     */
+    static formatTime(iso: string): string {
+        const date = new Date(iso);
+
+        return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
 
     /**

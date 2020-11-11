@@ -5,6 +5,7 @@ import { Helper } from '../../../shared/helper/helper';
 import { DataService } from '../services/data.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { IpcFrontend } from '../../../shared/ipc/frontend';
 
 @Component({
   selector: 'app-toolbar',
@@ -27,7 +28,7 @@ export class ToolbarComponent implements OnInit {
   ngOnInit(): void {
     this.isOrganized = true;
     // Get all the collections
-    this._electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
+    IpcFrontend.getCollections().forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
 
@@ -60,13 +61,13 @@ export class ToolbarComponent implements OnInit {
     album.collection = this._data.selectedCollection;
 
     // Update the is organized to true
-    this._electron.ipcRenderer.sendSync("update-album-started", this._data.selectedAlbum);
+    IpcFrontend.updateAlbumIsOrganized(this._data.selectedAlbum, true);
 
     // value must be set to true
     this._data.setAlbumStarted(this._data.selectedAlbum.album, true);
 
     // Get the preview and base flow from a certain collection
-    let startFlows: IFlow = this._electron.ipcRenderer.sendSync("get-started-flow", this.selectedCollection);
+    let startFlows: IFlow = IpcFrontend.getStartingFlows(this.selectedCollection);
 
     // Iterate over every key-value pair in the startFlows array
     for (const [key, flow] of Object.entries(startFlows)) {
@@ -76,7 +77,7 @@ export class ToolbarComponent implements OnInit {
       // Get all the base flow pictures
       if (flow == startFlows.base) {
 
-        this._electron.ipcRenderer.sendSync("get-baseFLow-pictures", album.album).forEach((picture: IBase) => {
+        IpcFrontend.getBaseFlowPictures(album.album).forEach((picture: IBase) => {
           // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
           let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5));
 
@@ -87,13 +88,13 @@ export class ToolbarComponent implements OnInit {
 
           let update = { name: this._electron.path.basename(destination), destination: picture.destination, album: picture.album, dest: destination };
 
-          this._electron.ipcRenderer.sendSync("update-name-baseFlow", update);
+          IpcFrontend.updateBaseFlowName(update);
         });
       }
 
       // Get all the preview flow pictures
       else if (flow == startFlows.preview) {
-        this._electron.ipcRenderer.sendSync("get-previewFLow-pictures", album.album).forEach((picture: IPreview) => {
+        IpcFrontend.getPreviewFlowPictures(album.album).forEach((picture: IPreview) => {
           // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
           let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5, true));
 
@@ -104,7 +105,7 @@ export class ToolbarComponent implements OnInit {
 
           let update = { name: this._electron.path.basename(destination), destination: picture.preview, album: picture.album, dest: destination };
 
-          this._electron.ipcRenderer.sendSync("update-name-previewFlow", update);
+          IpcFrontend.updatePreviewFlowName(update);
         });
       }
     }
@@ -123,7 +124,7 @@ export class ToolbarComponent implements OnInit {
       this.collections = [];
     }
 
-    this._electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
+    IpcFrontend.getCollections().forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
   }
@@ -135,5 +136,9 @@ export class ToolbarComponent implements OnInit {
     this.flowPath = this._electron.path.join(this._data.selectedAlbum.album, this._data.selectedFlow);
 
     Helper.openInExplorer(this.flowPath, this._snack);
+  }
+
+  deleteAlbum() {
+    console.log("DELEEEETE");
   }
 }

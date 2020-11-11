@@ -1,11 +1,10 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../../core/services/electron/electron.service';
-import { Logger } from '../../../../shared/logger/logger';
-import { ILibrary } from '../../../../shared/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DataService } from 'app/services/data.service';
+import { IpcFrontend } from '../../../../shared/ipc/frontend';
 
 @Component({
   selector: 'app-settings',
@@ -22,9 +21,11 @@ export class SettingsComponent implements OnInit {
    * On init lifecycle hook
    */
   ngOnInit(): void {
-    let formData = {};
-    const isEmpty = this.electron.ipcRenderer.sendSync("check-settings-empty");
+    console.log("SETTINGS");
 
+    let formData = {};
+    const isEmpty = IpcFrontend.checkSettingsEmpty();
+    
     // If the settings row is empty initialize the object with empty values
     if (isEmpty) {
       formData = {
@@ -37,7 +38,7 @@ export class SettingsComponent implements OnInit {
         conversion: ''
       };
     } else {
-      formData = this.electron.ipcRenderer.sendSync("get-settings");
+      formData = IpcFrontend.getSettings();
     }
 
     this.settingsForm = this.fb.group(formData);
@@ -48,7 +49,7 @@ export class SettingsComponent implements OnInit {
    * Function to save data into the database
    */
   saveSettings() {
-    this.electron.ipcRenderer.send("save-settings", this.settingsForm.value);
+    IpcFrontend.saveSettings(this.settingsForm.value);
 
     this._snack.open(`Settings saved!`, "Dismiss", {
       duration: 4000,

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTabGroup } from '@angular/material/tabs';
 import { ElectronService } from 'app/core/services';
 import { DataService } from 'app/services/data.service';
@@ -6,6 +6,9 @@ import { Subscription } from 'rxjs';
 import { IAlbum, IFlow, IPreview } from '../../../shared/database/interfaces';
 import { Helper } from '../../../shared/helper/helper';
 import { Logger } from '../../../shared/logger/logger';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogPictureInfoComponent } from 'app/dialogs/dialog-picture-info/dialog-picture-info.component';
+import { IpcFrontend } from '../../../shared/ipc/frontend';
 
 @Component({
   selector: 'app-pictures',
@@ -13,7 +16,7 @@ import { Logger } from '../../../shared/logger/logger';
   styleUrls: ['./pictures.component.css']
 })
 export class PicturesComponent implements OnInit {
-  previewList: string[] = [];
+  previewList: IPreview[] = [];
   base64List: string[] = [];
   _albums = [];
   selectedFlow: string;
@@ -28,7 +31,7 @@ export class PicturesComponent implements OnInit {
   subsAlbumVisible: Subscription; 
   subsAlbums: Subscription; 
   
-  constructor(private _electron: ElectronService, private _data: DataService, private cdRef:ChangeDetectorRef, private ngZone: NgZone) { }
+  constructor(private _electron: ElectronService, private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog) { }
   
   /**
    * On init lifecycle hook
@@ -39,7 +42,7 @@ export class PicturesComponent implements OnInit {
       this.selectedCollection = collection;
       
       // Get the albums within a certain collection
-      this.albums = this._electron.ipcRenderer.sendSync("get-albums", collection);
+      this.albums = IpcFrontend.getAlbums(collection);
       // Make the album selector visible
       this.isVisible = this._data.isAlbumSelectorVisible;
 
@@ -65,11 +68,11 @@ export class PicturesComponent implements OnInit {
    */
   displayPictures() {
     // Clear array when a flow is selected
-    this.base64List = [];
+    this.previewList = [];
 
     // Display pictures from a selected flow
     if(this.selectedFlow == this.tabFlows.preview) {
-      this._electron.ipcRenderer.sendSync("get-preview-pictures", this.selectedAlbum.album).forEach((picture: IPreview) => {
+      IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album).forEach((picture: IPreview) => {
         this.base64List.push(Helper.encodeBase64(picture.preview));
       });
     } else if(this.selectedFlow == this.tabFlows.edited) {
@@ -88,12 +91,15 @@ export class PicturesComponent implements OnInit {
     this.flows = [];
     this.selectedAlbum = album;
     this._data.selectedAlbum = album;
+    this.tabFlows = IpcFrontend.getTabFlows(album.collection);
 
-    this.tabFlows = this._electron.ipcRenderer.sendSync("get-flows", album.collection);
     this.displayFlows(this.tabFlows);
     this.displayPictures();
   }
 
+  /**
+   * Display the tab flow in the tab component 
+   */
   displayFlows(flows: IFlow) {
     // Display the the flows in the tab selector in a specified order
     this.flows.push(flows.preview);
@@ -105,5 +111,19 @@ export class PicturesComponent implements OnInit {
     // Make sure the first flow is selected by default
     this.cdRef.detectChanges();
     this.tabGroup.selectedIndex = this.flows.indexOf(flows.preview);
+  }
+
+  /**
+   * Display a picture's metadata
+   * @param index Index of the picture within the array
+   */
+  openPictureInformation(index: number) {
+    this.previewList = [];
+    this.previewList = IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album);
+
+    this._dialog.open(DialogPictureInfoComponent, { 
+      data: 
+        { album: this.previewList[index] }
+    });
   }
 }

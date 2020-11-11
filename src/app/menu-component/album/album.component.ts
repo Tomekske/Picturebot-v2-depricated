@@ -1,12 +1,13 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ElectronService } from '../../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection } from '../../../../shared/database/interfaces';
-import { Logger } from '../../../../shared/logger/logger';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Helper } from '../../../../shared/helper/helper';
 import { DataService } from 'app/services/data.service';
+import { Stats } from 'original-fs';
+import { IpcFrontend } from '../../../../shared/ipc/frontend';
 
 @Component({
   selector: 'app-album',
@@ -32,7 +33,7 @@ export class AlbumComponent implements OnInit {
       date: ''
     });
 
-    this.electron.ipcRenderer.sendSync("get-collections").forEach((collection: ICollection) => {
+    IpcFrontend.getCollections().forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
 
@@ -59,9 +60,11 @@ export class AlbumComponent implements OnInit {
     // Iterate over all the pictures within the dropzone
     this.picturesDropzone.forEach((element) => {
       // Obtain picture information
-     const stats = this.electron.fs.statSync(element.path);
+      const stats: Stats = this.electron.fs.statSync(element.path);
+      let createdDate: string = Helper.formatDate(stats.mtime.toISOString());
+      let createdTime: string = Helper.formatTime(stats.mtime.toISOString());
 
-     this.pictures.push({source: element.path, name: element.name, modification: stats.mtime});
+      this.pictures.push({source: element.path, name: element.name, modification: stats.mtime, date: createdDate, time: createdTime});
     });
 
     this.pictures.sort(Helper.sortDateTimes);
@@ -69,16 +72,18 @@ export class AlbumComponent implements OnInit {
     let that = this;
     this.pictures.forEach((picture, i) => {
       const newFilename = Helper.renameHashedPicture(picture, i + 1, 5);
-      that.hashedPictures.push({source: picture.source, name: picture.name, hashed: newFilename});
+      that.hashedPictures.push({source: picture.source, name: picture.name, hashed: newFilename, date: picture.date, time: picture.time});
     });
 
-    this.electron.ipcRenderer.sendSync("save-pictures", this.hashedPictures, album);
+    IpcFrontend.savePictures(this.hashedPictures, album);
     
     this._snack.open(`Album '${album.album}' saved!`, "Dismiss", {
       duration: 4000,
       horizontalPosition: "end"
     });
-    
+
+    this._data.isAlbumSelectorVisible = true;
+        
     this._router.navigateByUrl('/main');
   }
 

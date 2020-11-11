@@ -10,7 +10,13 @@
         <mat-grid-list cols="3" rowHeight="6:4">
             <div lightbox-group>
                 <mat-grid-tile *ngFor="let picture of base64List; let i = index">
-                    <img style="width: 100%; height: auto; padding-right: 5px; padding-bottom: 5px;" [src]="picture" lightbox counter="true" counterSeparator="/">
+                    <mat-card>
+                        <img style="width: 85%; height: auto; padding-right: 5px; padding-bottom: 5px;" [src]="picture" lightbox counter="true" counterSeparator="/">
+
+                        <button mat-icon-button class="example-icon" (click)="openPictureInformation(i)" matTooltip="Info">
+                            <mat-icon>info</mat-icon>
+                        </button>
+                    </mat-card>
                 </mat-grid-tile>
             </div>
         </mat-grid-list>

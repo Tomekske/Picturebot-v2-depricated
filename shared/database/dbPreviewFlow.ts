@@ -20,7 +20,9 @@ export class DbPreviewFlow extends Sqlite {
             "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
             "base" varchar(400) NOT NULL,
-            "preview" varchar(400) NOT NULL PRIMARY KEY)`;
+            "preview" varchar(400) NOT NULL PRIMARY KEY,
+            "date" varchar(10) NOT NULL,
+            "time" varchar(8) NOT NULL)`;
 
         this.connection.exec(query);
         Logger.Log().debug(`Query: ${query}`);
@@ -35,6 +37,17 @@ export class DbPreviewFlow extends Sqlite {
 
         Logger.Log().debug(`Query: ${query}`);
         return ((count == 1) ? true : false);
+    }
+
+    /**
+     * Method to insert data into table's row
+     * @param args Data needed to insert into the table's row
+     */
+    insertRow(args) {
+        const stmt = this.connection.prepare("INSERT INTO PreviewFlow VALUES (@collection, @name, @album, @base, @preview, @date, @time);");
+
+        stmt.run(args);
+        Logger.Log().debug(`Query: INSERT INTO PreviewFlow VALUES ("${JSON.stringify(args)}")`);
     }
 
     /**
@@ -59,17 +72,6 @@ export class DbPreviewFlow extends Sqlite {
 
         Logger.Log().debug(`Query: ${query}`);
         stmt.run();
-    }
-
-    /**
-     * Method to insert data into table's row
-     * @param args Data needed to insert into the table's row
-     */
-    insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO PreviewFlow VALUES (@collection, @name, @album, @base, @preview);");
-
-        stmt.run(args);
-        Logger.Log().debug(`Query: INSERT INTO PreviewFlow VALUES ("${JSON.stringify(args)}")`);
     }
 
     /**

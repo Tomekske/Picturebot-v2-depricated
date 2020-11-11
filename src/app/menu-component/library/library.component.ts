@@ -5,6 +5,7 @@ import { ILibrary } from '../../../../shared/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DataService } from 'app/services/data.service';
+import { IpcFrontend } from '../../../../shared/ipc/frontend';
 
 @Component({
   selector: 'app-library',
@@ -35,7 +36,7 @@ export class LibraryComponent implements OnInit {
     let form: ILibrary = this.libraryForm.value;
     let data: ILibrary = { name: form.name, base: form.base, library: this.electron.path.join(form.base, form.name) };
 
-    this.electron.ipcRenderer.send("save-library", data);
+    IpcFrontend.saveLibrary(data);
 
     this._snack.open(`Library '${this.electron.path.join(form.base, form.name)}' saved!`, "Dismiss", {
       duration: 4000,

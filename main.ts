@@ -15,6 +15,7 @@ import { Updater } from './shared/updater/updater';
 import { DbBackupFlow } from './shared/database/dbBackupFlow';
 import { DbPreviewFlow } from './shared/database/dbPreviewFlow';
 import { Helper } from './shared/helper/helper';
+import { IpcBackend } from './shared/ipc/backend';
 
 let win: BrowserWindow = null;
 
@@ -114,321 +115,52 @@ try {
  * Function to encapsulate ipc collections
  */
 function ipcCollections() {
-  // Get all collections
-  ipcMain.on('get-collections', (event, args: ILibrary) => {
-    Logger.Log().debug('ipcMain: get-collections');
-
-    // Create database
-    const db = new DbCollection();
-    
-    event.returnValue = db.queryCollections();
-  });
-
-  // Save a collection to the database
-  ipcMain.on('save-collection', (event, args: ICollection) => {
-    Logger.Log().debug('ipcMain: save-collection');
-
-    // Create database
-    const db = new DbCollection();
-
-    db.insertRow(args);
-    db.dbClose();
-
-    Helper.createDirectory(args.collection);
-  });
+  IpcBackend.getCollections();
+  IpcBackend.saveCollection();
 }
 
 /**
  * Function to encapsulate ipc flows
  */
 function ipcFlows() {
-  // Get certain flows from the database
-  ipcMain.on('get-flows', (event, collection: string) => {
-    Logger.Log().debug('ipcMain: get-flows');
-
-    const db = new DbCollection();
-
-    event.returnValue = db.queryFlows(collection);
-  });
-
-  // Update the name of the an picture within the base flow 
-  ipcMain.on('update-name-baseFlow', (event, update) => {
-    Logger.Log().debug('ipcMain: update-name-baseFlow');
-
-    const db = new DbBaseFlow();
-
-    db.updateName(update);
-    db.updateDestination(update);
-    db.dbClose();
-    
-    event.returnValue = "";
-  });
-  
-  // Update the name of the an picture within the preview flow 
-  ipcMain.on('update-name-previewFlow', (event, update) => {
-    Logger.Log().debug('ipcMain: update-name-previewFlow');
-
-    const db = new DbPreviewFlow();
-
-    db.updateName(update);
-    db.updateDestination(update);
-    db.dbClose();
-    
-    event.returnValue = "";
-  });
-
-  // Get the preview and base flow from a certain collection
-  ipcMain.on('get-started-flow', (event, collection: string) => {
-    Logger.Log().debug('ipcMain: get-started-flow');
-
-    const db = new DbCollection();
-
-    event.returnValue = db.queryRenameStartedFlows(collection);
-  });
+  IpcBackend.getTabFlows();
+  IpcBackend.getStartingFlows();
+  IpcBackend.updateBaseFlowName();
+  IpcBackend.updatePreviewFlowName();
 }
 
 /**
  * Function to encapsulate ipc libraries
  */
 function ipcLibraries() {
-  // Save a library to the database
-  ipcMain.on('save-library', (event, args: ILibrary) => {
-    Logger.Log().debug('ipcMain: save-library');
-
-    // Create database
-    const db = new DbLibrary();
-
-    // Insert data and close database
-    db.insertRow(args);
-    db.dbClose();
-
-    Helper.createDirectory(args.library);
-  });
-
-  // Get all libraries
-  ipcMain.on('get-libraries', (event, args: ILibrary) => {
-    Logger.Log().debug('ipcMain: get-libraries');
-
-    // Create database
-    const db = new DbLibrary();
-
-    event.returnValue = db.queryLibraries();
-  });
+  IpcBackend.saveLibrary();
+  IpcBackend.getLibraries();
 }
 
 /**
  * Function to encapsulate ipc pictures
  */
 function ipcPictures() {
-  // Get all pictures within the base flow directory
-  ipcMain.on('get-baseFLow-pictures', (event, album: string) => {
-    Logger.Log().debug('ipcMain: get-baseFLow-pictures');
-
-    const db = new DbBaseFlow();
-
-    event.returnValue = db.queryBaseFlow(album);
-  });
-
-  // Get all pictures within the backup flow directory
-  ipcMain.on('get-backupFLow-pictures', (event, album: string) => {
-    Logger.Log().debug('ipcMain: get-backupFLow-pictures');
-
-    const db = new DbBackupFlow();
-
-    event.returnValue = db.queryBackupFlow(album);
-  });
-
-  // Get all pictures within the preview flow directory
-  ipcMain.on('get-previewFLow-pictures', (event, album: string) => {
-    Logger.Log().debug('ipcMain: get-previewFLow-pictures');
-
-    const db = new DbPreviewFlow();
-
-    event.returnValue = db.queryAllWhereAlbum(album);
-  });
-
-  // Start pipeline
-  ipcMain.on('save-pictures', (event, args, album: IAlbum) => {
-    Logger.Log().debug('ipcMain: save-pictures');
-
-    const dbSettings = new DbSettings();
-
-    // Create database
-    const albumDb = new DbAlbum();
-
-    albumDb.insertRow(album);
-    albumDb.dbClose();
-
-    //Create album
-    Helper.createDirectory(album.album);
-
-    if (Helper.isDirectory(album.album)) {
-      const collectionDb = new DbCollection();
-      let flows: IFlow = collectionDb.queryAllFlows(album.collection);
-
-      // Creating flow directories
-      Object.values(flows).forEach(flow => {
-        // The selection flow is a virtual directory, so it doesn't need to be created
-        if(flow != flows.selection) {
-          Helper.createDirectory(path.join(album.album, flow));
-        }
-      });
-
-      collectionDb.dbClose();
-
-      // pictures
-      const picDb = new DbBaseFlow();
-      const backupDb = new DbBackupFlow();
-      const dbPreview = new DbPreviewFlow();
-   
-      // pipeline
-      args.forEach((picture: IBase) => {
-        const destBase: string = path.join(album.collection,`${album.name} ${album.date}`, flows.base, picture.hashed);
-        const destBackup: string = path.join(album.collection,`${album.name} ${album.date}`, flows.backup, picture.hashed);
-        const destPreview: string = path.join(album.collection,`${album.name} ${album.date}`, flows.preview, `${picture.hashed.split('.')[0]}.jpg`);
-        
-        let dataBaseFlow: IBase = { collection: album.collection, album: album.album, source: picture.source, name: picture.name, destination: destBase, selection: 0};
-        let dataBackupFlow: IBase = { collection: album.collection, album: album.album, source: picture.source, name: picture.name, destination: destBackup};
-        let dataPreviewFlow: IPreview = { collection: album.collection, album: album.album ,base: picture.source, name: picture.name, preview: destPreview}; 
-
-        // copy base
-        Helper.copyFile(picture.source, path.join(path.dirname(destBase), picture.hashed));
-
-        // Insert data into database
-        picDb.insertRow(dataBaseFlow);
-
-        // copy backup
-        Helper.copyFile(picture.source, path.join(path.dirname(destBackup), picture.hashed));
-
-        // Insert data into database
-        backupDb.insertRow(dataBackupFlow);
-        
-        // convert preview
-        const convert = `magick convert \"${picture.source}\" -quality ${dbSettings.queryConversion()} -verbose \"${destPreview}\"`
-        const data = cp.execSync(convert);
-
-        dbPreview.insertRow(dataPreviewFlow);
-
-        Logger.Log().debug(convert);
-      });
-
-      picDb.dbClose();
-      backupDb.dbClose();
-      dbPreview.dbClose();
-    }
-
-    event.returnValue = "";
-  });
-
-  // Get all preview pictures from a specified album
-  ipcMain.on('get-preview-pictures', (event, args) => {
-    Logger.Log().debug('get-preview-pictures');
-
-    // Create database
-    const db = new DbPreviewFlow();
-
-    event.returnValue = db.queryAllWhereAlbum(args);
-  });
+  IpcBackend.getBaseFlowPictures();
+  IpcBackend.getPreviewFlowPictures();
+  IpcBackend.savePictures();
 }
 
 /**
  * Function to encapsulate ipc albums
  */
 function ipcAlbums() {
-  // Check wether an album has started organizing
-  ipcMain.on("get-album-started", (event, album: string) => {
-    Logger.Log().debug('ipcMain: get-album-started');
-
-    const db = new DbAlbum();
-
-    event.returnValue = db.queryStarted(album);
-  });
-
-  // Update wether an album is updated
-  ipcMain.on("update-album-started", (event, album: IAlbum) => {
-    Logger.Log().debug('ipcMain: update-album-started');
-
-    const db = new DbAlbum();
-    
-    db.updateStartedRecord(1, album.album);
-
-    event.returnValue = "";
-  });
-  
-  // Save an album to the database
-  ipcMain.on('save-album', (event, args: IAlbum) => {
-    Logger.Log().debug('ipcMain: save-album');
-
-    // Create database
-    const db = new DbLibrary();
-
-    db.insertRow(args);
-    db.dbClose();
-
-    Helper.createDirectory(args.album);
-  });
-  
-  // Get all albums
-  ipcMain.on('get-albums', (event, args) => {
-    Logger.Log().debug('ipcMain: get-albums');
-
-    // Create database
-    const db = new DbAlbum();
-
-    event.returnValue = db.queryAlbums(args);
-  });
-
-  // Get all records from a specified album
-  ipcMain.on('get-single-album', (event, collection: string) => {
-    Logger.Log().debug('ipcMain: get-single-album');
-
-    // Create database
-    const db = new DbAlbum();
-
-    event.returnValue = db.querySingleAlbum(collection);
-  }); 
+  IpcBackend.updateAlbumIsOrganized();
+  IpcBackend.getAlbums();
 }
 
 /**
  * Function to encapsulate ipc settings
  */
 function ipcSettings() {
-  // Save settings to the database
-  ipcMain.on('save-settings', (event, args) => {
-    Logger.Log().debug('ipcMain: save-settings');
-
-    // Create database
-    const db = new DbSettings();
-    
-    // If table exists update database
-    db.isEmpty() ? db.insertRow(args) : db.updateRow(args);
-    // if(db.isEmpty()) {
-    //   db.insertRow(args);
-    // }
-    // else {
-    //   db.updateRow(args);
-    // }
-    
-    db.dbClose();
-  });
-
-  // Get settings from the database
-  ipcMain.on('get-settings', (event) => {
-    Logger.Log().debug('ipcMain: get-settings');
-
-    const db = new DbSettings();
-
-    event.returnValue = db.queryAll();
-  });
-
-  // Check wether the settings table has an empty row
-  ipcMain.on('check-settings-empty', (event) => {
-    Logger.Log().debug('ipcMain: check-settings-empty');
-
-    const db = new DbSettings();
-
-    event.returnValue = db.isEmpty();
-  });
+  IpcBackend.saveSettings();
+  IpcBackend.getSettings();
+  IpcBackend.checkSettingsEmpty();
 }
 
 /**

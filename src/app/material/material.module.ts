@@ -19,6 +19,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogModule } from '@angular/material/dialog';
 
 const MaterialComponents = [
   NgMaterialMultilevelMenuModule,
@@ -39,7 +40,8 @@ const MaterialComponents = [
   MatGridListModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatDividerModule
+  MatDividerModule,
+  MatDialogModule
 ];
 
 

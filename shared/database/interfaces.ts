@@ -92,6 +92,10 @@ interface IPicture {
     collection?: string;
     /** Album where the picture is located in */
     album?: string;
+    /** Creation date of the picture */
+    date?: string;
+    /** Creation time of the picture */
+    time?: string;
 }
 
 /**

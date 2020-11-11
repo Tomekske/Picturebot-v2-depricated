@@ -30,6 +30,7 @@ import { FlexLayoutModule } from '@angular/flex-layout'
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { PicturesComponent } from './pictures/pictures.component'
 import { CrystalLightboxModule } from '@crystalui/angular-lightbox';
+import { DialogPictureInfoComponent } from './dialogs/dialog-picture-info/dialog-picture-info.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -37,7 +38,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 }
 
 @NgModule({
-  declarations: [AppComponent, MenuComponent, SettingsComponent, ToolbarComponent, LibraryComponent, AlbumComponent, CollectionComponent, PicturesComponent],
+  declarations: [AppComponent, MenuComponent, SettingsComponent, ToolbarComponent, LibraryComponent, AlbumComponent, CollectionComponent, PicturesComponent, DialogPictureInfoComponent],
   imports: [
     BrowserModule,
     FormsModule,
