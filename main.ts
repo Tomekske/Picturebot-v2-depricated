@@ -1,20 +1,8 @@
-import { app, BrowserWindow, screen, ipcMain, remote } from 'electron';
+import { app, BrowserWindow, screen, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import * as fs from 'fs';
-import * as cp from 'child_process';
-
 import { Logger } from './shared/logger/logger';
-import { DbSettings } from './shared/database/dbSettings';
-import { DbLibrary } from './shared/database/dbLibrary';
-import { ILibrary, ISettings, ICollection, IAlbum, IFlow, IBase, IPreview } from './shared/database/interfaces';
-import { DbCollection } from './shared/database/dbCollection';
-import { DbAlbum } from './shared/database/dbAlbum';
-import { DbBaseFlow } from './shared/database/dbBaseFlow';
 import { Updater } from './shared/updater/updater';
-import { DbBackupFlow } from './shared/database/dbBackupFlow';
-import { DbPreviewFlow } from './shared/database/dbPreviewFlow';
-import { Helper } from './shared/helper/helper';
 import { IpcBackend } from './shared/ipc/backend';
 
 let win: BrowserWindow = null;
@@ -92,6 +80,14 @@ try {
     if (win === null) {
       createWindow();
     }
+  });
+
+  // Intercept filesystem paths in order to show the pictures from the filesystem
+  app.whenReady().then(() => {
+    protocol.registerFileProtocol('file', (request, callback) => {
+      const pathname = decodeURI(request.url.replace('file:///', ''));
+      callback(pathname);
+    });
   });
 
   // Check for new updates
