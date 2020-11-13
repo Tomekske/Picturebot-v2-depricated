@@ -140,6 +140,8 @@ function ipcPictures() {
   IpcBackend.getBaseFlowPictures();
   IpcBackend.getPreviewFlowPictures();
   IpcBackend.savePictures();
+  IpcBackend.baseFlowDeletePicture();
+  IpcBackend.previewFlowDeletePicture();
 }
 
 /**

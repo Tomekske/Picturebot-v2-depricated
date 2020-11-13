@@ -334,4 +334,39 @@ export class  IpcBackend {
             event.returnValue = result;
         });
     }
+
+    /**
+     * Delete a picture relation from the previewFlow table
+     */
+    static previewFlowDeletePicture() {
+        ipcMain.on('previewFlow-delete-picture', (event, path: string) => {
+            Logger.Log().debug('ipcMain: previewFlow-delete-picture');
+        
+            const db = new DbPreviewFlow();
+            db.deletePicture(path);
+        
+            db.dbClose();
+
+            Helper.deletePicture(path);
+            event.returnValue = "";
+        });    
+    }
+
+    /**
+     * Delete a picture relation from the baseFlow table
+     */
+    static baseFlowDeletePicture() {
+        ipcMain.on('baseFlow-delete-picture', (event, path: string) => {
+
+            Logger.Log().debug('ipcMain: previewFlow-delete-picture');
+        
+            const db = new DbBaseFlow();
+            db.deletePicture(path);
+        
+            db.dbClose();
+            Helper.deletePicture(path);
+            event.returnValue = "";
+        });    
+    }
+
 }

@@ -3,12 +3,14 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { ElectronService } from 'app/core/services';
 import { DataService } from 'app/services/data.service';
 import { Subscription } from 'rxjs';
-import { IAlbum, IFlow, IPreview } from '../../../shared/database/interfaces';
+import { IAlbum, IBase, IFlow, IPreview } from '../../../shared/database/interfaces';
 import { Helper } from '../../../shared/helper/helper';
 import { Logger } from '../../../shared/logger/logger';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogPictureInfoComponent } from 'app/dialogs/dialog-picture-info/dialog-picture-info.component';
 import { IpcFrontend } from '../../../shared/ipc/frontend';
+import { DialogPictureDeleteComponent } from 'app/dialogs/dialog-picture-delete/dialog-picture-delete.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Directive({ selector: 'img' })
 @Component({
@@ -33,7 +35,7 @@ export class PicturesComponent implements OnInit {
   subsAlbums: Subscription;
   test: any = [];
 
-  constructor({ nativeElement }: ElementRef<HTMLImageElement>, private _electron: ElectronService, private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog) { 
+  constructor({ nativeElement }: ElementRef<HTMLImageElement>, private _electron: ElectronService, private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar) { 
     const supports = 'loading' in HTMLImageElement.prototype;
     
     // Under construction
@@ -143,9 +145,29 @@ export class PicturesComponent implements OnInit {
    */
   deletePicture(index: number) {
     this.previewList = [];
+
     this.previewList = IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album);
+    let baseList: IBase = IpcFrontend.getBaseFlowPictures(this.selectedAlbum.album);
 
-    console.log(`DELETE PICTUREEEE: ${this.previewList[index].name}`);
+    // Picture deletion dialog
+    this._dialog.open(DialogPictureDeleteComponent, { 
+      data: { 
+        album: this.previewList[index],
+        flow: this.selectedFlow 
+      }
+    }).afterClosed().subscribe(confirmed => {
+      // Only delete pictures on confirmation
+      if(confirmed) {
+        IpcFrontend.previewFlowDeletePicture(this.previewList[index].preview);
+        IpcFrontend.baseFlowDeletePicture(baseList[index].destination);
 
+        this.displayPictures();
+
+        this._snack.open(`Picture '${baseList[index].name}' deleted`, "Dismiss", {
+          duration: 4000,
+          horizontalPosition: "end"
+        });
+      }
+    });
   }
 }

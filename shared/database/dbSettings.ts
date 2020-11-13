@@ -1,4 +1,3 @@
-import Database = require("better-sqlite3");
 import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
 

@@ -151,4 +151,18 @@ export class Helper {
 
         return `data:image/jpg;base64,${ base64 }`
     }
+
+    static deletePicture(path: string) {
+        Logger.Log().debug("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+        if(fs.existsSync(path)) {
+            try {
+                fs.unlinkSync(path);
+                Logger.Log().debug(`Delete picture: picture '${path}' deleted`);
+            } catch (error) {
+                Logger.Log().error(`Delete picture: '${path}' - ${error}`);
+            }
+        } else {
+            Logger.Log().error(`Delete picture: picture '${path}' doesn't exists`);
+        }
+    }
 }

@@ -130,4 +130,20 @@ export class  IpcFrontend {
     static getTabFlows(collection: string) {
         return ipcRenderer.sendSync("get-tab-flows", collection);
     }
+
+    /**
+     * Delete a picture relation from the previewFlow table
+     * @param path Path to the picture
+     */
+    static previewFlowDeletePicture(path: string) {
+        ipcRenderer.sendSync("previewFlow-delete-picture", path);
+    }
+
+    /**
+     * Delete a picture relation from the baseFlow table
+     * @param path Path to the picture
+     */
+    static baseFlowDeletePicture(path: string) {
+        ipcRenderer.sendSync("baseFlow-delete-picture", path);
+    }
 }

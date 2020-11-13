@@ -1,4 +1,3 @@
-import * as sqlite from 'better-sqlite3';
 import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
 
@@ -95,5 +94,17 @@ export class DbPreviewFlow extends Sqlite {
 
         Logger.Log().debug(`Query: ${query}`);
         return stmt.all();
+    }
+
+    /**
+     * Delete a picture relation from the database
+     * @param path Path to the picture
+     */
+    deletePicture(path: string) {
+        let query: string = `Delete FROM previewFlow WHERE preview='${path}'`;
+        const stmt = this.connection.prepare(query);
+        
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
     }
 }
