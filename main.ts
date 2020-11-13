@@ -150,6 +150,7 @@ function ipcPictures() {
 function ipcAlbums() {
   IpcBackend.updateAlbumIsOrganized();
   IpcBackend.getAlbums();
+  IpcBackend.deleteAlbum();
 }
 
 /**

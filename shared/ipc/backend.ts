@@ -369,4 +369,31 @@ export class  IpcBackend {
         });    
     }
 
+    /**
+     * Delete an album reference from the database
+     * All relations within the baseFlow, previewFlow and backupFlow will get deleted
+     */
+    static deleteAlbum() {
+        ipcMain.on('delete-album', (event, album: IAlbum) => {
+            Logger.Log().debug('ipcMain: delete-album');
+        
+            const dbAlbum = new DbAlbum();
+            dbAlbum.deleteAlbum(album.album);   
+            dbAlbum.dbClose();
+
+            const dbPreviewFlow = new DbPreviewFlow();
+            dbPreviewFlow.deletePicturesWhereAlbum(album.album);   
+            dbPreviewFlow.dbClose();
+
+            const dbBaseFlow = new DbBaseFlow();
+            dbBaseFlow.deletePicturesWhereAlbum(album.album);   
+            dbBaseFlow.dbClose();
+
+            const dbBackupFlow = new DbBackupFlow();
+            dbBackupFlow.deletePicturesWhereAlbum(album.album);   
+            dbBackupFlow.dbClose();
+
+            event.returnValue = "";
+        });    
+    }
 }

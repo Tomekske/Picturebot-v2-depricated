@@ -108,4 +108,16 @@ export class DbAlbum extends Sqlite {
         Logger.Log().debug(`Query: ${query}`);
         return ((started == 1) ? true : false);
     }
+
+    /**
+     * Delete an album relation from the database
+     * @param album Path to the picture
+     */
+    deleteAlbum(album: string) {
+        let query: string = `Delete FROM album WHERE album='${album}'`;
+        const stmt = this.connection.prepare(query);
+        
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
 }

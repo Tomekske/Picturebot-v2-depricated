@@ -22,7 +22,9 @@ export class DataService {
   private _srcSelectedAlbum = new BehaviorSubject<IAlbum>({});
   public ctxSelectedAlbum = this._srcSelectedAlbum.asObservable();
 
-
+  private _isAlbumDeleted: boolean;
+  private _srcIsAlbumDeleted = new Subject<boolean>();
+  public ctxIsAlbumDeleted = this._srcIsAlbumDeleted.asObservable();
 
   private _isAlbumSelectorVisible: boolean;
   private _srcAlbumSelectorVisible = new BehaviorSubject<boolean>(false);
@@ -152,5 +154,14 @@ export class DataService {
    */
   get isAlbumSelectorVisible(): boolean {
     return this._isAlbumSelectorVisible;
+  }
+
+  set isAlbumDeleted(state: boolean) {
+    this._isAlbumDeleted = state;
+    this._srcIsAlbumDeleted.next(state);
+  }
+
+  get isAlbumDeleted() {
+    return this._isAlbumDeleted;
   }
 }

@@ -146,4 +146,12 @@ export class  IpcFrontend {
     static baseFlowDeletePicture(path: string) {
         ipcRenderer.sendSync("baseFlow-delete-picture", path);
     }
+
+    /**
+     * Delete an album reference from the database
+     * @param album Album that get deleted
+     */
+    static deleteAlbum(album: IAlbum) {
+        ipcRenderer.sendSync("delete-album", album);
+    }
 }

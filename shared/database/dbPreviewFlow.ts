@@ -107,4 +107,16 @@ export class DbPreviewFlow extends Sqlite {
         Logger.Log().debug(`Query: ${query}`);
         stmt.run();
     }
+
+    /**
+     * Delete pictures relations located in a specified album from the database
+     * @param album Album where the pictures are located in
+     */
+    deletePicturesWhereAlbum(album: string) {
+        let query: string = `Delete FROM previewFlow WHERE album='${album}'`;
+        const stmt = this.connection.prepare(query);
+        
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
 }

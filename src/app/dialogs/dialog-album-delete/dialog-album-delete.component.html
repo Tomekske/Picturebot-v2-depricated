@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Delete album</h1>
+<div mat-dialog-content>
+    <p>Do you want to permanently delete '{{ data.album.name }} - {{ data.album.date }}'  from the {{ data.flow }} flow ?</p>
+    <span>(Note: This action won't delete '{{ data.album.album }}' from the hard drive)</span>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="cancelClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Ok</button>
+</div>

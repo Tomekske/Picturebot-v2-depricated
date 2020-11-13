@@ -32,6 +32,7 @@ import { PicturesComponent } from './pictures/pictures.component'
 import { CrystalLightboxModule } from '@crystalui/angular-lightbox';
 import { DialogPictureInfoComponent } from './dialogs/dialog-picture-info/dialog-picture-info.component';
 import { DialogPictureDeleteComponent } from './dialogs/dialog-picture-delete/dialog-picture-delete.component';
+import { DialogAlbumDeleteComponent } from './dialogs/dialog-album-delete/dialog-album-delete.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -39,7 +40,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
 }
 
 @NgModule({
-  declarations: [AppComponent, MenuComponent, SettingsComponent, ToolbarComponent, LibraryComponent, AlbumComponent, CollectionComponent, PicturesComponent, DialogPictureInfoComponent, DialogPictureDeleteComponent],
+  declarations: [AppComponent, MenuComponent, SettingsComponent, ToolbarComponent, LibraryComponent, AlbumComponent, CollectionComponent, PicturesComponent, DialogPictureInfoComponent, DialogPictureDeleteComponent, DialogAlbumDeleteComponent],
   imports: [
     BrowserModule,
     FormsModule,

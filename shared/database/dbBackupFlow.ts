@@ -71,4 +71,16 @@ export class DbBackupFlow extends Sqlite {
         Logger.Log().debug(`Query: ${query}`);
         return stmt.all();  
     }
+
+    /**
+     * Delete pictures relations located in a specified album from the database
+     * @param album Album where the pictures are located in
+     */
+    deletePicturesWhereAlbum(album: string) {
+        let query: string = `Delete FROM backupFlow WHERE album='${album}'`;
+        const stmt = this.connection.prepare(query);
+        
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
 }

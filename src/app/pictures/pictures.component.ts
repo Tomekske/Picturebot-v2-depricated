@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, Directive, ElementRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, Directive, ElementRef, NgZone } from '@angular/core';
 import { MatTabGroup } from '@angular/material/tabs';
 import { ElectronService } from 'app/core/services';
 import { DataService } from 'app/services/data.service';
@@ -35,7 +35,7 @@ export class PicturesComponent implements OnInit {
   subsAlbums: Subscription;
   test: any = [];
 
-  constructor({ nativeElement }: ElementRef<HTMLImageElement>, private _electron: ElectronService, private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar) { 
+  constructor({ nativeElement }: ElementRef<HTMLImageElement>, private ngZone: NgZone, private _electron: ElectronService, private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar) { 
     const supports = 'loading' in HTMLImageElement.prototype;
     
     // Under construction
@@ -60,6 +60,23 @@ export class PicturesComponent implements OnInit {
       // Select the first album as the default album
       if (typeof this.albums[0] !== 'undefined') {
         this.selectedAlbumEvent(this.albums[0]);
+      }
+    });
+
+    // Monitor if an album is deleted
+    this._data.ctxIsAlbumDeleted.subscribe(state => {
+      if(state) {
+        // Get the albums within a certain collection
+        this.albums = IpcFrontend.getAlbums(this.selectedCollection);
+        // Make the album selector visible
+        this.isVisible = this._data.isAlbumSelectorVisible;
+
+        // Select the first album as the default album
+        if (typeof this.albums[0] !== 'undefined') {
+          this.selectedAlbumEvent(this.albums[0]);
+        } else {
+          this.base64List = [];
+        }
       }
     });
   }
@@ -152,7 +169,7 @@ export class PicturesComponent implements OnInit {
     // Picture deletion dialog
     this._dialog.open(DialogPictureDeleteComponent, { 
       data: { 
-        album: this.previewList[index],
+        picture: this.previewList[index],
         flow: this.selectedFlow 
       }
     }).afterClosed().subscribe(confirmed => {

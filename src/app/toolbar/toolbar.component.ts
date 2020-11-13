@@ -6,6 +6,8 @@ import { DataService } from '../services/data.service';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { IpcFrontend } from '../../../shared/ipc/frontend';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogAlbumDeleteComponent } from 'app/dialogs/dialog-album-delete/dialog-album-delete.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -19,8 +21,9 @@ export class ToolbarComponent implements OnInit {
   flowPath: string;
   albums: IAlbum[] = [];
   isOrganized: boolean;
+  selectedAlbum: IAlbum;
 
-  constructor(private _electron: ElectronService, private _data: DataService, private _router: Router, private _snack: MatSnackBar, private cdRef:ChangeDetectorRef) { }
+  constructor(private _electron: ElectronService, private _data: DataService, private _router: Router, private _snack: MatSnackBar, private cdRef:ChangeDetectorRef, private _dialog: MatDialog) { }
 
   /**
    * On init lifecycle hook
@@ -38,7 +41,12 @@ export class ToolbarComponent implements OnInit {
       this.selectedCollectionEvent();  
     }
 
-    this._data.ctxSelectedAlbum.subscribe(album => album.started ? this.isOrganized = true : this.isOrganized = false);
+    // Monitor wether a new album is selected
+    this._data.ctxSelectedAlbum.subscribe(album => {
+      // Check wether an album is organized and display the correct toolbar action
+      album.started ? this.isOrganized = true : this.isOrganized = false;
+      this.selectedAlbum = album;
+    });
   }
 
   /**
@@ -139,6 +147,24 @@ export class ToolbarComponent implements OnInit {
   }
 
   deleteAlbum() {
-    console.log("DELEEEETE");
+    // Picture deletion dialog
+    this._dialog.open(DialogAlbumDeleteComponent, { 
+      data: { 
+        album: this.selectedAlbum,
+        flow: this._data.selectedFlow
+      }
+    }).afterClosed().subscribe(confirmed => {
+      // Only delete pictures on confirmation
+      if(confirmed) {
+        IpcFrontend.deleteAlbum(this.selectedAlbum);
+
+        this._data.isAlbumDeleted = true;
+
+        this._snack.open(`Album '${this.selectedAlbum.album}' deleted`, "Dismiss", {
+          duration: 4000,
+          horizontalPosition: "end"
+        });
+      }
+    });
   }
 }
