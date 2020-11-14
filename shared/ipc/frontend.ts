@@ -50,6 +50,14 @@ export class  IpcFrontend {
     }
 
     /**
+     * Method to query all values from the collection table of a specified collection
+     * @param collection Selected collection
+     */
+    static getAllCollectionWhereCollection(collection: string) {
+        return ipcRenderer.sendSync("get-all-collections-where-collection", collection);
+    }
+
+    /**
      * Save collection to the database
      * @param data Form data which is stored within the database
      */

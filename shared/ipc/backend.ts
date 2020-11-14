@@ -116,6 +116,22 @@ export class  IpcBackend {
     }
 
     /**
+     * Method to query all values from the collection table of a specified collection
+     */
+    static getAllCollectionWhereCollection() {
+        ipcMain.on('get-all-collections-where-collection', (event, collection: string) => {
+            Logger.Log().debug('ipcMain: get-all-collections-where-collection');
+        
+            // Create database
+            const db = new DbCollection();
+            let result = db.queryAllWhereCollection(collection);
+            
+            db.dbClose();
+            event.returnValue = result;
+        });    
+    }
+
+    /**
      * Save collection to the database
      */
     static saveCollection() {

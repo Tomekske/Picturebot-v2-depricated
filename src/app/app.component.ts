@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ElectronService } from './core/services';
 import { TranslateService } from '@ngx-translate/core';
-import { AppConfig } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +13,5 @@ export class AppComponent {
     this.translate.setDefaultLang('en');
   }
 
-  ngOnInit() {
-    console.log("ngOnInit");
-  }
+  ngOnInit() { }
 }

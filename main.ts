@@ -112,6 +112,7 @@ try {
  */
 function ipcCollections() {
   IpcBackend.getCollections();
+  IpcBackend.getAllCollectionWhereCollection();
   IpcBackend.saveCollection();
 }
 

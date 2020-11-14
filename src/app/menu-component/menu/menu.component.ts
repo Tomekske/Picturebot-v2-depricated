@@ -1,4 +1,11 @@
+import { createViewChild } from '@angular/compiler/src/core';
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ElectronService } from 'app/core/services';
+import { DataService } from 'app/services/data.service';
+import { ICollection } from '../../../../shared/database/interfaces';
+import { Helper } from '../../../../shared/helper/helper';
+import { IpcFrontend } from '../../../../shared/ipc/frontend';
 
 @Component({
     selector: 'app-menu',
@@ -14,6 +21,13 @@ export class MenuComponent {
       icon: 'library_books',
       items: [
         {
+          label: 'Open',
+          icon: 'open_in_new',
+          onSelected: () => {
+            Helper.openInExplorer(this.selectedCollection.library, this._snack);
+          }
+        },
+        {
           label: 'Add',
           link: '/addLibrary',
           icon: 'add_box'
@@ -25,6 +39,13 @@ export class MenuComponent {
       icon: 'perm_media',
       items: [
         {
+          label: 'Open',
+          icon: 'open_in_new',
+          onSelected: () => {
+            Helper.openInExplorer(this.selectedCollection.collection, this._snack);
+          }
+        },
+        {
           label: 'Add',
           link: '/addCollection',
           icon: 'add_box'
@@ -35,6 +56,19 @@ export class MenuComponent {
       label: 'Album',
       link: '/addAlbum',
       icon: 'photo_album'
+    },
+    {
+      label: 'Developers',
+      icon: 'bug_report',
+      items: [
+        {
+          label: 'Open',
+          icon: 'open_in_new',
+          onSelected: () => {
+            Helper.openFile(this._electron.path.join(Helper.pathMyDocuments(), Helper.app, "app.log"), this._snack);
+          }
+        }
+      ]
     },
     {
       label: 'Settings',
@@ -57,5 +91,9 @@ export class MenuComponent {
     rtlLayout: false
 };
 
-  constructor() { }
+selectedCollection: ICollection;
+
+  constructor(private _electron: ElectronService, private _data: DataService, private _snack: MatSnackBar) { 
+    this._data.ctxSelectedCollection.subscribe(collection => this.selectedCollection = IpcFrontend.getAllCollectionWhereCollection(collection));
+  }
 }

@@ -35,7 +35,6 @@ export class CollectionComponent implements OnInit {
     });
 
     IpcFrontend.getLibraries().forEach((library: ILibrary) => {
-      console.log(library.library);
       this.libraries.push(library.library);
     });
 

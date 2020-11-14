@@ -21,8 +21,6 @@ export class SettingsComponent implements OnInit {
    * On init lifecycle hook
    */
   ngOnInit(): void {
-    console.log("SETTINGS");
-
     let formData = {};
     const isEmpty = IpcFrontend.checkSettingsEmpty();
     

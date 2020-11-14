@@ -66,6 +66,18 @@ export class DbCollection extends Sqlite {
     }
 
     /**
+     * Method to query all values from the collection table of a specified collection
+     * @param collection Selected collection
+     */
+    queryAllWhereCollection(collection: string) {
+        let query: string = `SELECT * FROM Collection WHERE collection='${collection}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
+        return stmt.get();
+    }
+
+    /**
      * Method to query all collections
      */
     queryCollections() {

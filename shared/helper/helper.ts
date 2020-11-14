@@ -143,17 +143,36 @@ export class Helper {
     }
 
     /**
-     * Encode a picture to base64
-     * @param path Absolute path to the picture
+     * Opens a specified file
+     * @param path Path to open the file
      */
-    static encodeBase64(path) {
-        let base64 = fs.readFileSync(path).toString('base64');
+    static openFile(path: string, snack: MatSnackBar) {
+        let message: string;
 
-        return `data:image/jpg;base64,${ base64 }`
+        // Only open the path in the explorer if the path exists
+        if(fs.existsSync(path)) {
+            message = `File '${path}' opened`;
+
+            cp.exec(`"${path}"`);
+            Logger.Log().debug(`File: ${message}`);
+        } else {
+            message = `Unable to open file '${path}'`;
+
+            Logger.Log().error(`File: ${message}`);
+        }
+
+        // Display message to the user
+        snack.open(message, "Dismiss", {
+            duration: 4000,
+            horizontalPosition: "end"
+        });
     }
 
+    /**
+     * Delete a picture from the filesystem
+     * @param path Path to the picture
+     */
     static deletePicture(path: string) {
-        Logger.Log().debug("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
         if(fs.existsSync(path)) {
             try {
                 fs.unlinkSync(path);
