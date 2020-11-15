@@ -40,7 +40,6 @@ export class SettingsComponent implements OnInit {
     }
 
     this.settingsForm = this.fb.group(formData);
-    this._data.isAlbumSelectorVisible = false;
   }
 
   /**

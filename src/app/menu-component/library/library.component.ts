@@ -25,8 +25,6 @@ export class LibraryComponent implements OnInit {
       base: '',
       name: ''
     });
-
-    this._data.isAlbumSelectorVisible = false;
   }
 
   /**

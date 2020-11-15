@@ -31,7 +31,7 @@
 </div>    
 <!-- Album selector -->
 <div fxFlex="15" fxLayoutAlign="center center">
-    <div class="test">
+    <div *ngIf="isVisible">
         <mat-card >
             <mat-selection-list [multiple]="false" >
                 <div mat-subheader>Select album</div>

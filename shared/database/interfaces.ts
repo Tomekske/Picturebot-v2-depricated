@@ -96,6 +96,8 @@ interface IPicture {
     date?: string;
     /** Creation time of the picture */
     time?: string;
+    /** Source location of the picture */
+    source?: string;
 }
 
 /**
@@ -104,10 +106,20 @@ interface IPicture {
 export interface IBase extends IPicture {
     /** Check wether a picture is selected for editing */
     selection?: number;
-    /** Source where the file is located */
-    source?: string;
-    /** Destination where the file gets stored */
-    destination?: string;
+    /** Backup location of the file */
+    backup?: string;
+    /** Base location of the file */
+    base?: string;
+}
+
+/**
+ * Interface containing backup properties
+ */
+export interface IBackup extends IPicture {
+    /** Base location of the file */
+    base?: string;
+    /** Backup location of the file */
+    backup?: string; 
 }
 
 /**

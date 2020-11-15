@@ -8,7 +8,7 @@ import { DbCollection } from '../database/dbCollection';
 import { DbLibrary } from '../database/dbLibrary';
 import { DbSettings } from '../database/dbSettings';
 import { DbAlbum } from '../database/dbAlbum';
-import { IAlbum, IBase, ICollection, IFlow, ILibrary, IPreview } from '../database/interfaces';
+import { IAlbum, IBackup, IBase, ICollection, IFlow, ILibrary, IPreview } from '../database/interfaces';
 import { Helper } from '../helper/helper';
 import { Logger } from '../logger/logger';
 import { DbBaseFlow } from '../database/dbBaseFlow';
@@ -152,7 +152,7 @@ export class  IpcBackend {
      * Hashed pictures which are saved to the database
      */
     static savePictures() {
-        ipcMain.on('save-pictures', (event, args, album: IAlbum) => {
+        ipcMain.on('save-pictures', (event, args: IBase[], album: IAlbum) => {
             Logger.Log().debug('ipcMain: save-pictures');
         
             const dbSettings = new DbSettings();
@@ -191,8 +191,8 @@ export class  IpcBackend {
                 const destBackup: string = path.join(album.collection,`${album.name} ${album.date}`, flows.backup, picture.hashed);
                 const destPreview: string = path.join(album.collection,`${album.name} ${album.date}`, flows.preview, `${picture.hashed.split('.')[0]}.jpg`);
                 
-                let dataBaseFlow: IBase = { collection: album.collection, name: picture.name, album: album.album, selection: 0, source: picture.source, destination: destBase, date: picture.date, time: picture.time};
-                let dataBackupFlow: IBase = { collection: album.collection, name: picture.name, album: album.album, source: destBase, destination: destBackup, date: picture.date, time: picture.time};
+                let dataBaseFlow: IBase = { collection: album.collection, name: picture.name, album: album.album, selection: 0, backup: destBackup, base: destBase, date: picture.date, time: picture.time};
+                let dataBackupFlow: IBackup = { collection: album.collection, name: picture.name, album: album.album, base: destBase, backup: destBackup, date: picture.date, time: picture.time};
                 let dataPreviewFlow: IPreview = { collection: album.collection, name: picture.name, album: album.album, base: destBase, preview: destPreview, date: picture.date, time: picture.time}; 
         
                 // copy base
@@ -219,6 +219,7 @@ export class  IpcBackend {
               picDb.dbClose();
               backupDb.dbClose();
               dbPreview.dbClose();
+              dbSettings.dbClose();
             }
         
             event.returnValue = "";

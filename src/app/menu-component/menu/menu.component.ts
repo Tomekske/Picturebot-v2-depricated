@@ -58,7 +58,7 @@ export class MenuComponent {
       icon: 'photo_album'
     },
     {
-      label: 'Developers',
+      label: 'Developers Tab',
       icon: 'bug_report',
       items: [
         {
@@ -66,6 +66,13 @@ export class MenuComponent {
           icon: 'open_in_new',
           onSelected: () => {
             Helper.openFile(this._electron.path.join(Helper.pathMyDocuments(), Helper.app, "app.log"), this._snack);
+          }
+        },
+        {
+          label: 'Pictures',
+          icon: 'insert_photo',
+          onSelected: () => {
+            Helper.openInExplorer("D:\\Pictures", this._snack);
           }
         }
       ]

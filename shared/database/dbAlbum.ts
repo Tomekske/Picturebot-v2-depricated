@@ -78,7 +78,7 @@ export class DbAlbum extends Sqlite {
      * @param collection Collection from which certain records are queried
      */
     queryAlbums(collection) {
-        let query: string = `SELECT album, collection, name, date, started FROM Album WHERE collection='${collection}';`;
+        let query: string = `SELECT album, collection, name, date, started FROM Album WHERE collection='${collection}' ORDER BY name ASC;`;
         const stmt = this.connection.prepare(query);
 
         Logger.Log().debug(`Query: ${query}`);

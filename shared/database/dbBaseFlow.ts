@@ -19,8 +19,8 @@ export class DbBaseFlow extends Sqlite {
             "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
             "selection" INTEGER NULL,
-            "source" varchar(400) NOT NULL,
-            "destination" varchar(400) NOT NULL PRIMARY KEY,
+            "backup" varchar(400) NOT NULL,
+            "base" varchar(400) NOT NULL PRIMARY KEY,
             "date" varchar(10) NOT NULL,
             "time" varchar(8) NOT NULL)`;
 
@@ -44,7 +44,7 @@ export class DbBaseFlow extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @selection, @source, @destination, @date, @time);");
+        const stmt = this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @selection, @backup, @base, @date, @time);");
 
         stmt.run(args);
         Logger.Log().debug(`Query: INSERT INTO baseFlow VALUES ("${JSON.stringify(args)}")`);
@@ -55,7 +55,7 @@ export class DbBaseFlow extends Sqlite {
      * @param update updated values
      */
     updateName(update) {
-        let query: string = `UPDATE baseFlow SET name='${update.name}' WHERE destination='${update.destination}' AND album='${update.album}';`;
+        let query: string = `UPDATE baseFlow SET name='${update.name}' WHERE destination='${update.location}' AND album='${update.album}';`;
         const stmt = this.connection.prepare(query);
 
         stmt.run();

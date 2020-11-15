@@ -37,8 +37,6 @@ export class CollectionComponent implements OnInit {
     IpcFrontend.getLibraries().forEach((library: ILibrary) => {
       this.libraries.push(library.library);
     });
-
-    this._data.isAlbumSelectorVisible = false;
   }
 
   /**

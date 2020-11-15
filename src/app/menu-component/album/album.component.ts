@@ -36,8 +36,6 @@ export class AlbumComponent implements OnInit {
     IpcFrontend.getCollections().forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
-
-    this._data.isAlbumSelectorVisible = false;
   }
 
   /**
@@ -72,7 +70,7 @@ export class AlbumComponent implements OnInit {
     let that = this;
     this.pictures.forEach((picture, i) => {
       const newFilename = Helper.renameHashedPicture(picture, i + 1, 5);
-      that.hashedPictures.push({source: picture.source, name: picture.name, hashed: newFilename, date: picture.date, time: picture.time});
+      that.hashedPictures.push({source: picture.source, name: newFilename, hashed: newFilename, date: picture.date, time: picture.time});
     });
 
     IpcFrontend.savePictures(this.hashedPictures, album);

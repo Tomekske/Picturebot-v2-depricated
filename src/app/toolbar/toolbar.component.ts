@@ -54,7 +54,6 @@ export class ToolbarComponent implements OnInit {
    * @param $event Selection events
    */
   selectedCollectionEvent() {
-    this._data.isAlbumSelectorVisible = true;
     this._data.selectedCollection = this.selectedCollection;
       
     this._router.navigateByUrl('/main');
@@ -90,11 +89,11 @@ export class ToolbarComponent implements OnInit {
           let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5));
 
           // Rename pictures with the new file name
-          this._electron.fs.rename(picture.destination, destination, function (err) {
+          this._electron.fs.rename(picture.base, destination, function (err) {
             if (err) console.log('ERROR: ' + err);
           });
 
-          let update = { name: this._electron.path.basename(destination), destination: picture.destination, album: picture.album, dest: destination };
+          let update = { name: this._electron.path.basename(destination), destination: picture.base, album: picture.album, dest: destination };
 
           IpcFrontend.updateBaseFlowName(update);
         });
