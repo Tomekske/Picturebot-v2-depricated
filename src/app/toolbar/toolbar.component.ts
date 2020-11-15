@@ -55,6 +55,7 @@ export class ToolbarComponent implements OnInit {
    */
   selectedCollectionEvent() {
     this._data.selectedCollection = this.selectedCollection;
+    this._data.isAlbumSelectorVisible = true;
       
     this._router.navigateByUrl('/main');
   }

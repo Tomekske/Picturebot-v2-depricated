@@ -48,15 +48,12 @@ export class PicturesComponent implements OnInit {
    * On init lifecycle hook
    */
   ngOnInit(): void {
-    this.isVisible = false;
     // Monitor for collection changes
     this._data.ctxSelectedCollection.subscribe(collection => {
+      this.isVisible = false;
       this.selectedCollection = collection;
-      
       // Get the albums within a certain collection
       this.albums = IpcFrontend.getAlbums(collection);
-
-      console.log(`ALBUUUMS: ${this.albums.length}`);
 
       // Select the first album as the default album
       if (typeof this.albums[0] !== 'undefined' && this.albums.length !== 0) {
@@ -72,14 +69,13 @@ export class PicturesComponent implements OnInit {
       if(state) {
         // Get the albums within a certain collection
         this.albums = IpcFrontend.getAlbums(this.selectedCollection);
-        // Make the album selector visible
-        this.isVisible = this._data.isAlbumSelectorVisible;
 
         // Select the first album as the default album
         if (typeof this.albums[0] !== 'undefined') {
           this.selectedAlbumEvent(this.albums[0]);
         } else {
           this.base64List = [];
+          this.isVisible = this._data.isAlbumSelectorVisible = false;
         }
       }
     });

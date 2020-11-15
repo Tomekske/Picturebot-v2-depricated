@@ -40,7 +40,7 @@
   background-color: #1f1e1d;
 }
 
-.test {
+.fixedPosition {
   position: fixed;
   top: 130px;
   width: 12%;
