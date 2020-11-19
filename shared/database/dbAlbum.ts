@@ -20,9 +20,9 @@ export class DbAlbum extends Sqlite {
             "date" date NOT NULL,
             "started" INTEGER NULL,
             "album" varchar(250) NOT NULL PRIMARY KEY)`;
-        
-        this.connection.exec(query);
+
         Logger.Log().debug(`Query: ${query}`);
+        this.connection.exec(query);
     }
     
     /**
@@ -45,8 +45,8 @@ export class DbAlbum extends Sqlite {
             @collection, @name, @date, @started, @album);`
         );
 
-        stmt.run(args);
         Logger.Log().debug(`Query: INSERT INTO Album VALUES ("${JSON.stringify(args)}")`);
+        stmt.run(args);
     }
 
     /**
@@ -58,8 +58,8 @@ export class DbAlbum extends Sqlite {
         let query: string = `UPDATE album SET started=${isStarted} WHERE album='${album}'`;
         const stmt = this.connection.prepare(query);
 
-        stmt.run();
         Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
     }
 
     /**

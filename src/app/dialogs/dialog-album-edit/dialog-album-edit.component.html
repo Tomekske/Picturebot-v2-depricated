@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>Edit album</h1>
+<div mat-dialog-content>
+    <div class="example-form">
+        <div style="padding-top: 1%;">
+            <mat-form-field class="example-full-width" style="width: 60%;">
+                <mat-label>Album name</mat-label>
+                <input matInput type="text" [(ngModel)]="name">
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="width: 35%; padding-left: 5%;"> 
+                <mat-label>Select date</mat-label>
+                <input matInput [matDatepicker]="picker" [(ngModel)]="date">
+                <mat-datepicker-toggle matSuffix [for]="picker" disabled="false"></mat-datepicker-toggle>
+                <mat-datepicker #picker disabled="false"></mat-datepicker>
+            </mat-form-field> 
+        </div>
+    </div>
+</div>
+<!-- <div mat-dialog-actions> -->
+<div>
+    <div align="end">
+        <button mat-button [mat-dialog-close]="{album: name, date: date}" cdkFocusInitial>Ok</button>
+        <!-- <button mat-button (click)="test()">Ok</button> -->
+    </div>        
+</div>

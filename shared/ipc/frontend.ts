@@ -132,6 +132,15 @@ export class  IpcFrontend {
     }
 
     /**
+     * Save an album to the database
+     * @param currentAlbum Selected album name
+     * @param updatedAlbum Updated album
+     */
+    static updateAlbum(currentAlbum: string, updatedAlbum: IAlbum) {
+        ipcRenderer.sendSync("update-album", currentAlbum, updatedAlbum);
+    }
+
+    /**
      * Get the flows which are displayed in the tab component
      * @param collection Selected collection
      */

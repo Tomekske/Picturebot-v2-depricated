@@ -62,7 +62,7 @@ export class MenuComponent {
       icon: 'bug_report',
       items: [
         {
-          label: 'Open',
+          label: 'Log file',
           icon: 'open_in_new',
           onSelected: () => {
             Helper.openFile(this._electron.path.join(Helper.pathMyDocuments(), Helper.app, "app.log"), this._snack);

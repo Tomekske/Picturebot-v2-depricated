@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import '../polyfills';
 
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CoreModule } from './core/core.module';
@@ -27,20 +27,33 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { FlexLayoutModule } from '@angular/flex-layout'
-import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { DateAdapter, MatDateFormats, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { PicturesComponent } from './pictures/pictures.component'
 import { CrystalLightboxModule } from '@crystalui/angular-lightbox';
 import { DialogPictureInfoComponent } from './dialogs/dialog-picture-info/dialog-picture-info.component';
 import { DialogPictureDeleteComponent } from './dialogs/dialog-picture-delete/dialog-picture-delete.component';
 import { DialogAlbumDeleteComponent } from './dialogs/dialog-album-delete/dialog-album-delete.component';
-
+import { DialogAlbumEditComponent } from './dialogs/dialog-album-edit/dialog-album-edit.component';
+import {  MomentDateAdapter} from '@angular/material-moment-adapter';
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
+export const MY_FORMATS: MatDateFormats = {
+  parse: {
+      dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+      dateInput: 'DD/MM/YYYY',
+      monthYearLabel: 'MMM YYYY',
+      dateA11yLabel: 'LL',
+      monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
 @NgModule({
-  declarations: [AppComponent, MenuComponent, SettingsComponent, ToolbarComponent, LibraryComponent, AlbumComponent, CollectionComponent, PicturesComponent, DialogPictureInfoComponent, DialogPictureDeleteComponent, DialogAlbumDeleteComponent],
+  declarations: [AppComponent, MenuComponent, SettingsComponent, ToolbarComponent, LibraryComponent, AlbumComponent, CollectionComponent, PicturesComponent, DialogPictureInfoComponent, DialogPictureDeleteComponent, DialogAlbumDeleteComponent, DialogAlbumEditComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -70,7 +83,11 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
       {path: 'addLibrary', component: LibraryComponent}
     ])
   ],
-  providers: [DataService, {provide: MAT_DATE_LOCALE, useValue: 'en-GB'}],
+  providers: [DataService, 
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+    // { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    // { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

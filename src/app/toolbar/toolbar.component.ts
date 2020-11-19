@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { IpcFrontend } from '../../../shared/ipc/frontend';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAlbumDeleteComponent } from 'app/dialogs/dialog-album-delete/dialog-album-delete.component';
+import { DialogAlbumEditComponent } from 'app/dialogs/dialog-album-edit/dialog-album-edit.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -146,6 +147,9 @@ export class ToolbarComponent implements OnInit {
     Helper.openInExplorer(this.flowPath, this._snack);
   }
 
+  /**
+   * Delete an album relation from the database
+   */
   deleteAlbum() {
     // Picture deletion dialog
     this._dialog.open(DialogAlbumDeleteComponent, { 
@@ -165,6 +169,30 @@ export class ToolbarComponent implements OnInit {
           horizontalPosition: "end"
         });
       }
+    });
+  }
+
+  /**
+   * Edit album information
+   */
+  editAlbum() {
+    // Picture deletion dialog
+    this._dialog.open(DialogAlbumEditComponent, { 
+      data: { 
+        album: this.selectedAlbum
+      }
+    }).afterClosed().subscribe(form => {
+      let updatedAlbum: IAlbum = {  
+        collection: this.selectedAlbum.collection,
+        name: form.album, 
+        date: Helper.formatDate(form.date), 
+        album: this._electron.path.join(this.selectedAlbum.collection, `${form.album} ${Helper.formatDate(form.date)}`), // error
+        started: this.selectedAlbum.started
+      };
+
+      IpcFrontend.updateAlbum(this.selectedAlbum.album, updatedAlbum);
+      Helper.renameDirectory(this.selectedAlbum.album, updatedAlbum.album);
+      this._data.isAlbumUpdated = true;
     });
   }
 }

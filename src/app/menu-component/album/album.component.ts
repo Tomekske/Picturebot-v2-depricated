@@ -43,15 +43,14 @@ export class AlbumComponent implements OnInit {
    */
   saveAlbum() {   
     let dropzone: IAlbum = this.albumForm.value;
-
-    Helper.formatDate(dropzone.date);
+    let formatedDate = Helper.formatDate(dropzone.date);
 
     // Create album object
     let album: IAlbum = { 
       collection: dropzone.collection, 
       name: dropzone.name, 
-      date: Helper.formatDate(dropzone.date), 
-      album: this.electron.path.join(dropzone.collection, `${dropzone.name} ${Helper.formatDate(dropzone.date)}`), 
+      date: formatedDate, 
+      album: this.electron.path.join(dropzone.collection, `${dropzone.name} ${formatedDate}`), 
       started: 0
     };
 
@@ -74,13 +73,12 @@ export class AlbumComponent implements OnInit {
     });
 
     IpcFrontend.savePictures(this.hashedPictures, album);
-    
+    this._data.isAlbumSelectorVisible = true;
+
     this._snack.open(`Album '${album.album}' saved!`, "Dismiss", {
       duration: 4000,
       horizontalPosition: "end"
     });
-
-    this._data.isAlbumSelectorVisible = true;
         
     this._router.navigateByUrl('/main');
   }

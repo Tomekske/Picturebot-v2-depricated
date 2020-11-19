@@ -338,6 +338,36 @@ export class  IpcBackend {
     }
 
     /**
+     * Save an album to the database
+     */
+    static updateAlbum() {
+        ipcMain.on('update-album', (event, currentAlbum: string, updatedAlbum: IAlbum) => {
+            Logger.Log().debug('ipcMain: update-album');
+        
+            // Create database
+            const db = new DbAlbum();
+            db.deleteAlbum(currentAlbum);   
+            db.insertRow(updatedAlbum);
+            db.dbClose();
+
+            // Edit the album name in associated tables
+            const backupDb = new DbBackupFlow();
+            backupDb.updateAlbum(currentAlbum, updatedAlbum.album);
+            backupDb.dbClose();
+
+            const baseDb = new DbBaseFlow();
+            baseDb.updateAlbum(currentAlbum, updatedAlbum.album);
+            baseDb.dbClose();
+
+            const previewDb = new DbPreviewFlow();
+            previewDb.updateAlbum(currentAlbum, updatedAlbum.album);
+            previewDb.dbClose();
+
+            event.returnValue = "";
+        });    
+    }
+
+    /**
      * Get the flows which are displayed in the tab component
      */
     static getTabFlows() {

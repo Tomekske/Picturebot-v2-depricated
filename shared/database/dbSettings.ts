@@ -21,9 +21,9 @@ export class DbSettings extends Sqlite {
             "fileType" varchar(200) NOT NULL, 
             "logLevel" varchar(200) NOT NULL, 
             "conversion" varchar(3) NOT NULL);`;
-
-        this.connection.exec(query);
+        
         Logger.Log().debug(`Query: ${query}`);
+        this.connection.exec(query);
     }
 
     /**
@@ -44,8 +44,8 @@ export class DbSettings extends Sqlite {
     insertRow(args) {
         const stmt = this.connection.prepare("INSERT INTO Settings VALUES (@uploadEdited, @uploadSocialMedia, @sofwareEditing, @sofwarePostProcessing, @fileType, @logLevel, @conversion);");
         
-        stmt.run(args);
         Logger.Log().debug(`Query: INSERT INTO Settings VALUES ("${JSON.stringify(args)}")`);
+        stmt.run(args);
     }
 
     /**
@@ -55,8 +55,8 @@ export class DbSettings extends Sqlite {
     updateRow(args) {
         const stmt = this.connection.prepare("UPDATE Settings set uploadEdited=@uploadEdited, uploadSocialMedia=@uploadSocialMedia, sofwareEditing = @sofwareEditing, sofwarePostProcessing=@sofwarePostProcessing, fileType=@fileType, logLevel=@logLevel, conversion=@conversion;");
         
+        Logger.Log().debug(`Query: UPDATE Settings set "${JSON.stringify(args)}"`);     
         stmt.run(args);
-        Logger.Log().debug(`Query: UPDATE Settings set "${JSON.stringify(args)}"`);
     }
 
     /**

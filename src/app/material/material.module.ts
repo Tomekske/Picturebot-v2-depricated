@@ -44,7 +44,6 @@ const MaterialComponents = [
   MatDialogModule
 ];
 
-
 @NgModule({
   imports: [ MaterialComponents ],
   exports: [MaterialComponents ]

@@ -26,8 +26,8 @@ export class DbCollection extends Sqlite {
             "selection" varchar(40) NOT NULL,
             "collection" varchar(250) NOT NULL PRIMARY KEY)`;
 
-        this.connection.exec(query);
         Logger.Log().debug(`Query: ${query}`);
+        this.connection.exec(query);
     }
 
     /**
@@ -50,8 +50,8 @@ export class DbCollection extends Sqlite {
             @library, @name, @backup, @base, @preview, @files, @edited, @socialMedia, @selection, @collection);`
         );
 
-        stmt.run(args);
         Logger.Log().debug(`Query: INSERT INTO Collection VALUES ("${JSON.stringify(args)}")`);
+        stmt.run(args);
     }
 
     /**

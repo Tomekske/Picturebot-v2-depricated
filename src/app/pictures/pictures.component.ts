@@ -79,6 +79,15 @@ export class PicturesComponent implements OnInit {
         }
       }
     });
+
+    // Monitor wether the album is edited
+    this._data.ctxIsAlbumUpdated.subscribe(state => {
+      if(state) {
+        // Get the albums within a certain collection
+        this.albums = IpcFrontend.getAlbums(this.selectedCollection);
+        this.selectedAlbumEvent(this.albums[0]);
+      }
+    });
   }
 
   /**

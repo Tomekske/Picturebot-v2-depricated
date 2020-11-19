@@ -152,6 +152,7 @@ function ipcAlbums() {
   IpcBackend.updateAlbumIsOrganized();
   IpcBackend.getAlbums();
   IpcBackend.deleteAlbum();
+  IpcBackend.updateAlbum();
 }
 
 /**

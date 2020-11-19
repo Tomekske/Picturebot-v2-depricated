@@ -23,8 +23,8 @@ export class DbBackupFlow extends Sqlite {
             "date" varchar(10) NOT NULL,
             "time" varchar(8) NOT NULL)`;
 
-        this.connection.exec(query);
         Logger.Log().debug(`Query: ${query}`);
+        this.connection.exec(query);
     }
 
     /**
@@ -44,9 +44,9 @@ export class DbBackupFlow extends Sqlite {
      */
     insertRow(args) {
         const stmt = this.connection.prepare("INSERT INTO backupFlow VALUES (@collection, @name, @album, @base, @backup, @date, @time);");
-
-        stmt.run(args);
+        
         Logger.Log().debug(`Query: INSERT INTO backupFlow VALUES ("${JSON.stringify(args)}")`);
+        stmt.run(args);
     }
 
     /**
@@ -80,6 +80,19 @@ export class DbBackupFlow extends Sqlite {
         let query: string = `Delete FROM backupFlow WHERE album='${album}'`;
         const stmt = this.connection.prepare(query);
         
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
+
+    /**
+     * Update album's name within the album, base and backup record
+     * @param value Current album name
+     * @param updated Updated album name
+     */
+    updateAlbum(value: string, updated: string) {
+        let query: string = `UPDATE backupFlow SET album=REPLACE(album,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), backup=REPLACE(backup,'${value}','${updated}');`;
+        const stmt = this.connection.prepare(query);
+
         Logger.Log().debug(`Query: ${query}`);
         stmt.run();
     }

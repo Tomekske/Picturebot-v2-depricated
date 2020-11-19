@@ -17,9 +17,9 @@ export class DbLibrary extends Sqlite {
             "name" varchar(200) NOT NULL, 
             "base" varchar(200) NOT NULL, 
             "library" varchar(400) NOT NULL PRIMARY KEY)`;
-
-        this.connection.exec(query);
+        
         Logger.Log().debug(`Query: ${query}`);
+        this.connection.exec(query);
     }
 
     /**
@@ -39,9 +39,9 @@ export class DbLibrary extends Sqlite {
      */
     insertRow(args) {
         const stmt = this.connection.prepare("INSERT INTO Library VALUES (@name, @base, @library);");
-
-        stmt.run(args);
+        
         Logger.Log().debug(`Query: INSERT INTO Library VALUES ("${JSON.stringify(args)}")`);
+        stmt.run(args);
     }
 
     /**

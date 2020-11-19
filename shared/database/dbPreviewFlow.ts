@@ -23,8 +23,8 @@ export class DbPreviewFlow extends Sqlite {
             "date" varchar(10) NOT NULL,
             "time" varchar(8) NOT NULL)`;
 
-        this.connection.exec(query);
         Logger.Log().debug(`Query: ${query}`);
+        this.connection.exec(query);
     }
 
     /**
@@ -44,9 +44,9 @@ export class DbPreviewFlow extends Sqlite {
      */
     insertRow(args) {
         const stmt = this.connection.prepare("INSERT INTO PreviewFlow VALUES (@collection, @name, @album, @base, @preview, @date, @time);");
-
-        stmt.run(args);
+        
         Logger.Log().debug(`Query: INSERT INTO PreviewFlow VALUES ("${JSON.stringify(args)}")`);
+        stmt.run(args);
     }
 
     /**
@@ -116,6 +116,19 @@ export class DbPreviewFlow extends Sqlite {
         let query: string = `Delete FROM previewFlow WHERE album='${album}'`;
         const stmt = this.connection.prepare(query);
         
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
+
+    /**
+     * Update album's name within the album, base and preview record
+     * @param value Current album name
+     * @param updated Updated album name
+     */
+    updateAlbum(value: string, updated: string) {
+        let query: string = `UPDATE previewFlow SET album=REPLACE(album,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), preview=REPLACE(preview,'${value}','${updated}');`;
+        const stmt = this.connection.prepare(query);
+
         Logger.Log().debug(`Query: ${query}`);
         stmt.run();
     }

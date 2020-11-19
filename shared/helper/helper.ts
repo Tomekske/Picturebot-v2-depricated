@@ -74,7 +74,7 @@ export class Helper {
     static formatDate(iso: string): string {
         const date = new Date(iso);
 
-        return date.toLocaleDateString('en-GB', { month: '2-digit', day: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+        return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
     }
 
     /**
@@ -182,6 +182,21 @@ export class Helper {
             }
         } else {
             Logger.Log().error(`Delete picture: picture '${path}' doesn't exists`);
+        }
+    }
+
+    /**
+     * Rename a directory
+     * @param source Source location of the folder
+     * @param destination Destination location of the folder
+     */
+    static renameDirectory(source: string, destination: string) {
+        if(fs.existsSync(source)) {
+            fs.renameSync(source, destination);
+            Logger.Log().debug(`Rename directory: directory '${source}' -> '${destination}' renamed`);
+
+        } else {
+            Logger.Log().error(`Rename directory: directory '${source}' already exists`);
         }
     }
 }

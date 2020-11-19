@@ -24,8 +24,8 @@ export class DbBaseFlow extends Sqlite {
             "date" varchar(10) NOT NULL,
             "time" varchar(8) NOT NULL)`;
 
-        this.connection.exec(query);
         Logger.Log().debug(`Query: ${query}`);
+        this.connection.exec(query);
     }
 
     /**
@@ -45,9 +45,9 @@ export class DbBaseFlow extends Sqlite {
      */
     insertRow(args) {
         const stmt = this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @selection, @backup, @base, @date, @time);");
-
-        stmt.run(args);
+        
         Logger.Log().debug(`Query: INSERT INTO baseFlow VALUES ("${JSON.stringify(args)}")`);
+        stmt.run(args);
     }
 
     /**
@@ -58,8 +58,8 @@ export class DbBaseFlow extends Sqlite {
         let query: string = `UPDATE baseFlow SET name='${update.name}' WHERE destination='${update.location}' AND album='${update.album}';`;
         const stmt = this.connection.prepare(query);
 
-        stmt.run();
         Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
     }
 
     /**
@@ -69,9 +69,9 @@ export class DbBaseFlow extends Sqlite {
     updateDestination(update) {
         let query: string = `UPDATE baseFlow SET destination='${update.dest}' WHERE name='${update.name}' AND album='${update.album}';`;
         const stmt = this.connection.prepare(query);
-
-        stmt.run();
+        
         Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
     }
 
     /**
@@ -117,6 +117,19 @@ export class DbBaseFlow extends Sqlite {
         let query: string = `Delete FROM baseFlow WHERE album='${album}'`;
         const stmt = this.connection.prepare(query);
         
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
+
+    /**
+     * Update album's name within the album, base and backup record
+     * @param value Current album name
+     * @param updated Updated album name
+     */
+    updateAlbum(value: string, updated: string) {
+        let query: string = `UPDATE baseFlow SET album=REPLACE(album,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), backup=REPLACE(backup,'${value}','${updated}');`;
+        const stmt = this.connection.prepare(query);
+
         Logger.Log().debug(`Query: ${query}`);
         stmt.run();
     }
