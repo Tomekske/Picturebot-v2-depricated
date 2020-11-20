@@ -54,7 +54,7 @@ export class DbPreviewFlow extends Sqlite {
      * @param update Updated values
      */
     updateName(update) {
-        let query: string = `UPDATE previewFlow SET name='${update.name}' WHERE preview='${update.destination}' AND album='${update.album}';`;
+        let query: string = `UPDATE previewFlow SET name='${update.name}' WHERE preview='${update.preview}' AND album='${update.album}';`;
         const stmt = this.connection.prepare(query);
 
         Logger.Log().debug(`Query: ${query}`);
@@ -65,8 +65,8 @@ export class DbPreviewFlow extends Sqlite {
      * Method to update the destination record
      * @param update Updated values
      */
-    updateDestination(update) {
-        let query: string = `UPDATE previewFlow SET preview='${update.dest}' WHERE name='${update.name}' AND album='${update.album}';`;
+    updatePreview(update) {
+        let query: string = `UPDATE previewFlow SET preview='${update.updatedPreview}' WHERE name='${update.name}' AND album='${update.album}';`;
         const stmt = this.connection.prepare(query);
 
         Logger.Log().debug(`Query: ${query}`);

@@ -236,7 +236,7 @@ export class  IpcBackend {
             const db = new DbPreviewFlow();
         
             db.updateName(update);
-            db.updateDestination(update);
+            db.updatePreview(update);
             db.dbClose();
             
             event.returnValue = "";
@@ -266,11 +266,14 @@ export class  IpcBackend {
         ipcMain.on('update-name-baseFlow', (event, update) => {
             Logger.Log().debug('ipcMain: update-name-baseFlow');
         
-            const db = new DbBaseFlow();
-        
-            db.updateName(update);
-            db.updateDestination(update);
-            db.dbClose();
+            const dbBase = new DbBaseFlow();
+            dbBase.updateName(update);
+            dbBase.updateBase(update);
+            dbBase.dbClose();
+
+            const dbBackup = new DbBackupFlow();
+            dbBackup.updateBase(update);
+            dbBackup.dbClose();
             
             event.returnValue = "";
         });

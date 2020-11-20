@@ -96,4 +96,16 @@ export class DbBackupFlow extends Sqlite {
         Logger.Log().debug(`Query: ${query}`);
         stmt.run();
     }
+
+    /**
+     * Method to update the base location
+     * @param update updated values
+     */
+    updateBase(update) {
+        let query: string = `UPDATE backupFlow SET base='${update.updatedBase}' WHERE backup='${update.backup}' AND album='${update.album}';`;
+        const stmt = this.connection.prepare(query);
+        
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
 }

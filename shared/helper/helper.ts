@@ -111,7 +111,8 @@ export class Helper {
      */
     static renameOrganizesPicture(picture: any, index: number, padding: number, isPreview: boolean = false): string {
         let dirname = path.basename(picture.album);
-        let extname = isPreview ? path.extname(picture.preview) : path.extname(picture.destination);
+        // Get the correct extension format of the original picture
+        let extname = isPreview ? path.extname(picture.preview) : path.extname(picture.base);
 
         return `${dirname.split(" ")[0]}_${dirname.split(" ")[1]}_${(index).toString().padStart(padding, '0')}${extname}`;
     }

@@ -65,18 +65,8 @@ export class ToolbarComponent implements OnInit {
    * Start organizing pictures within the base flow and preview flow
    */
   startClickEvent() {
-    let album: IAlbum = this._data.selectedAlbum;
-
-    album.collection = this._data.selectedCollection;
-
-    // Update the is organized to true
-    IpcFrontend.updateAlbumIsOrganized(this._data.selectedAlbum, true);
-
-    // value must be set to true
-    this._data.setAlbumStarted(this._data.selectedAlbum.album, true);
-
     // Get the preview and base flow from a certain collection
-    let startFlows: IFlow = IpcFrontend.getStartingFlows(this.selectedCollection);
+    let startFlows: IFlow = IpcFrontend.getStartingFlows(this.selectedAlbum.collection);
 
     // Iterate over every key-value pair in the startFlows array
     for (const [key, flow] of Object.entries(startFlows)) {
@@ -86,7 +76,7 @@ export class ToolbarComponent implements OnInit {
       // Get all the base flow pictures
       if (flow == startFlows.base) {
 
-        IpcFrontend.getBaseFlowPictures(album.album).forEach((picture: IBase) => {
+        IpcFrontend.getBaseFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
           // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
           let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5));
 
@@ -95,15 +85,14 @@ export class ToolbarComponent implements OnInit {
             if (err) console.log('ERROR: ' + err);
           });
 
-          let update = { name: this._electron.path.basename(destination), destination: picture.base, album: picture.album, dest: destination };
-
+          let update = { name: this._electron.path.basename(destination), base: picture.base, album: picture.album, updatedBase: destination, backup: picture.base.replace(startFlows.base, startFlows.backup) };
           IpcFrontend.updateBaseFlowName(update);
         });
       }
 
       // Get all the preview flow pictures
       else if (flow == startFlows.preview) {
-        IpcFrontend.getPreviewFlowPictures(album.album).forEach((picture: IPreview) => {
+        IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album).forEach((picture: IPreview) => {
           // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
           let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5, true));
 
@@ -112,17 +101,27 @@ export class ToolbarComponent implements OnInit {
             if (err) console.log('ERROR: ' + err);
           });
 
-          let update = { name: this._electron.path.basename(destination), destination: picture.preview, album: picture.album, dest: destination };
-
+          let update = { name: this._electron.path.basename(destination), preview: picture.preview, album: picture.album, updatedPreview: destination };
           IpcFrontend.updatePreviewFlowName(update);
         });
       }
     }
 
+    // Update the is organized to true
+    IpcFrontend.updateAlbumIsOrganized(this.selectedAlbum, true);
+
+    // value must be set to true
+    this._data.setAlbumStarted(this.selectedAlbum.album, true);
+
     // Making sure to update the album 
     this.isOrganized = true;
     // Updating the album, because the album won't be updated if the collection hasn't changed
     this._data.selectedAlbum.started = 1;
+
+    this._snack.open(`Album '${this.selectedAlbum.album}' organized`, "Dismiss", {
+      duration: 4000,
+      horizontalPosition: "end"
+    });
   }
 
   /**

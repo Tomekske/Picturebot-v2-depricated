@@ -11,8 +11,8 @@
     </div>
     <div fxFlex="35">
       <mat-toolbar>
-        <div *ngIf="!isOrganized">
-          <button mat-icon-button class="example-icon" (click)="startClickEvent()" matTooltip="Start organizing">
+        <div matTooltip="Start organizing">
+          <button mat-icon-button [disabled]="isOrganized" class="example-icon" (click)="startClickEvent()">
             <mat-icon>play_arrow</mat-icon>
           </button>
         </div>

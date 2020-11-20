@@ -105,7 +105,7 @@ export class DbCollection extends Sqlite {
      * @param collection Collection from which the records are queried
      */
     queryRenameStartedFlows(collection: string) {
-        let query: string = `SELECT base, preview FROM Collection WHERE collection='${collection}';`;
+        let query: string = `SELECT base, preview, backup FROM Collection WHERE collection='${collection}';`;
         const stmt = this.connection.prepare(query);
 
         Logger.Log().debug(`Query: ${query}`);

@@ -55,7 +55,7 @@ export class DbBaseFlow extends Sqlite {
      * @param update updated values
      */
     updateName(update) {
-        let query: string = `UPDATE baseFlow SET name='${update.name}' WHERE destination='${update.location}' AND album='${update.album}';`;
+        let query: string = `UPDATE baseFlow SET name='${update.name}' WHERE base='${update.base}' AND album='${update.album}';`;
         const stmt = this.connection.prepare(query);
 
         Logger.Log().debug(`Query: ${query}`);
@@ -66,8 +66,8 @@ export class DbBaseFlow extends Sqlite {
      * Method to update the destination location
      * @param update updated values
      */
-    updateDestination(update) {
-        let query: string = `UPDATE baseFlow SET destination='${update.dest}' WHERE name='${update.name}' AND album='${update.album}';`;
+    updateBase(update) {
+        let query: string = `UPDATE baseFlow SET base='${update.updatedBase}' WHERE name='${update.name}' AND album='${update.album}';`;
         const stmt = this.connection.prepare(query);
         
         Logger.Log().debug(`Query: ${query}`);
