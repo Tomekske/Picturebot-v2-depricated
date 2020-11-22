@@ -18,8 +18,9 @@ export class DbBaseFlow extends Sqlite {
             "collection" varchar(400) NOT NULL,
             "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
-            "selection" INTEGER NULL,
+            "favorited" INTEGER NULL,
             "backup" varchar(400) NOT NULL,
+            "preview" varchar(400),
             "base" varchar(400) NOT NULL PRIMARY KEY,
             "date" varchar(10) NOT NULL,
             "time" varchar(8) NOT NULL)`;
@@ -44,7 +45,7 @@ export class DbBaseFlow extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @selection, @backup, @base, @date, @time);");
+        const stmt = this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @favorited, @backup, @preview, @base, @date, @time);");
         
         Logger.Log().debug(`Query: INSERT INTO baseFlow VALUES ("${JSON.stringify(args)}")`);
         stmt.run(args);
@@ -68,6 +69,18 @@ export class DbBaseFlow extends Sqlite {
      */
     updateBase(update) {
         let query: string = `UPDATE baseFlow SET base='${update.updatedBase}' WHERE name='${update.name}' AND album='${update.album}';`;
+        const stmt = this.connection.prepare(query);
+        
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
+
+    /**
+     * Method to update the destination location
+     * @param update updated values
+     */
+    updatePreview(update) {
+        let query: string = `UPDATE baseFlow SET preview='${update.preview}' WHERE name='${update.name}' AND album='${update.album}';`;
         const stmt = this.connection.prepare(query);
         
         Logger.Log().debug(`Query: ${query}`);
@@ -127,9 +140,33 @@ export class DbBaseFlow extends Sqlite {
      * @param updated Updated album name
      */
     updateAlbum(value: string, updated: string) {
-        let query: string = `UPDATE baseFlow SET album=REPLACE(album,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), backup=REPLACE(backup,'${value}','${updated}');`;
+        let query: string = `UPDATE baseFlow SET album=REPLACE(album,'${value}','${updated}'), preview=REPLACE(preview,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), backup=REPLACE(backup,'${value}','${updated}');`;
         const stmt = this.connection.prepare(query);
 
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
+
+    /**
+     * Get the is favorited boolean of a specified picture
+     * @param preview Selected preview
+     */
+    getIsFavoriteWherePreview(preview: string) {
+        let query: string = `SELECT favorited FROM baseFlow WHERE preview='${preview}';`;
+        const count = this.connection.prepare(query).pluck().get();
+        Logger.Log().debug(`Query: ${query}`);
+        return ((count == 1) ? true : false);
+    }
+
+    /**
+     * Update the favorited boolean of a specified picture
+     * @param preview Selected preview
+     * @param isFavorited Specified value
+     */
+    updateFavorited(preview: string, isFavorited: number) {
+        let query: string = `UPDATE baseFlow SET favorited='${isFavorited}' WHERE preview='${preview}';`;
+        const stmt = this.connection.prepare(query);
+        
         Logger.Log().debug(`Query: ${query}`);
         stmt.run();
     }

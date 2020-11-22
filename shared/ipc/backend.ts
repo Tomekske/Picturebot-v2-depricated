@@ -14,6 +14,7 @@ import { Logger } from '../logger/logger';
 import { DbBaseFlow } from '../database/dbBaseFlow';
 import { DbBackupFlow } from '../database/dbBackupFlow';
 import { DbPreviewFlow } from '../database/dbPreviewFlow';
+import { DbFavoriteFlow } from '../database/dbFavoriteFlow';
 
 /**
  * Static class contains methods to communicate with the backend 
@@ -191,7 +192,7 @@ export class  IpcBackend {
                 const destBackup: string = path.join(album.collection,`${album.name} ${album.date}`, flows.backup, picture.hashed);
                 const destPreview: string = path.join(album.collection,`${album.name} ${album.date}`, flows.preview, `${picture.hashed.split('.')[0]}.jpg`);
                 
-                let dataBaseFlow: IBase = { collection: album.collection, name: picture.name, album: album.album, selection: 0, backup: destBackup, base: destBase, date: picture.date, time: picture.time};
+                let dataBaseFlow: IBase = { collection: album.collection, name: picture.name, album: album.album, favorited: 0, backup: destBackup,preview: destPreview, base: destBase, date: picture.date, time: picture.time};
                 let dataBackupFlow: IBackup = { collection: album.collection, name: picture.name, album: album.album, base: destBase, backup: destBackup, date: picture.date, time: picture.time};
                 let dataPreviewFlow: IPreview = { collection: album.collection, name: picture.name, album: album.album, base: destBase, preview: destPreview, date: picture.date, time: picture.time}; 
         
@@ -237,6 +238,7 @@ export class  IpcBackend {
         
             db.updateName(update);
             db.updatePreview(update);
+            db.updateBase(update);
             db.dbClose();
             
             event.returnValue = "";
@@ -269,6 +271,7 @@ export class  IpcBackend {
             const dbBase = new DbBaseFlow();
             dbBase.updateName(update);
             dbBase.updateBase(update);
+            dbBase.updatePreview(update);
             dbBase.dbClose();
 
             const dbBackup = new DbBackupFlow();
@@ -443,7 +446,68 @@ export class  IpcBackend {
             dbBackupFlow.deletePicturesWhereAlbum(album.album);   
             dbBackupFlow.dbClose();
 
+            const dbFavorite = new DbFavoriteFlow();
+            dbFavorite.deletePicturesWhereAlbum(album.album);
+            dbFavorite.dbClose();
+
             event.returnValue = "";
         });    
+    }
+
+    /**
+     * Get the favorite picture from the base flow from a preview picture
+     */
+    static getIsFavoriteBaseFlowWherePreview() {
+        //ipcRenderer.sendSync("get-isFavorite-baseFlow-where-preview", preview);
+        ipcMain.on('get-isFavorite-baseFlow-where-preview', (event, preview: string) => { 
+            const db = new DbBaseFlow();
+            let isFavorite = db.getIsFavoriteWherePreview(preview);
+            db.dbClose();
+
+            event.returnValue = isFavorite;
+        });
+    }
+
+    /**
+     * Update the favorited boolean of a specified picture
+     */
+    static updateFavorited() {
+        ipcMain.on('update-favorited', (event, preview: string, isFavorited: boolean) => { 
+            const db = new DbBaseFlow();
+            db.updateFavorited(preview, ((isFavorited == true) ? 1 : 0));
+            db.dbClose();
+
+            event.returnValue = "";
+        });
+    }
+
+    /**
+     * Save a favorited picture to the favorite flow
+     */
+    static saveFavorite() {
+        ipcMain.on('save-favorite', (event, favorite) => {
+            Logger.Log().debug('ipcMain: save-favorite');
+
+            const db = new DbFavoriteFlow();
+            db.insertRow(favorite);
+            db.dbClose();
+
+            event.returnValue = "";
+        });
+    }
+
+    /**
+     * Delete a favorited picture from the favorite flow
+     */
+    static deleteFavoriteWhereBase() {
+        ipcMain.on('delete-favorite-where-base', (event, base: string) => {
+            Logger.Log().debug('ipcMain: delete-favorite-where-base');
+
+            const db = new DbFavoriteFlow();
+            db.deletePictureWhereBase(base);
+            db.dbClose();
+
+            event.returnValue = "";
+        });
     }
 }

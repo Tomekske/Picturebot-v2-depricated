@@ -171,4 +171,35 @@ export class  IpcFrontend {
     static deleteAlbum(album: IAlbum) {
         ipcRenderer.sendSync("delete-album", album);
     }
+
+    /**
+     * Get the favorite picture from the base flow from a preview picture
+     * @param preview Selected preview picture
+     */
+    static getIsFavoriteBaseFlowWherePreview(preview: string) {
+        return ipcRenderer.sendSync("get-isFavorite-baseFlow-where-preview", preview);
+    }
+
+    /**
+     * Update the favorited boolean of a specified picture
+     */
+    static updateFavorited(preview: string, isFavorited: boolean) {
+        ipcRenderer.sendSync("update-favorited", preview, isFavorited);
+    }
+
+    /**
+     * Save a favorited picture to the favorite flow
+     * @param favorite Selected favorite
+     */
+    static saveFavorite(favorite: IBase) {
+        ipcRenderer.sendSync("save-favorite", favorite);
+    }
+
+    /**
+     * Delete a favorited picture from the favorite flow
+     * @param favorite Selected favorite
+     */
+    static deleteFavoriteWhereBase(favorite: string) {
+        ipcRenderer.sendSync("delete-favorite-where-base", favorite);
+    }
 }

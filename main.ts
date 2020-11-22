@@ -143,6 +143,10 @@ function ipcPictures() {
   IpcBackend.savePictures();
   IpcBackend.baseFlowDeletePicture();
   IpcBackend.previewFlowDeletePicture();
+  IpcBackend.getIsFavoriteBaseFlowWherePreview();
+  IpcBackend.updateFavorited();
+  IpcBackend.saveFavorite();
+  IpcBackend.deleteFavoriteWhereBase();
 }
 
 /**

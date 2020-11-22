@@ -30,6 +30,10 @@ export class DataService {
   private _srcIsAlbumUpdated = new Subject<boolean>();
   public ctxIsAlbumUpdated = this._srcIsAlbumUpdated.asObservable();
 
+  private _isStarted: boolean;
+  private _srcIsStarted = new Subject<boolean>();
+  public ctxIsStarted = this._srcIsStarted.asObservable();
+
   private _isAlbumSelectorVisible: boolean;
   private _srcAlbumSelectorVisible = new BehaviorSubject<boolean>(false);
   public ctxAlbumSelectorVisible = this._srcAlbumSelectorVisible.asObservable();
@@ -93,9 +97,9 @@ export class DataService {
     this._srcSelectedFlow.next(flow);
   }
 
-  // /**
-  //  * Get the selected flow
-  //  */
+  /**
+   * Get the selected flow
+   */
   get selectedFlow() {
     return this._selectedFlow;
   }
@@ -188,5 +192,20 @@ export class DataService {
    */
   get isAlbumUpdated() {
     return this._isAlbumUpdated;
+  }
+
+  /**
+   * Set the is started state
+   */
+  set IsStarted(state: boolean) {
+    this._isStarted = state;
+    this._srcIsStarted.next(state);
+  }
+
+  /**
+   * Get the is started state
+   */
+  get IsStarted() {
+    return this._isStarted;
   }
 }

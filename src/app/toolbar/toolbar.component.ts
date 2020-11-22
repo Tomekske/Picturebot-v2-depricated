@@ -79,13 +79,14 @@ export class ToolbarComponent implements OnInit {
         IpcFrontend.getBaseFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
           // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
           let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5));
+          let previewDestination = this._electron.path.join(picture.album, startFlows.preview, Helper.renameOrganizesPicture(picture, counter, 5, true));
 
           // Rename pictures with the new file name
           this._electron.fs.rename(picture.base, destination, function (err) {
             if (err) console.log('ERROR: ' + err);
           });
 
-          let update = { name: this._electron.path.basename(destination), base: picture.base, album: picture.album, updatedBase: destination, backup: picture.base.replace(startFlows.base, startFlows.backup) };
+          let update = { name: this._electron.path.basename(destination), base: picture.base, album: picture.album, updatedBase: destination, preview: previewDestination, backup: picture.base.replace(startFlows.base, startFlows.backup) };
           IpcFrontend.updateBaseFlowName(update);
         });
       }
@@ -95,13 +96,14 @@ export class ToolbarComponent implements OnInit {
         IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album).forEach((picture: IPreview) => {
           // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
           let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5, true));
+          let baseDestination = this._electron.path.join(picture.album, startFlows.preview, Helper.renameOrganizesPicture(picture, counter, 5));
 
           // Rename pictures with the new file name
           this._electron.fs.rename(picture.preview, destination, function (err) {
             if (err) console.log('ERROR: ' + err);
           });
 
-          let update = { name: this._electron.path.basename(destination), preview: picture.preview, album: picture.album, updatedPreview: destination };
+          let update = { name: this._electron.path.basename(destination), preview: picture.preview, album: picture.album, updatedPreview: destination, base: baseDestination };
           IpcFrontend.updatePreviewFlowName(update);
         });
       }
@@ -116,7 +118,8 @@ export class ToolbarComponent implements OnInit {
     // Making sure to update the album 
     this.isOrganized = true;
     // Updating the album, because the album won't be updated if the collection hasn't changed
-    this._data.selectedAlbum.started = 1;
+    this._data.IsStarted = true;
+
 
     this._snack.open(`Album '${this.selectedAlbum.album}' organized`, "Dismiss", {
       duration: 4000,

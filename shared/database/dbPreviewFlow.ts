@@ -74,6 +74,18 @@ export class DbPreviewFlow extends Sqlite {
     }
 
     /**
+     * Method to update the base record
+     * @param update Update values
+     */
+    updateBase(update) {
+        let query: string = `UPDATE previewFlow SET base='${update.base}' WHERE name='${update.name}' AND album='${update.album}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
+
+    /**
      * Method to query all values from the previewFlow table
      */
     queryAll() {

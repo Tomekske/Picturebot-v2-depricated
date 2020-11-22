@@ -104,12 +104,14 @@ interface IPicture {
  * Interface containing baseFLow properties
  */
 export interface IBase extends IPicture {
-    /** Check wether a picture is selected for editing */
-    selection?: number;
+    /** Check wether a picture is favorited */
+    favorited?: number;
     /** Backup location of the file */
     backup?: string;
     /** Base location of the file */
     base?: string;
+    /** Location of the converted picture */
+    preview?: string;
 }
 
 /**
