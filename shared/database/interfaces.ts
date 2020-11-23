@@ -46,8 +46,8 @@ export interface IFlow {
     edited?: string;
     /** Social-media flow name */
     socialMedia?: string;
-    /** Selection flow name */
-    selection?: string;
+    /** Favorite flow name */
+    favorites?: string;
 }
 
 /**

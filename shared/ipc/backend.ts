@@ -174,7 +174,7 @@ export class  IpcBackend {
               // Creating flow directories
               Object.values(flows).forEach(flow => {
                 // The selection flow is a virtual directory, so it doesn't need to be created
-                if(flow != flows.selection) {
+                if(flow != flows.favorites) {
                   Helper.createDirectory(path.join(album.album, flow));
                 }
               });
@@ -258,7 +258,23 @@ export class  IpcBackend {
 
             db.dbClose();
             event.returnValue = result;
-          });
+        });
+    }
+
+    /**
+     * Get pictures from a specified album of the favorites flow
+     */
+    static getFavoritesFlowPictures() {
+        ipcMain.on('get-favoritesFlow-pictures', (event, args) => {
+            Logger.Log().debug('get-previewFlow-pictures');
+        
+            // Create database
+            const db = new DbFavoriteFlow();
+            let result = db.queryAllWhereAlbum(args);
+
+            db.dbClose();
+            event.returnValue = result;
+        });
     }
     
     /**
@@ -418,6 +434,21 @@ export class  IpcBackend {
         
             db.dbClose();
             Helper.deletePicture(path);
+            event.returnValue = "";
+        });    
+    }
+
+    /**
+     * Delete a picture relation from the previewFlow table
+     */
+    static favoriteFlowDeletePicture() {
+        ipcMain.on('favoriteFlow-delete-picture', (event, path: string) => {
+            Logger.Log().debug('ipcMain: favoriteFlow-delete-picture');
+        
+            const db = new DbFavoriteFlow();
+            db.deletePicture(path);
+            db.dbClose();
+
             event.returnValue = "";
         });    
     }

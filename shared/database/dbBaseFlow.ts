@@ -115,7 +115,7 @@ export class DbBaseFlow extends Sqlite {
      * @param path Path to the picture
      */
     deletePicture(path: string) {
-        let query: string = `Delete FROM baseFlow WHERE destination='${path}'`;
+        let query: string = `Delete FROM baseFlow WHERE base='${path}'`;
         const stmt = this.connection.prepare(query);
         
         Logger.Log().debug(`Query: ${query}`);

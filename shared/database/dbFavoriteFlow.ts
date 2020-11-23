@@ -80,4 +80,28 @@ export class DbFavoriteFlow extends Sqlite {
         Logger.Log().debug(`Query: ${query}`);
         stmt.run();
     }
+
+    /**
+     * Delete a picture relation from the database
+     * @param path Path to the picture
+     */
+    deletePicture(path: string) {
+        let query: string = `Delete FROM favoriteFlow WHERE preview='${path}'`;
+        const stmt = this.connection.prepare(query);
+        
+        Logger.Log().debug(`Query: ${query}`);
+        stmt.run();
+    }
+
+    /**
+     * Method to query all records from a certain album
+     * @param album Selected album
+     */
+    queryAllWhereAlbum(album) {
+        let query: string = `SELECT DISTINCT * FROM favoriteFlow WHERE album='${album}';`;
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
+        return stmt.all();
+    }
 }

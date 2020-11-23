@@ -107,6 +107,14 @@ export class  IpcFrontend {
     }
 
     /**
+     * Get pictures from a specified album of the favorites flow
+     * @param album Selected album
+     */
+    static getFavoritesFlowPictures(album: string) {
+        return ipcRenderer.sendSync("get-favoritesFlow-pictures", album);   
+    }
+
+    /**
      * Get the preview and base flow from a certain collection
      * @param collection Selected collection
      */
@@ -162,6 +170,14 @@ export class  IpcFrontend {
      */
     static baseFlowDeletePicture(path: string) {
         ipcRenderer.sendSync("baseFlow-delete-picture", path);
+    }
+
+    /**
+     * Delete a picture relation from the favoriteFlow table
+     * @param path Path to the picture
+     */
+    static favoriteFlowDeletePicture(path: string) {
+        ipcRenderer.sendSync("favoriteFlow-delete-picture", path);
     }
 
     /**

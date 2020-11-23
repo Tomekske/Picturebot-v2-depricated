@@ -23,7 +23,7 @@ export class DbCollection extends Sqlite {
             "files" varchar(40) NOT NULL, 
             "edited" varchar(40) NOT NULL, 
             "socialMedia" varchar(40) NOT NULL,
-            "selection" varchar(40) NOT NULL,
+            "favorites" varchar(40) NOT NULL,
             "collection" varchar(250) NOT NULL PRIMARY KEY)`;
 
         Logger.Log().debug(`Query: ${query}`);
@@ -47,7 +47,7 @@ export class DbCollection extends Sqlite {
      */
     insertRow(args) {
         const stmt = this.connection.prepare(`INSERT INTO Collection VALUES (
-            @library, @name, @backup, @base, @preview, @files, @edited, @socialMedia, @selection, @collection);`
+            @library, @name, @backup, @base, @preview, @files, @edited, @socialMedia, @favorites, @collection);`
         );
 
         Logger.Log().debug(`Query: INSERT INTO Collection VALUES ("${JSON.stringify(args)}")`);
@@ -93,7 +93,7 @@ export class DbCollection extends Sqlite {
      * @param collection Collection from which the flows are queried
      */
     queryFlows(collection: string) {
-        let query: string = `SELECT preview, edited, socialMedia FROM Collection WHERE collection='${collection}';`;
+        let query: string = `SELECT preview, favorites, edited, socialMedia FROM Collection WHERE collection='${collection}';`;
         const stmt = this.connection.prepare(query);
 
         Logger.Log().debug(`Query: ${query}`);
@@ -117,7 +117,7 @@ export class DbCollection extends Sqlite {
      * @param collection Collection from which the flows are queried
      */
     queryAllFlows(collection: string) {
-        let query: string = `SELECT backup, base, preview, files, edited, socialMedia, selection FROM Collection WHERE collection='${collection}';`;
+        let query: string = `SELECT backup, base, preview, files, edited, socialMedia, favorites FROM Collection WHERE collection='${collection}';`;
         const stmt = this.connection.prepare(query);
 
         Logger.Log().debug(`Query: ${query}`);

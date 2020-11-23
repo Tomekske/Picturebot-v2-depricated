@@ -140,9 +140,11 @@ function ipcLibraries() {
 function ipcPictures() {
   IpcBackend.getBaseFlowPictures();
   IpcBackend.getPreviewFlowPictures();
+  IpcBackend.getFavoritesFlowPictures();
   IpcBackend.savePictures();
   IpcBackend.baseFlowDeletePicture();
   IpcBackend.previewFlowDeletePicture();
+  IpcBackend.favoriteFlowDeletePicture();
   IpcBackend.getIsFavoriteBaseFlowWherePreview();
   IpcBackend.updateFavorited();
   IpcBackend.saveFavorite();

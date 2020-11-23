@@ -23,7 +23,7 @@ export interface IDisplay {
   /** Base picture location */
   base: string;
   /** Is favorited property of an image */
-  favorited: boolean;
+  favorited?: boolean;
 }
 
 @Directive({ selector: 'img' })
@@ -137,6 +137,14 @@ export class PicturesComponent implements OnInit {
       });
       this.isOrganized = Boolean(this.selectedAlbum.started);
 
+    } else if(this.selectedFlow == this.tabFlows.favorites) {
+      IpcFrontend.getFavoritesFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
+        let isFavorite = IpcFrontend.getIsFavoriteBaseFlowWherePreview(picture.preview);
+
+        this.pictureList.push({ location: `file://${picture.preview}`, preview: picture.preview, base: picture.base });
+      });
+
+      this.isOrganized = Boolean(this.selectedAlbum.started);
     } else if(this.selectedFlow == this.tabFlows.edited) {
       // Edited flow is selected
     } else if(this.selectedFlow == this.tabFlows.socialMedia) {
@@ -165,6 +173,7 @@ export class PicturesComponent implements OnInit {
   displayFlows(flows: IFlow) {
     // Display the the flows in the tab selector in a specified order
     this.flows.push(flows.preview);
+    this.flows.push(flows.favorites);
     this.flows.push(flows.edited);
     this.flows.push(flows.socialMedia);
     this.selectedFlow = flows.preview;
@@ -208,8 +217,9 @@ export class PicturesComponent implements OnInit {
     }).afterClosed().subscribe(confirmed => {
       // Only delete pictures on confirmation
       if(confirmed) {
+        IpcFrontend.favoriteFlowDeletePicture(this.previewList[index].preview);
         IpcFrontend.previewFlowDeletePicture(this.previewList[index].preview);
-        IpcFrontend.baseFlowDeletePicture(baseList[index].destination);
+        IpcFrontend.baseFlowDeletePicture(baseList[index].base);
 
         this.displayPictures();
 

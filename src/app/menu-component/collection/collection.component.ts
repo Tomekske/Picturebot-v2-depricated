@@ -31,7 +31,7 @@ export class CollectionComponent implements OnInit {
       files: '',
       edited: '',
       socialMedia: '',
-      selection: ''
+      favorites: ''
     });
 
     IpcFrontend.getLibraries().forEach((library: ILibrary) => {
@@ -47,7 +47,7 @@ export class CollectionComponent implements OnInit {
     let data: ICollection = {
       library: form.library, name: form.name, backup: form.backup, base: form.base,
       preview: form.preview, files: form.files, edited: form.edited, socialMedia: form.socialMedia,
-      selection: form.selection, collection: this.electron.path.join(form.library, form.name)
+      favorites: form.favorites, collection: this.electron.path.join(form.library, form.name)
     };
 
     IpcFrontend.saveCollection(data);
