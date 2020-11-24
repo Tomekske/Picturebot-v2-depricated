@@ -1,10 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, Directive, ElementRef, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { MatTabGroup } from '@angular/material/tabs';
-import { ElectronService } from 'app/core/services';
 import { DataService } from 'app/services/data.service';
 import { Subscription } from 'rxjs';
 import { IAlbum, IBase, IFlow, IPreview } from '../../../shared/database/interfaces';
-import { Helper } from '../../../shared/helper/helper';
 import { Logger } from '../../../shared/logger/logger';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogPictureInfoComponent } from 'app/dialogs/dialog-picture-info/dialog-picture-info.component';
@@ -26,7 +24,6 @@ export interface IDisplay {
   favorited?: boolean;
 }
 
-@Directive({ selector: 'img' })
 @Component({
   selector: 'app-pictures',
   templateUrl: './pictures.component.html',
@@ -46,14 +43,7 @@ export class PicturesComponent implements OnInit {
   isVisible: boolean = false;
   isOrganized: boolean;
 
-  constructor({ nativeElement }: ElementRef<HTMLImageElement>, private ngZone: NgZone, private _electron: ElectronService, private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar) { 
-    const supports = 'loading' in HTMLImageElement.prototype;
-    
-    // Under construction
-    if (supports) {
-      nativeElement.setAttribute('loading', 'lazy');
-    }
-  }
+  constructor(private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar) { }
   
   /**
    * On init lifecycle hook

@@ -87,7 +87,7 @@ export class MenuComponent {
   config = {
     paddingAtStart: true,
     interfaceWithRoute: true,
-    classname: 'my-custom-class',
+    classname: 'test',
     listBackgroundColor: `#333`,
     fontColor: `#fff`,
     backgroundColor: `#333`,
@@ -95,7 +95,7 @@ export class MenuComponent {
     highlightOnSelect: true,
     collapseOnSelect: true,
     useDividers: false,
-    rtlLayout: false
+    rtlLayout: false,
 };
 
 selectedCollection: ICollection;
