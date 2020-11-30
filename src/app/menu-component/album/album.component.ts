@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ElectronService } from '../../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection } from '../../../../shared/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,6 +8,7 @@ import { Helper } from '../../../../shared/helper/helper';
 import { DataService } from 'app/services/data.service';
 import { Stats } from 'original-fs';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
+import { Regex, Message } from '../../../../shared/helper/enums';
 
 @Component({
   selector: 'app-album',
@@ -17,6 +18,8 @@ import { IpcFrontend } from '../../../../shared/ipc/frontend';
 export class AlbumComponent implements OnInit {
   albumForm: FormGroup;
   collections = [];
+  hasPictures: boolean;
+  message = Message;
 
   constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _data: DataService, private _router: Router) { }
   picturesDropzone: File[] = [];
@@ -27,15 +30,24 @@ export class AlbumComponent implements OnInit {
    * On init lifecycle hook
    */
   ngOnInit(): void {
-    this.albumForm = this.fb.group({
-      collection: '',
-      name: '',
-      date: ''
-    });
-
     IpcFrontend.getCollections().forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
+
+    let defaultCollection: string = (this.collections.length == 0) ? "" : this.collections[0];
+
+    this.albumForm = this.fb.group({
+      collection: defaultCollection,
+      name: ['', [Validators.required, Validators.pattern(Regex.NameWhiteSpaces)]],
+      date: ['', Validators.required]
+    });
+  }
+
+  /**
+   * Method that simplifies getting the form controls 
+   */
+  get form() { 
+    return this.albumForm.controls; 
   }
 
   /**
@@ -44,6 +56,17 @@ export class AlbumComponent implements OnInit {
   saveAlbum() {   
     let dropzone: IAlbum = this.albumForm.value;
     let formatedDate = Helper.formatDate(dropzone.date);
+
+    // Return on validation errors
+    if (this.albumForm.invalid || this.picturesDropzone.length == 0) {
+      this.hasPictures = this.picturesDropzone.length == 0 ? false : true;
+      this._snack.open(`Input values are invalid!`, "Dismiss", {
+        duration: 4000,
+        horizontalPosition: "end"
+      });
+              
+      return;
+    }
 
     // Create album object
     let album: IAlbum = { 
@@ -88,6 +111,7 @@ export class AlbumComponent implements OnInit {
    * @param event Event parameter
    */
 	onSelect(event) {
+    this.hasPictures = true;
     this.picturesDropzone.push(...event.addedFiles);
 	}
 
@@ -97,5 +121,19 @@ export class AlbumComponent implements OnInit {
    */
 	onRemove(event) {
     this.picturesDropzone.splice(this.picturesDropzone.indexOf(event), 1);
+
+    this.hasPictures = this.picturesDropzone.length == 0 ? false : true;
+  }
+
+  /**
+   * Clear the input value of an control element
+   * @param control Control element name
+   */
+  clearInput(control: string) {
+    this.albumForm.controls[control].reset();
+  }
+
+  clearDropzone() {
+    this.picturesDropzone = [];
   }
 }

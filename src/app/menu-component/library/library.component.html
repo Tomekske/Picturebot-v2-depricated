@@ -9,20 +9,38 @@
         </a>
         </button>
     </mat-card>
-    <form class="example-form" [formGroup]="libraryForm" (ngSubmit)="saveLibrary()">
+    <form class="example-form" [formGroup]="libraryForm">
         <div style="padding-top: 1%;">
             <mat-card>
                 <h4>Create a new library</h4>
                 <mat-form-field style="width: 100%;">
                     <mat-label>Base path</mat-label>
                     <input matInput formControlName="base" type="text">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('base')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-base-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-error *ngIf="form.base.errors?.required && !form.base.dirty" id="error-base-required-id">
+                        {{ message.Required }}
+                    </mat-error>
+                    <mat-error *ngIf="form.base.errors?.pattern" id="error-base-pattern-id">
+                        {{ message.Directory }}
+                    </mat-error>            
                 </mat-form-field>
                 <mat-form-field style="width: 100%;">
                     <mat-label>Library name</mat-label>
                     <input matInput formControlName="name" type="text">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('name')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-name-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-error *ngIf="form.name.errors?.required && !form.name.dirty" id="error-name-required-id">
+                        {{ message.Required }}
+                    </mat-error>
+                    <mat-error *ngIf="form.name.errors?.pattern" id="error-name-pattern-id">
+                        {{ message.NoWhiteSpaces }}
+                    </mat-error>   
                 </mat-form-field>
                 <div align="end">
-                    <button  mat-fab color="primary" aria-label="Example icon-button with a heart icon">
+                    <button  mat-fab color="primary" aria-label="Example icon-button with a heart icon" (click)="saveLibrary()" id="btn-submit-form-library-id">
                         <mat-icon>save</mat-icon>
                     </button>
                 </div>

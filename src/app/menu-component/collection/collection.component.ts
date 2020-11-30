@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ElectronService } from '../../core/services/electron/electron.service';
 import { ICollection, ILibrary } from '../../../../shared/database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DataService } from 'app/services/data.service';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
+import { Message, Regex } from '../../../../shared/helper/enums';
 
 @Component({
   selector: 'app-collection',
@@ -15,6 +16,7 @@ import { IpcFrontend } from '../../../../shared/ipc/frontend';
 export class CollectionComponent implements OnInit {
   collectionForm: FormGroup;
   libraries: any = [];
+  message = Message;
 
   constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _data: DataService, private _router: Router) { }
 
@@ -22,21 +24,30 @@ export class CollectionComponent implements OnInit {
    * On init lifecycle hook
    */
   ngOnInit(): void {
-    this.collectionForm = this.fb.group({
-      library: '',
-      name: '',
-      backup: '',
-      base: '',
-      preview: '',
-      files: '',
-      edited: '',
-      socialMedia: '',
-      favorites: ''
-    });
-
     IpcFrontend.getLibraries().forEach((library: ILibrary) => {
       this.libraries.push(library.library);
     });
+
+    let defaultLibrary: string = (this.libraries.length == 0) ? "" : this.libraries[0];
+
+    this.collectionForm = this.fb.group({
+      library: defaultLibrary,
+      name: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      backup: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      base: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      preview: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      files: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      edited: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      socialMedia: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      favorites: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]]
+    });
+  }
+
+  /**
+   * Method that simplifies getting the form controls 
+   */
+  get form() { 
+    return this.collectionForm.controls; 
   }
 
   /**
@@ -50,6 +61,16 @@ export class CollectionComponent implements OnInit {
       favorites: form.favorites, collection: this.electron.path.join(form.library, form.name)
     };
 
+    // Return on validation errors
+    if (this.collectionForm.invalid) {
+      this._snack.open(`Input values are invalid!`, "Dismiss", {
+        duration: 4000,
+        horizontalPosition: "end"
+      });
+              
+      return;
+    }
+
     IpcFrontend.saveCollection(data);
 
     this._snack.open(`Collection '${this.electron.path.join(form.library, form.name)}' saved!`, "Dismiss", {
@@ -58,5 +79,13 @@ export class CollectionComponent implements OnInit {
     });
 
     this._router.navigateByUrl('/main');
+  }
+
+  /**
+   * Clear the input value of an control element
+   * @param control Control element name
+   */
+  clearInput(control: string) {
+    this.collectionForm.controls[control].reset();
   }
 }

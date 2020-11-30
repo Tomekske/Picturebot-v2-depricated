@@ -87,7 +87,7 @@ export class MenuComponent {
   config = {
     paddingAtStart: true,
     interfaceWithRoute: true,
-    classname: 'test',
+    classname: 'menu-id',
     listBackgroundColor: `#333`,
     fontColor: `#fff`,
     backgroundColor: `#333`,

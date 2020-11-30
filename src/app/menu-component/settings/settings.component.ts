@@ -1,10 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ElectronService } from '../../core/services/electron/electron.service';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { DataService } from 'app/services/data.service';
+import { ISettings } from '../../../../shared/database/interfaces';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
+import { Regex, Message } from '../../../../shared/helper/enums';
+
+export interface IForm {
+  uploadEdited?: string;
+  uploadSocialMedia?: string;
+  sofwareEditing?: string;
+  sofwarePostProcessing?: string;
+  conversion?: string;  
+}
 
 @Component({
   selector: 'app-settings',
@@ -14,32 +22,49 @@ import { IpcFrontend } from '../../../../shared/ipc/frontend';
 /** settings component*/
 export class SettingsComponent implements OnInit { 
   settingsForm: FormGroup;
+  formData = {};
+  submitted: boolean = false;
+  message = Message;
 
-  constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _data: DataService, private _router: Router) { }
+  constructor(private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
 
   /**
    * On init lifecycle hook
    */
   ngOnInit(): void {
-    let formData = {};
-    const isEmpty = IpcFrontend.checkSettingsEmpty();
     
+    const isEmpty = IpcFrontend.checkSettingsEmpty();
+
     // If the settings row is empty initialize the object with empty values
     if (isEmpty) {
-      formData = {
-        uploadEdited: '',
-        uploadSocialMedia: '',
-        sofwareEditing: '',
-        sofwarePostProcessing: '',
-        fileType: '',
-        logLevel: '',
-        conversion: ''
+      this.formData = {
+        uploadEdited: ['', [Validators.required, Validators.pattern(Regex.Website)]],
+        uploadSocialMedia: ['', [Validators.required, Validators.pattern(Regex.Website)]],
+        sofwareEditing: ['', [Validators.required, Validators.pattern(Regex.File)]],
+        sofwarePostProcessing: ['', [Validators.required, Validators.pattern(Regex.File)]],
+        conversion: ['', [Validators.required, Validators.pattern(Regex.Percentage)]]
+  
       };
     } else {
-      formData = IpcFrontend.getSettings();
+      let settings: ISettings = IpcFrontend.getSettings();
+
+      this.formData = {
+        uploadEdited: [settings.uploadEdited, [Validators.required, Validators.pattern(Regex.Website)]],
+        uploadSocialMedia: [settings.uploadSocialMedia, [Validators.required, Validators.pattern(Regex.Website)]],
+        sofwareEditing: [settings.sofwareEditing, [Validators.required, Validators.pattern(Regex.File)]],
+        sofwarePostProcessing: [settings.sofwarePostProcessing, [Validators.required, Validators.pattern(Regex.File)]],
+        conversion: [settings.conversion, [Validators.required, Validators.pattern(Regex.Percentage)]]
+      };
     }
 
-    this.settingsForm = this.fb.group(formData);
+    this.settingsForm = this.fb.group(this.formData);
+  }
+
+  /**
+   * Method that simplifies getting the form controls 
+   */
+  get form() { 
+    return this.settingsForm.controls; 
   }
 
   /**
@@ -48,11 +73,29 @@ export class SettingsComponent implements OnInit {
   saveSettings() {
     IpcFrontend.saveSettings(this.settingsForm.value);
 
+    // Return on validation errors
+    if (this.settingsForm.invalid) {
+      this._snack.open(`Input values are invalid!`, "Dismiss", {
+        duration: 4000,
+        horizontalPosition: "end"
+      });
+      
+      return;
+    }
+
     this._snack.open(`Settings saved!`, "Dismiss", {
       duration: 4000,
       horizontalPosition: "end"
     });
 
     this._router.navigateByUrl('/main');
+  }
+
+  /**
+   * Clear the input value of an control element
+   * @param control Control element name
+   */
+  clearInput(control: string) {
+    this.settingsForm.controls[control].reset();
   }
 }

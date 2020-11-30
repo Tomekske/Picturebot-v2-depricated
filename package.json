@@ -2,10 +2,10 @@
   "name": "Picturebot",
   "version": "2.0.0",
   "description": "Angular 10 with Electron (Typescript + SASS + Hot Reload)",
-  "homepage": "https://github.com/maximegris/angular-electron",
+  "homepage": "https://github.com/Tomekske/Picturebot",
   "author": {
-    "name": "Maxime GRIS",
-    "email": "maxime.gris@gmail.com"
+    "name": "Tomek Joostens",
+    "email": "joostenstomek@gmail.com"
   },
   "keywords": [
     "angular",
@@ -31,7 +31,6 @@
     "electron:serve": "wait-on tcp:4200 && npm run electron:serve-tsc && npx electron . --serve",
     "electron:local": "npm run build:prod && npx electron .",
     "electron:build": "npm run build:prod && electron-builder build",
-    "test": "mocha",
     "test:watch": "ng test",
     "e2e": "npm run build:prod && cross-env TS_NODE_PROJECT='e2e/tsconfig.e2e.json' mocha --timeout 300000 --require ts-node/register e2e/**/*.e2e.ts",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
@@ -39,7 +38,8 @@
     "pack": "ng build --prod && electron-packager . --no-prune --ignore=/node_modules --ignore=/e2e --ignore=/src --overwrite",
     "msi": "electron-builder",
     "prerelease": "npm run build -- --prod",
-    "release": "npm run build:prod && electron-builder"
+    "release": "npm run build:prod && electron-builder",
+    "test": "./node_modules/.bin/chromedriver"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "9.2.0",
@@ -72,9 +72,9 @@
     "conventional-changelog-cli": "2.0.34",
     "core-js": "3.6.5",
     "cross-env": "7.0.2",
-    "electron": "9.1.1",
     "electron-builder": "22.7.0",
     "electron-packager": "15.0.0",
+    "electron-rebuild": "2.3.2",
     "electron-reload": "1.5.0",
     "electron-wix-msi": "3.0.3",
     "eslint": "7.4.0",
@@ -115,10 +115,13 @@
     "@popperjs/core": "2.5.3",
     "@syncfusion/ej2-angular-lists": "18.3.35",
     "@types/better-sqlite3": "5.4.0",
-    "better-sqlite3": "7.1.0",
+    "behave": "0.2.2",
+    "better-sqlite3": "7.1.1",
     "body-parser": "1.19.0",
     "bootstrap": "4.5.3",
     "bootstrap-material-design": "4.1.1",
+    "electron": "9.1.1",
+    "electron-chromedriver": "11.0.0",
     "electron-updater": "4.3.5",
     "hasha": "5.2.1",
     "jquery": "3.5.1",
@@ -127,7 +130,9 @@
     "moment": "2.29.1",
     "ng-material-multilevel-menu": "4.12.2",
     "ngx-dropzone": "2.2.2",
-    "popper.js": "1.16.1"
+    "node-abi": "2.19.3",
+    "popper.js": "1.16.1",
+    "selenium-webdriver": "4.0.0-alpha.7"
   },
   "build": {
     "appId": "Picturebot",

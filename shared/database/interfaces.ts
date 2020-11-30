@@ -22,10 +22,6 @@ export interface ISettings {
     sofwareEditing?: string;
     /** Path to the software used to post-process pictures */
     sofwarePostProcessing?: string;
-    /** Default file type */
-    fileType?: string;
-    /** Default error logging level */
-    logLevel?: string;
     /** Default RAW picture conversion percentage */
     conversion?: string;
 }

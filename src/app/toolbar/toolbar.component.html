@@ -4,7 +4,7 @@
     <div fxFlex="30" fxLayoutAlign="center center">
       <mat-form-field appearance="fill" style="width: 100%;">
         <mat-label align="end">Select collection</mat-label>
-        <mat-select [(ngModel)]="selectedCollection" name="collection" (ngModelChange)="selectedCollectionEvent($event)" (click)="selectionClickEvent()">
+        <mat-select [(ngModel)]="selectedCollection" name="collection" (ngModelChange)="selectedCollectionEvent()" (click)="selectionClickEvent()">
           <mat-option *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
         </mat-select>
       </mat-form-field>

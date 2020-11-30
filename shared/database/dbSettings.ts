@@ -14,13 +14,11 @@ export class DbSettings extends Sqlite {
      */
     createTable() {
         let query: string = `CREATE TABLE IF NOT EXISTS Settings(
-            "uploadEdited" varchar(200) NOT NULL, 
-            "uploadSocialMedia" varchar(200) NOT NULL, 
-            "sofwareEditing" varchar(200) NOT NULL, 
-            "sofwarePostProcessing" varchar(200) NOT NULL, 
-            "fileType" varchar(200) NOT NULL, 
-            "logLevel" varchar(200) NOT NULL, 
-            "conversion" varchar(3) NOT NULL);`;
+            "uploadEdited" varchar(200), 
+            "uploadSocialMedia" varchar(200), 
+            "sofwareEditing" varchar(200), 
+            "sofwarePostProcessing" varchar(200), 
+            "conversion" varchar(3));`;
         
         Logger.Log().debug(`Query: ${query}`);
         this.connection.exec(query);
@@ -42,7 +40,7 @@ export class DbSettings extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO Settings VALUES (@uploadEdited, @uploadSocialMedia, @sofwareEditing, @sofwarePostProcessing, @fileType, @logLevel, @conversion);");
+        const stmt = this.connection.prepare("INSERT INTO Settings VALUES (@uploadEdited, @uploadSocialMedia, @sofwareEditing, @sofwarePostProcessing, @conversion);");
         
         Logger.Log().debug(`Query: INSERT INTO Settings VALUES ("${JSON.stringify(args)}")`);
         stmt.run(args);
@@ -53,7 +51,7 @@ export class DbSettings extends Sqlite {
      * @param args Updated values
      */
     updateRow(args) {
-        const stmt = this.connection.prepare("UPDATE Settings set uploadEdited=@uploadEdited, uploadSocialMedia=@uploadSocialMedia, sofwareEditing = @sofwareEditing, sofwarePostProcessing=@sofwarePostProcessing, fileType=@fileType, logLevel=@logLevel, conversion=@conversion;");
+        const stmt = this.connection.prepare("UPDATE Settings set uploadEdited=@uploadEdited, uploadSocialMedia=@uploadSocialMedia, sofwareEditing = @sofwareEditing, sofwarePostProcessing=@sofwarePostProcessing, conversion=@conversion;");
         
         Logger.Log().debug(`Query: UPDATE Settings set "${JSON.stringify(args)}"`);     
         stmt.run(args);
