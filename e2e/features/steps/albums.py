@@ -25,8 +25,6 @@ def page_is_loaded(ctx):
     finally:
         print("Page loaded")
 
-
-
 @given('Run application')
 def run_application(ctx):
     exe = r"C:\Users\joost\AppData\Local\Programs\Picturebot\Picturebot.exe"
@@ -35,9 +33,6 @@ def run_application(ctx):
     options.binary_location = exe
 
     ctx.driver = webdriver.Chrome(chrome_options=options)
-
-
-
 
 @when('I click on the add new album button')
 def click_add_new_album_button(ctx):

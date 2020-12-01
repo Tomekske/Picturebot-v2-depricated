@@ -72,9 +72,9 @@
     "conventional-changelog-cli": "2.0.34",
     "core-js": "3.6.5",
     "cross-env": "7.0.2",
+    "electron": "9.1.1",
     "electron-builder": "22.7.0",
     "electron-packager": "15.0.0",
-    "electron-rebuild": "2.3.2",
     "electron-reload": "1.5.0",
     "electron-wix-msi": "3.0.3",
     "eslint": "7.4.0",
@@ -94,7 +94,7 @@
     "tslib": "2.0.0",
     "typescript": "3.9.6",
     "wait-on": "5.0.1",
-    "webdriver-manager": "12.1.7",
+    "webdriver-manager": "^12.1.7",
     "zone.js": "0.10.3"
   },
   "engines": {
@@ -119,8 +119,7 @@
     "body-parser": "1.19.0",
     "bootstrap": "4.5.3",
     "bootstrap-material-design": "4.1.1",
-    "electron": "9.1.1",
-    "electron-chromedriver": "11.0.0",
+    "electron-chromedriver": "^11.0.0",
     "electron-updater": "4.3.5",
     "hasha": "5.2.1",
     "jquery": "3.5.1",
@@ -129,7 +128,6 @@
     "moment": "2.29.1",
     "ng-material-multilevel-menu": "4.12.2",
     "ngx-dropzone": "2.2.2",
-    "node-abi": "2.19.3",
     "popper.js": "1.16.1"
   },
   "build": {
