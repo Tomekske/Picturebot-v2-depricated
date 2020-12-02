@@ -1,4 +1,5 @@
 import { Helper } from '../helper/helper';
+import { App } from '../helper/enums';
 import * as path from 'path';
 
 /**
@@ -15,7 +16,7 @@ export class Logger {
               },
               "file": {
                   "type": "fileSync",
-                  "filename": path.join(Helper.pathMyDocuments(), Helper.app, "app.log"),
+                  "filename": path.join(Helper.pathMyDocuments(), App.name, "app.log"),
                   "maxLogSize": 16384,
                   "numBackups": 3,
                   "pattern": "%d{dd-MM-yyyy HH:mm:ss} %-5p [%m]",

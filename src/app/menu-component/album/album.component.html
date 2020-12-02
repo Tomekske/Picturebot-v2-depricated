@@ -19,7 +19,7 @@
                     </mat-form-field>
                         <mat-form-field class="example-full-width" style="width: 70%;">
                             <mat-label>Album name</mat-label>
-                            <input formControlName="name" matInput type="text">
+                            <input formControlName="name" matInput type="text" id="input-name-id">
                             <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('name')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-name-id">
                                 <mat-icon>close</mat-icon>
                             </button>
@@ -32,7 +32,7 @@
                         </mat-form-field>
                         <mat-form-field appearance="fill" style="width: 25%; padding-left: 5%;"> 
                             <mat-label>Select date</mat-label>
-                            <input matInput [matDatepicker]="picker" formControlName="date" disabled>
+                            <input matInput [matDatepicker]="picker" formControlName="date" disabled id="input-date-id">
                             <mat-error *ngIf="form.date.errors?.required && form.date.untouched" id="error-date-required-id">
                                 {{ message.Required }}
                             </mat-error>

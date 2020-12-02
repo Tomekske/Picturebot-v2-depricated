@@ -15,7 +15,7 @@
                 <h4>Create a new library</h4>
                 <mat-form-field style="width: 100%;">
                     <mat-label>Base path</mat-label>
-                    <input matInput formControlName="base" type="text">
+                    <input matInput formControlName="base" type="text" id="input-base-id">
                     <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('base')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-base-id">
                         <mat-icon>close</mat-icon>
                     </button>
@@ -28,7 +28,7 @@
                 </mat-form-field>
                 <mat-form-field style="width: 100%;">
                     <mat-label>Library name</mat-label>
-                    <input matInput formControlName="name" type="text">
+                    <input matInput formControlName="name" type="text" id="input-name-id">
                     <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('name')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-name-id">
                         <mat-icon>close</mat-icon>
                     </button>

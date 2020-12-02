@@ -9,6 +9,7 @@ import { DialogPictureInfoComponent } from 'app/dialogs/dialog-picture-info/dial
 import { IpcFrontend } from '../../../shared/ipc/frontend';
 import { DialogPictureDeleteComponent } from 'app/dialogs/dialog-picture-delete/dialog-picture-delete.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Helper } from '../../../shared/helper/helper';
 
 /**
  * Display interface containing properties 

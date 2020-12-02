@@ -1,6 +1,6 @@
 {
   "name": "Picturebot",
-  "version": "2.0.1",
+  "version": "2.0.0-alpha.1",
   "description": "Angular 10 with Electron (Typescript + SASS + Hot Reload)",
   "homepage": "https://github.com/Tomekske/Picturebot",
   "author": {
@@ -33,13 +33,12 @@
     "electron:build": "npm run build:prod && electron-builder build",
     "test": "mocha",
     "test:watch": "ng test",
-    "e2e": "npm run build:prod && cross-env TS_NODE_PROJECT='e2e/tsconfig.e2e.json' mocha --timeout 300000 --require ts-node/register e2e/**/*.e2e.ts",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md",
     "lint": "ng lint",
-    "pack": "ng build --prod && electron-packager . --no-prune --ignore=/node_modules --ignore=/e2e --ignore=/src --overwrite",
     "msi": "electron-builder",
     "prerelease": "npm run build -- --prod",
-    "release": "npm run build:prod && electron-builder"
+    "git": "npm run build:prod && electron-builder",
+    "release": "npm run build:prod"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "9.2.0",

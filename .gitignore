@@ -175,3 +175,5 @@ baseline.json
 *.tgz
 
 *.js
+
+/release

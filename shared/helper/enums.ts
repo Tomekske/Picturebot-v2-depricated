@@ -1,4 +1,6 @@
 import { IRegex } from './interfaces';
+import * as path from 'path';
+import { Helper } from '../helper/helper';
 
 /**
  * Enum contains frequently used regex expressions
@@ -38,4 +40,14 @@ export enum Message {
     WhiteSpaces = "Field may only contain characters and optional white spaces",
     /** Field may not contain white spaces */
     NoWhiteSpaces = "Field may only contain characters and optional white spaces"
+}
+
+/**
+ * Enum contains application metadata
+ */
+export enum App {
+    /** Application name */
+    name = "Picturebot",
+    productionDb = "database.db",
+    debugDb = "debug.db"
 }

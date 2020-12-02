@@ -5,6 +5,7 @@ import { ElectronService } from 'app/core/services';
 import { DataService } from 'app/services/data.service';
 import { ICollection } from '../../../../shared/database/interfaces';
 import { Helper } from '../../../../shared/helper/helper';
+import { App } from '../../../../shared/helper/enums';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
 
 @Component({
@@ -65,7 +66,7 @@ export class MenuComponent {
           label: 'Log file',
           icon: 'open_in_new',
           onSelected: () => {
-            Helper.openFile(this._electron.path.join(Helper.pathMyDocuments(), Helper.app, "app.log"), this._snack);
+            Helper.openFile(this._electron.path.join(Helper.pathMyDocuments(), App.name, "app.log"), this._snack);
           }
         },
         {

@@ -7,14 +7,13 @@ import * as cp from 'child_process';
 import { Logger } from '../../shared/logger/logger';
 import { IBase } from '../database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { app, remote } from 'electron';
+import { renderFlagCheckIfStmt } from '@angular/compiler/src/render3/view/template';
 
 /**
  * Static helper class containing helper methods
  */
 export class Helper {
-    /** Application name */
-    static app: string = "Picturebot";
-
     /**
      * Build path to the user's documents
      */
@@ -199,5 +198,15 @@ export class Helper {
         } else {
             Logger.Log().error(`Rename directory: directory '${source}' already exists`);
         }
+    }
+
+    /**
+     * Check if the executable is a release version
+     * @param isMain Specify wether the function is called from the main process or render process
+     */
+    static isProduction(isMain: boolean): boolean {
+        let version: string = isMain ? app.getVersion() : remote.app.getVersion();
+
+        return (version.includes("alpha") || version.includes("beta")) ? false : true;
     }
 }
