@@ -1,4 +1,4 @@
-from e2e.api.menu import Menu
+from e2e.api.components.menu_component import Menu
 from behave import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options

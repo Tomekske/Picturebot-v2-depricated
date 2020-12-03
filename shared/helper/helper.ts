@@ -207,6 +207,6 @@ export class Helper {
     static isProduction(isMain: boolean): boolean {
         let version: string = isMain ? app.getVersion() : remote.app.getVersion();
 
-        return (version.includes("alpha") || version.includes("beta")) ? false : true;
+        return version.includes("dev") ? false : true;
     }
 }
