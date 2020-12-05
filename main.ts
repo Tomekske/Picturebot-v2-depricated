@@ -4,6 +4,7 @@ import * as url from 'url';
 import { Logger } from './shared/logger/logger';
 import { Updater } from './shared/updater/updater';
 import { IpcBackend } from './shared/ipc/backend';
+import { Helper } from './shared/helper/helper';
 
 let win: BrowserWindow = null;
 
@@ -24,13 +25,12 @@ function createWindow(): BrowserWindow {
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve) ? true : false,
-      webSecurity: false
+      webSecurity: false,
+      devTools: Helper.isProduction(true) ? false : true
     },
   });
 
   if (serve) {
-
-    win.webContents.openDevTools();
 
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/node_modules/electron`)
@@ -52,6 +52,11 @@ function createWindow(): BrowserWindow {
     // when you should delete the corresponding element.
     win = null;
   });
+
+  // Set the browser title
+  win.setTitle(`Picturebot ${app.getVersion()}`);
+  // On startup maximize the browser window
+  win.maximize();
 
   return win;
 }
@@ -91,7 +96,9 @@ try {
   });
 
   // Check for new updates
-  checkForUpdates();
+  if(Helper.isProduction(true)) {
+    checkForUpdates();
+  }
 
   // Ipc functions
   ipcAlbums();
@@ -104,7 +111,6 @@ try {
   // Catch Error
   // throw e;
   //logger.Log().debug(e);
-
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "Picturebot",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-dev.2",
   "description": "Angular 10 with Electron (Typescript + SASS + Hot Reload)",
   "homepage": "https://github.com/Tomekske/Picturebot",
   "author": {
@@ -37,8 +37,7 @@
     "lint": "ng lint",
     "msi": "electron-builder",
     "prerelease": "npm run build -- --prod",
-    "git": "npm run build:prod && electron-builder",
-    "release": "npm run build:prod"
+    "release": "npm run build:prod && electron-builder"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "9.2.0",

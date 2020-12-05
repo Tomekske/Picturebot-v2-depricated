@@ -16,7 +16,6 @@ class Menu():
         xpath = "/html/body/app-root/div/div[2]/div[1]/app-menu/div/ng-material-multilevel-menu/div/mat-list/ng-list-item[3]/mat-list-item/div/a/div"
         # selector = "#test-open-album-id"
         self.driver.click_by_xpath(xpath)
-        print("CLICCCCKED")
     
     def click_add_library_item(self):
         '''Click on the add library button'''

@@ -59,26 +59,6 @@ export class MenuComponent {
       icon: 'photo_album'
     },
     {
-      label: 'Developers Tab',
-      icon: 'bug_report',
-      items: [
-        {
-          label: 'Log file',
-          icon: 'open_in_new',
-          onSelected: () => {
-            Helper.openFile(this._electron.path.join(Helper.pathMyDocuments(), App.name, "app.log"), this._snack);
-          }
-        },
-        {
-          label: 'Pictures',
-          icon: 'insert_photo',
-          onSelected: () => {
-            Helper.openInExplorer("D:\\Pictures", this._snack);
-          }
-        }
-      ]
-    },
-    {
       label: 'Settings',
       link: '/settings',
       icon: 'settings'
@@ -102,6 +82,31 @@ export class MenuComponent {
 selectedCollection: ICollection;
 
   constructor(private _electron: ElectronService, private _data: DataService, private _snack: MatSnackBar) { 
+
+    // Add a developer tab when running a non production version
+    if(!Helper.isProduction(false)) {
+      this.menuItems.push({
+        label: 'Developers Tab',
+        icon: 'bug_report',
+        items: [
+          {
+            label: 'Log file',
+            icon: 'open_in_new',
+            onSelected: () => {
+              Helper.openFile(this._electron.path.join(Helper.pathMyDocuments(), App.name, "app.log"), this._snack);
+            }
+          },
+          {
+            label: 'Pictures',
+            icon: 'insert_photo',
+            onSelected: () => {
+              Helper.openInExplorer("D:\\Pictures", this._snack);
+            }
+          }
+        ]
+      });  
+    }
+
     this._data.ctxSelectedCollection.subscribe(collection => this.selectedCollection = IpcFrontend.getAllCollectionWhereCollection(collection));
   }
 }
