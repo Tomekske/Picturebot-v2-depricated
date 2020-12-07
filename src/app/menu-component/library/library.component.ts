@@ -47,8 +47,9 @@ export class LibraryComponent implements OnInit {
     // Return on validation errors
     if (this.libraryForm.invalid) {
       this._snack.open(`Input values are invalid!`, "Dismiss", {
-        duration: 4000,
-        horizontalPosition: "end"
+        duration: (5*60000),
+        horizontalPosition: "end",
+        panelClass: "snackbar-id"
       });
           
       return;

@@ -85,7 +85,8 @@ export class SettingsComponent implements OnInit {
 
     this._snack.open(`Settings saved!`, "Dismiss", {
       duration: 4000,
-      horizontalPosition: "end"
+      horizontalPosition: "end",
+      panelClass: "snackbar-id"
     });
 
     this._router.navigateByUrl('/main');

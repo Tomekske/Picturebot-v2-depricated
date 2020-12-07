@@ -39,7 +39,7 @@ export enum Message {
     /** Field may only contain characters and optional white spaces */
     WhiteSpaces = "Field may only contain characters and optional white spaces",
     /** Field may not contain white spaces */
-    NoWhiteSpaces = "Field may only contain characters and optional white spaces"
+    NoWhiteSpaces = "Field is not allowed to contain white spaces"
 }
 
 /**

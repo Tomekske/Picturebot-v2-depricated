@@ -62,7 +62,8 @@ export class AlbumComponent implements OnInit {
       this.hasPictures = this.picturesDropzone.length == 0 ? false : true;
       this._snack.open(`Input values are invalid!`, "Dismiss", {
         duration: 4000,
-        horizontalPosition: "end"
+        horizontalPosition: "end",
+        panelClass: "snackbar-id"
       });
               
       return;
