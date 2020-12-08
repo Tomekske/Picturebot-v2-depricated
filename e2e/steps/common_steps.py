@@ -1,4 +1,5 @@
 from e2e.api.components.menu_component import Menu
+from e2e.api.components.snackbar_component import Snackbar
 from behave import *
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -46,3 +47,13 @@ def close_application(ctx):
 @then('I wait "{seconds}" seconds')
 def wait_seconds(ctx, seconds):
     time.sleep(int(seconds))
+
+@then('I check wether the error snackbar is displayed')
+def check_snackbar_is_displayed(ctx):
+    assert Snackbar(ctx.driver).is_snackbar_visible() == True, "snackbar isn't visible"
+
+@then('I check wether the snackbar contains the text "{expected}"')
+def check_wether_snackbar_contains_text(ctx, expected):
+    actual = Snackbar(ctx.driver).get_text()
+
+    assert actual == expected, f"'{expected}' doesn't equal '{actual}'"

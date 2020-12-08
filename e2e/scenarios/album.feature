@@ -1,4 +1,4 @@
-Feature: Album testing
+Feature: Album tests
     Background: Run application
         Given I read settings file
         Then I cleanup workspace

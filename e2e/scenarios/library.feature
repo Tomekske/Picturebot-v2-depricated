@@ -1,4 +1,4 @@
-Feature: Library testing
+Feature: Library tests
     Background: Run application
         Given I read settings file
         Then I cleanup workspace
@@ -22,8 +22,8 @@ Feature: Library testing
         Then I wait "1" seconds
         Then I check wether the error snackbar is displayed
         Then I check wether the snackbar contains the text "Input values are invalid!"
-        Then I check the base input for error messages "Directory is incorrect"
-        Then I check the name input for error messages "Field is not allowed to contain white spaces"
+        Then Library page: I check the base input for error messages "Directory is incorrect"
+        Then Library page: I check the name input for error messages "Field is not allowed to contain white spaces"
         Then Close application
 
     Scenario: Add a new library - empty form input
@@ -31,6 +31,6 @@ Feature: Library testing
         Then I wait "1" seconds
         Then I check wether the error snackbar is displayed
         Then I check wether the snackbar contains the text "Input values are invalid!"
-        Then I check the base input for error messages "Field is required"
-        Then I check the name input for error messages "Field is required"
+        Then Library page: I check the base input for error messages "Field is required"
+        Then Library page: I check the name input for error messages "Field is required"
         Then Close application

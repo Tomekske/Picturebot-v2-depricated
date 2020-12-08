@@ -62,10 +62,11 @@ export class CollectionComponent implements OnInit {
     };
 
     // Return on validation errors
-    if (this.collectionForm.invalid) {
+    if (this.collectionForm.invalid || this.libraries.length === 0) {
       this._snack.open(`Input values are invalid!`, "Dismiss", {
         duration: 4000,
-        horizontalPosition: "end"
+        horizontalPosition: "end",
+        panelClass: "snackbar-id"
       });
               
       return;
@@ -73,9 +74,10 @@ export class CollectionComponent implements OnInit {
 
     IpcFrontend.saveCollection(data);
 
-    this._snack.open(`Collection '${this.electron.path.join(form.library, form.name)}' saved!`, "Dismiss", {
-      duration: 2000,
-      horizontalPosition: "end"
+    this._snack.open(`Collection saved!`, "Dismiss", {
+      duration: 4000,
+      horizontalPosition: "end",
+      panelClass: "snackbar-id"
     });
 
     this._router.navigateByUrl('/main');

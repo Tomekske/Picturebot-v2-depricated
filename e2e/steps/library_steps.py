@@ -38,24 +38,14 @@ def click_save_library_button(ctx):
     page = LibraryPage(ctx.driver)
     page.click_save_button()
 
-@then('I check wether the error snackbar is displayed')
-def check_snackbar_is_displayed(ctx):
-    assert Snackbar(ctx.driver).is_snackbar_visible() == True, "snackbar isn't visible"
-
-@then('I check wether the snackbar contains the text "{expected}"')
-def check_wether_snackbar_contains_text(ctx, expected):
-    actual = Snackbar(ctx.driver).get_text()
-
-    assert actual == expected, f"'{expected}' doesn't equal '{actual}'"
-
-@then('I check the base input for error messages "{expected}"')
+@then('Library page: I check the base input for error messages "{expected}"')
 def check_base_input_for_error_messages(ctx, expected):
     id = "error-base-id"
     actual = Error(ctx.driver, id).get_error_message()
 
     assert actual == expected, f"'{actual}' doesn't equal '{expected}'"
 
-@then('I check the name input for error messages "{expected}"')
+@then('Library page: I check the name input for error messages "{expected}"')
 def check_name_input_for_error_messages(ctx, expected):
     id = "error-name-id"
     actual = Error(ctx.driver, id).get_error_message()
