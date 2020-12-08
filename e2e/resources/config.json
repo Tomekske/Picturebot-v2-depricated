@@ -1,4 +1,6 @@
 {
     "chromedriver": "C:\\Users\\joost\\Documents\\Chromedriver\\chromedriver.exe",
-    "application":  "D:\\Programs\\Development\\Picturebot\\release\\win-unpacked\\Picturebot.exe" 
+    "application":  "D:\\Programs\\Development\\Picturebot\\release\\win-unpacked\\Picturebot.exe",
+    "database": "C:\\Users\\joost\\Documents\\Picturebot\\debug.db",
+    "workspace": "D:\\e2e"
 }

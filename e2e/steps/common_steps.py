@@ -11,12 +11,33 @@ from e2e.api.driver import Driver
 import time
 import json
 import os
+import time
+import shutil 
 
-@given('Run application')
-def run_application(ctx):
+@given('I read settings file')
+def cleanup_library(ctx):
     with open(r'e2e\resources\config.json') as f:
-        data = json.load(f)
-        ctx.driver = Driver(data["chromedriver"], data["application"])
+        ctx.data = json.load(f)
+
+@Then('I cleanup workspace')
+def cleanup_library(ctx):
+    workspace = ctx.data["workspace"]
+    database = ctx.data["database"]
+
+    # Delete Library on the hard-disk
+    if os.path.isdir(workspace):
+        shutil.rmtree(workspace)
+        os.mkdir(workspace)
+    else: 
+        os.mkdir(workspace)
+
+    # Delete database file
+    if os.path.exists(database):
+        os.remove(database)
+
+@then('Run application')
+def run_application(ctx):
+    ctx.driver = Driver(ctx.data["chromedriver"], ctx.data["application"])
 
 @then('Close application')
 def close_application(ctx):

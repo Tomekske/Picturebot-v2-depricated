@@ -57,9 +57,10 @@ export class LibraryComponent implements OnInit {
 
     IpcFrontend.saveLibrary(data);
 
-    this._snack.open(`Library '${this.electron.path.join(form.base, form.name)}' saved!`, "Dismiss", {
+    this._snack.open(`Library saved!`, "Dismiss", {
       duration: 4000,
-      horizontalPosition: "end"
+      horizontalPosition: "end",
+      panelClass: "snackbar-id"
     });
 
     this._router.navigateByUrl('/main');

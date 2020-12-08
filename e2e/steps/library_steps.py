@@ -13,9 +13,11 @@ from selenium.webdriver.common.by import By
 from e2e.api.driver import Driver
 
 import os
-import time 
+import time
+import shutil 
+import sqlite3
 
-@when('I click on the add new library button')
+@then('I click on the add new library button')
 def click_add_new_album_button(ctx):
     menu = Menu(ctx.driver)
     menu.click_add_library_item()
@@ -40,24 +42,34 @@ def click_save_library_button(ctx):
 def check_snackbar_is_displayed(ctx):
     assert Snackbar(ctx.driver).is_snackbar_visible() == True, "snackbar isn't visible"
 
-@then('I check wether the snackbar contains the text "{excepted}"')
-def check_wether_snackbar_contains_text(ctx, excepted):
+@then('I check wether the snackbar contains the text "{expected}"')
+def check_wether_snackbar_contains_text(ctx, expected):
     actual = Snackbar(ctx.driver).get_text()
 
-    assert actual == excepted, f"'{excepted}' doesn't equal '{actual}'"
+    assert actual == expected, f"'{expected}' doesn't equal '{actual}'"
 
-@then('I check the base input for error messages')
-def check_base_input_for_error_messages(ctx):
-    id = "error-base-pattern-id"
-    excepted = "Directory is incorrect"
+@then('I check the base input for error messages "{expected}"')
+def check_base_input_for_error_messages(ctx, expected):
+    id = "error-base-id"
     actual = Error(ctx.driver, id).get_error_message()
 
-    assert actual == excepted, f"'{actual}' doesn't equal '{excepted}'"
+    assert actual == expected, f"'{actual}' doesn't equal '{expected}'"
 
-@then('I check the name input for error messages')
-def check_name_input_for_error_messages(ctx):
-    id = "error-name-pattern-id"
-    excepted = "Field is not allowed to contain white spaces"
+@then('I check the name input for error messages "{expected}"')
+def check_name_input_for_error_messages(ctx, expected):
+    id = "error-name-id"
     actual = Error(ctx.driver, id).get_error_message()
 
-    assert actual == excepted, f"'{actual}' doesn't equal '{excepted}'"
+    assert actual == expected, f"'{actual}' doesn't equal '{expected}'"
+
+@then('I check wether the library "{expected}" is saved in the database')
+def check_wether_library_is_in_databse(ctx, expected):
+    # Delete data from database
+    conn = sqlite3.connect(ctx.data["database"])
+
+    cur = conn.cursor()
+    cur.execute(f'SELECT library FROM library WHERE library = "{expected}"')
+    actual = cur.fetchone()[0]
+
+    assert actual == expected, f"'{actual}' doesn't equal '{expected}'"
+    conn.close()

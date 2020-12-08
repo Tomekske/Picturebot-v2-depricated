@@ -19,10 +19,10 @@
                     <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('base')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-base-id">
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-error *ngIf="form.base.errors?.required && !form.base.dirty" id="error-base-required-id">
+                    <mat-error *ngIf="form.base.errors?.required && !form.base.dirty" id="error-base-id">
                         {{ message.Required }}
                     </mat-error>
-                    <mat-error *ngIf="form.base.errors?.pattern" id="error-base-pattern-id">
+                    <mat-error *ngIf="form.base.errors?.pattern" id="error-base-id">
                         {{ message.Directory }}
                     </mat-error>            
                 </mat-form-field>
@@ -32,10 +32,10 @@
                     <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('name')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-name-id">
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-error *ngIf="form.name.errors?.required && !form.name.dirty" id="error-name-required-id">
+                    <mat-error *ngIf="form.name.errors?.required && !form.name.dirty" id="error-name-id">
                         {{ message.Required }}
                     </mat-error>
-                    <mat-error *ngIf="form.name.errors?.pattern" id="error-name-pattern-id">
+                    <mat-error *ngIf="form.name.errors?.pattern" id="error-name-id">
                         {{ message.NoWhiteSpaces }}
                     </mat-error>   
                 </mat-form-field>
