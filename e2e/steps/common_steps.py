@@ -48,12 +48,12 @@ def close_application(ctx):
 def wait_seconds(ctx, seconds):
     time.sleep(int(seconds))
 
-@then('I check wether the error snackbar is displayed')
+@then('I check whether the error snackbar is displayed')
 def check_snackbar_is_displayed(ctx):
     assert Snackbar(ctx.driver).is_snackbar_visible() == True, "snackbar isn't visible"
 
-@then('I check wether the snackbar contains the text "{expected}"')
-def check_wether_snackbar_contains_text(ctx, expected):
+@then('I check whether the snackbar contains the text "{expected}"')
+def check_whether_snackbar_contains_text(ctx, expected):
     actual = Snackbar(ctx.driver).get_text()
 
     assert actual == expected, f"'{expected}' doesn't equal '{actual}'"

@@ -1,3 +1,4 @@
+from e2e.api.components.dropdown_component import Dropdown
 from e2e.api.pages.collection_page import CollectionPage
 from e2e.api.components.menu_component import Menu
 from e2e.api.components.snackbar_component import Snackbar
@@ -89,3 +90,9 @@ def check_socialMedia_input_for_error_messages(ctx, expected):
     actual = Error(ctx.driver, id).get_error_message()
 
     assert actual == expected, f"'{actual}' doesn't equal '{expected}'"
+
+@then('Collection page: I check whether the dropdown is disabled')
+def check_whether_dropdown_is_disabled(ctx):
+    id = "select-library-id"
+
+    assert Dropdown(ctx.driver, id).is_disabled() == True, f"'Dropdown is not disabled'"

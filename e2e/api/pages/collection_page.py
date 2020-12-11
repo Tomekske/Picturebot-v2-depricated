@@ -14,5 +14,4 @@ class CollectionPage:
         '''Click on the save button'''
         
         id = "btn-save-form-collection-id"
-        self.driver.click_by_id(id) 
-
+        self.driver.click_by_id(id)

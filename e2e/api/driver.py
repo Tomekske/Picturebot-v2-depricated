@@ -6,6 +6,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from distutils.util import strtobool
 
 class Driver:
     '''Class with low level methods to interact with selenium'''
@@ -77,7 +78,7 @@ class Driver:
         '''Get the value of an element by id
         
         Args:
-            xpath: Xpath of an element
+            id: Id name of an element
         '''
 
         return self.driver.find_element_by_id(id).text
@@ -98,21 +99,40 @@ class Driver:
         self.driver.find_element(By.ID, id).send_keys(text)
 
     def is_element_visible_by_class_name(self, class_name):
-        '''Check wether an element is visible by class name
+        '''Check whether an element is visible by class name
         
         Args:
             class_name: Class name of an element
         '''
 
-        element = self.driver.find_element_by_class_name(class_name)
-        return element.is_displayed()
+        try:
+            return self.driver.find_element_by_class_name(class_name).is_displayed()
+        except:
+            return False
 
     def is_element_visible_by_id(self, id):
-        '''Check wether an element is visible by id
+        '''Check whether an element is visible by id
         
         Args:
-            class_name: Class name of an element
+            id: Id name of an element
         '''
 
-        element = self.driver.find_element_by_id(id)
-        return element.is_displayed()
+        try:
+            return self.driver.find_element_by_id(id).is_displayed()
+        except:
+            return False
+
+    def is_element_disabled_by_id(self, id):
+        '''Check whether an element is disabled by id
+        
+        Args:
+            id: Id name of an element
+        '''
+
+        try:
+            isEnabled = self.driver.find_element_by_id(id).get_attribute("aria-disabled")
+
+            # strtobool returs 1 or 0, thus it needs to be wrapped with the bool function to return True or False
+            return bool(strtobool(isEnabled))
+        except:
+            return False

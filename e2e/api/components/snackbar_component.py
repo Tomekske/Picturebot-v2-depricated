@@ -1,5 +1,3 @@
-import time
-
 class Snackbar():  
     '''Class to model the snackbar component'''
 
