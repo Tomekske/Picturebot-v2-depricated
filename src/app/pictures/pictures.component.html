@@ -1,49 +1,50 @@
 <div fxLayout="row" style="overflow-y: auto;">
     <!-- Flow Selector -->
-    <div fxFlex="85" class="window">
-    <mat-tab-group  animationDuration="0ms" (selectedTabChange)="selectedFlowEvent($event)" #tab>
-        <div *ngFor="let flow of flows">
-            <mat-tab label="{{ flow }}"></mat-tab>
-        </div>
-    </mat-tab-group>
-    <!-- Picture display -->
-    <div style="padding-top: 1%;">
+    <div fxFlex="85" [ngClass]="{'window': albums.length !== 0}">
+      <mat-tab-group animationDuration="0ms" (selectedTabChange)="selectedFlowEvent($event)" #tab>
+      <div *ngFor="let flow of flows">
+        <mat-tab label="{{ flow }}"></mat-tab>
+      </div>
+      </mat-tab-group>
+      <!-- Picture display -->
+      <div style="padding-top: 1%;">
         <mat-grid-list cols="3" rowHeight="6:4" style="padding-top: 5px;">
-            <div lightbox-group>
-                <mat-grid-tile *ngFor="let picture of pictureList; let i = index">
-                    <div class="container">
-                        <img class="image" style="width: 100%; height: auto;" [src]="picture.location" lightbox counter="true" counterSeparator="/" loading="lazy">
-                        <div class="overlay">
-                            <mat-toolbar fxLayoutAlign="end center"style="background-color: transparent;">
-                                <button [disabled]="!isOrganized" mat-icon-button class="example-icon" (click)="updateFavorite(i)" matTooltip="Favorite">
-                                    <mat-icon *ngIf="!picture.favorited">favorite_border</mat-icon>
-                                    <mat-icon *ngIf="picture.favorited">favorite</mat-icon>
-                                </button>
-                                <button mat-icon-button class="example-icon" (click)="openPictureInformation(i)" matTooltip="Info">
-                                    <mat-icon>info</mat-icon>
-                                </button>
-                                <button mat-icon-button class="example-icon" (click)="deletePicture(i)" matTooltip="Delete picture">
-                                    <mat-icon>delete</mat-icon>
-                                </button>
-                            </mat-toolbar>
-                        </div>
-                    </div>
-                </mat-grid-tile>
-            </div>
+          <div lightbox-group>
+            <mat-grid-tile *ngFor="let picture of pictureList; let i = index">
+              <div class="container">
+                <img class="image" style="width: 100%; height: auto;" [src]="picture.location" lightbox counter="true" counterSeparator="/" loading="lazy">
+                <div class="overlay">
+                  <mat-toolbar fxLayoutAlign="end center"style="background-color: transparent;">
+                    <button [disabled]="!isOrganized" mat-icon-button class="example-icon" (click)="updateFavorite(i)" matTooltip="Favorite">
+                    <mat-icon *ngIf="!picture.favorited">favorite_border</mat-icon>
+                    <mat-icon *ngIf="picture.favorited"ed>favorit</mat-icon>
+                    </button>
+                    <button mat-icon-button class="example-icon" (click)="openPictureInformation(i)" matTooltip="Info">
+                      <mat-icon>info</mat-icon>
+                    </button>
+                    <button mat-icon-button class="example-icon" (click)="deletePicture(i)" matTooltip="Delete picture">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </mat-toolbar>
+                </div>
+              </div>
+            </mat-grid-tile>
+          </div>
         </mat-grid-list>
+      </div>
     </div>
-</div>    
-<!-- Album selector -->
-<div fxFlex="15" fxLayoutAlign="center center">
-    <div class="fixedPosition" *ngIf="isVisible">
+    <!-- Album selector -->
+    <div fxFlex="15" fxLayoutAlign="center center">
+      <div class="fixedPosition" *ngIf="isVisible">
         <mat-card >
-            <mat-selection-list [multiple]="false" >
-                <div mat-subheader>Select album</div>
-                <mat-list-option *ngFor="let album of albums;let i = index" [value]="album" (click)="selectedAlbumEvent(album)" [selected]="i==0">
-                    <div mat-line>{{album.name}}</div>
-                    <div mat-line> {{album.date}} </div>
-                </mat-list-option>
-            </mat-selection-list>
+          <mat-selection-list [multiple]="false" >
+            <div mat-subheader>Select album</div>
+            <mat-list-option *ngFor="let album of albums;let i = index" [value]="album" (click)="selectedAlbumEvent(album)" [selected]="i==0">
+            <div mat-line>{{album.name}}</div>
+            <div mat-line> {{album.date}} </div>
+            </mat-list-option>
+          </mat-selection-list>
         </mat-card>
+      </div>
     </div>
 </div>

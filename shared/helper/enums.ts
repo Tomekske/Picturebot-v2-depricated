@@ -53,3 +53,17 @@ export enum App {
     productionDb = "database.db",
     debugDb = "debug.db"
 }
+
+/**
+ * Enum contains menu page titles
+ */
+export enum MenuText {
+    /** Library page name */
+    library = "Add a library page",
+    /** Collection page name */
+    collection = "Add a collection page",
+    /** Album page name */
+    album = "Add an album page",
+    /** Settings page name */
+    settings = "Settings page"
+}

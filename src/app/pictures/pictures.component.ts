@@ -50,6 +50,8 @@ export class PicturesComponent implements OnInit {
    * On init lifecycle hook
    */
   ngOnInit(): void {
+    this._data.IsPictures = true;
+
     // Monitor for collection changes
     this._data.ctxSelectedCollection.subscribe(collection => {
       this.isVisible = false;

@@ -23,7 +23,9 @@ export class ToolbarComponent implements OnInit {
   albums: IAlbum[] = [];
   isOrganized: boolean;
   selectedAlbum: IAlbum;
-
+  isPictures: boolean = true;
+  menuText: string = "";
+  
   constructor(private _electron: ElectronService, private _data: DataService, private _router: Router, private _snack: MatSnackBar, private cdRef:ChangeDetectorRef, private _dialog: MatDialog) { }
 
   /**
@@ -31,6 +33,11 @@ export class ToolbarComponent implements OnInit {
    */
   ngOnInit(): void {
     this.isOrganized = true;
+
+    // Monitor whether the user switches pages and display the menu text accordingly
+    this._data.ctxIsPictures.subscribe(state => this.isPictures = state);
+    this._data.ctxMenuText.subscribe(text => this.menuText = text);
+
     // Get all the collections
     IpcFrontend.getCollections().forEach((collection: ICollection) => {
       this.collections.push(collection.collection);

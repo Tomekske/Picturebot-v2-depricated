@@ -8,7 +8,7 @@ import { Helper } from '../../../../shared/helper/helper';
 import { DataService } from 'app/services/data.service';
 import { Stats } from 'original-fs';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
-import { Regex, Message } from '../../../../shared/helper/enums';
+import { Regex, Message, MenuText } from '../../../../shared/helper/enums';
 
 @Component({
   selector: 'app-album',
@@ -30,6 +30,9 @@ export class AlbumComponent implements OnInit {
    * On init lifecycle hook
    */
   ngOnInit(): void {
+    this._data.IsPictures = false;
+    this._data.MenuText = MenuText.album;
+    
     IpcFrontend.getCollections().forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });

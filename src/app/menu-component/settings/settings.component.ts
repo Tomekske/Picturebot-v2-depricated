@@ -4,7 +4,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { ISettings } from '../../../../shared/database/interfaces';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
-import { Regex, Message } from '../../../../shared/helper/enums';
+import { Regex, Message, MenuText } from '../../../../shared/helper/enums';
+import { DataService } from 'app/services/data.service';
 
 export interface IForm {
   uploadEdited?: string;
@@ -26,12 +27,14 @@ export class SettingsComponent implements OnInit {
   submitted: boolean = false;
   message = Message;
 
-  constructor(private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
+  constructor(private _data: DataService, private fb: FormBuilder, private _snack: MatSnackBar, private _router: Router) { }
 
   /**
    * On init lifecycle hook
    */
   ngOnInit(): void {
+    this._data.IsPictures = false;
+    this._data.MenuText = MenuText.settings;
     
     const isEmpty = IpcFrontend.checkSettingsEmpty();
 

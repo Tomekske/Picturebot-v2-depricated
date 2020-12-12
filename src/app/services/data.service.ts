@@ -42,6 +42,14 @@ export class DataService {
   private _dictStarted = new Object();
   private _pictures: IBase[] = [];
 
+  private _isPictures: boolean;
+  private _srcIsPictures = new BehaviorSubject<boolean>(true);
+  public ctxIsPictures = this._srcIsPictures.asObservable();
+
+  private _menuText: string;
+  private _srcMenuText = new Subject<string>();
+  public ctxMenuText = this._srcMenuText.asObservable();
+
   constructor() { }
 
   /**
@@ -207,5 +215,35 @@ export class DataService {
    */
   get IsStarted() {
     return this._isStarted;
+  }
+
+  /**
+   * Set the is picture state
+   */
+  set IsPictures(state: boolean) {
+    this._isPictures = state;
+    this._srcIsPictures.next(state);
+  }
+
+  /**
+   * Get the is picture state
+   */
+  get IsPictures() {
+    return this._isPictures;
+  }
+
+  /**
+   * Set the is menu text
+   */
+  set MenuText(text: string) {
+    this._menuText = text;
+    this._srcMenuText.next(text);
+  }
+
+  /**
+   * Get the is menu text
+   */
+  get MenuText() {
+    return this._menuText;
   }
 }

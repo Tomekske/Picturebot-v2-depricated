@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DataService } from 'app/services/data.service';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
-import { Message, Regex } from '../../../../shared/helper/enums';
+import { MenuText, Message, Regex } from '../../../../shared/helper/enums';
 
 @Component({
   selector: 'app-collection',
@@ -24,6 +24,9 @@ export class CollectionComponent implements OnInit {
    * On init lifecycle hook
    */
   ngOnInit(): void {
+    this._data.IsPictures = false;
+    this._data.MenuText = MenuText.collection;
+    
     IpcFrontend.getLibraries().forEach((library: ILibrary) => {
       this.libraries.push(library.library);
     });

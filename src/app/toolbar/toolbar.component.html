@@ -1,33 +1,60 @@
 <div fxLayout="column" style="background-color: #222;">
-  <div fxLayout="row">
-    <div fxFlex="35"></div>
-    <div fxFlex="30" fxLayoutAlign="center center">
-      <mat-form-field appearance="fill" style="width: 100%;">
-        <mat-label align="end">Select collection</mat-label>
-        <mat-select [(ngModel)]="selectedCollection" name="collection" (ngModelChange)="selectedCollectionEvent()" (click)="selectionClickEvent()">
-          <mat-option *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div fxFlex="35">
-      <mat-toolbar>
-        <div matTooltip="Start organizing">
-          <button mat-icon-button [disabled]="isOrganized" class="example-icon" (click)="startClickEvent()">
+  <!-- Collection selector and album functions -->
+  <div *ngIf="isPictures">
+    <div fxLayout="row">
+      <div fxFlex="35">        
+        <mat-toolbar color="primary"></mat-toolbar>
+      </div>
+      <div fxFlex="30">
+        <mat-toolbar color="primary" fxLayoutAlign="end center">
+          <mat-form-field color="primary" appearance="fill" style="width: 100%; margin-top: 13px;">
+            <mat-label style="margin-top: 13px; font-size: 15px;" align="end">Select collection</mat-label>
+            <mat-select [(ngModel)]="selectedCollection" name="collection" (ngModelChange)="selectedCollectionEvent()" (click)="selectionClickEvent()">
+              <mat-option style="font-size: 17px;" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-toolbar>     
+      </div>
+      <div fxFlex="35">
+        <mat-toolbar color="primary">
+          <div matTooltip="Start organizing">
+            <button mat-icon-button [disabled]="isOrganized" class="example-icon" (click)="startClickEvent()">
             <mat-icon>play_arrow</mat-icon>
+            </button>
+          </div>
+          <div>
+            <button mat-icon-button class="example-icon" (click)="editAlbum()" matTooltip="Edit album" id="test-open-album-id">
+              <mat-icon>create</mat-icon>
+            </button>
+          </div>
+          <button mat-icon-button class="example-icon" (click)="openInExplorerEvent()" matTooltip="{{ explorerTooltip }}">
+            <mat-icon>open_in_new</mat-icon>
           </button>
-        </div>
-        <div>
-          <button mat-icon-button class="example-icon" (click)="editAlbum()" matTooltip="Edit album" id="test-open-album-id">
-            <mat-icon>create</mat-icon>
+          <button mat-icon-button class="example-icon" (click)="deleteAlbum()" matTooltip="{{ explorerTooltip }}">
+            <mat-icon>delete</mat-icon>
           </button>
-        </div>
-        <button mat-icon-button class="example-icon" (click)="openInExplorerEvent()" matTooltip="{{ explorerTooltip }}">
-          <mat-icon>open_in_new</mat-icon>
-        </button>
-        <button mat-icon-button class="example-icon" (click)="deleteAlbum()" matTooltip="{{ explorerTooltip }}">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </mat-toolbar>
+        </mat-toolbar>
+      </div>
+    </div>
+  </div>
+  <!-- Menu item page -->
+  <div *ngIf="!isPictures">
+    <div fxLayout="row">
+      <div fxFlex="35">
+        <mat-toolbar color="primary" fxLayoutAlign="end center">
+          <button routerLink="/main" mat-icon-button matTooltip="Return to the picture overview page" id="return-main-id">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </mat-toolbar>
+      </div>
+      <div fxFlex="30">
+        <mat-toolbar color="primary" fxLayoutAlign="center center">
+          <h1 color="accent" id="menu-text-id">{{ menuText }}</h1>
+        </mat-toolbar>
+      </div>
+      <div fxFlex="35">
+        <mat-toolbar color="primary"></mat-toolbar>
+      </div>
     </div>
   </div>
   <mat-divider></mat-divider>

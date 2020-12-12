@@ -34,7 +34,7 @@ import { DialogPictureInfoComponent } from './dialogs/dialog-picture-info/dialog
 import { DialogPictureDeleteComponent } from './dialogs/dialog-picture-delete/dialog-picture-delete.component';
 import { DialogAlbumDeleteComponent } from './dialogs/dialog-album-delete/dialog-album-delete.component';
 import { DialogAlbumEditComponent } from './dialogs/dialog-album-edit/dialog-album-edit.component';
-import {  MomentDateAdapter} from '@angular/material-moment-adapter';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');

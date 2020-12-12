@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ElectronService } from '../../core/services/electron/electron.service';
 import { ILibrary } from '../../../../shared/database/interfaces';
@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DataService } from 'app/services/data.service';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
-import { Message, Regex } from '../../../../shared/helper/enums';
+import { Message, Regex, MenuText } from '../../../../shared/helper/enums';
 
 @Component({
   selector: 'app-library',
@@ -23,6 +23,9 @@ export class LibraryComponent implements OnInit {
    * On init lifecycle hook
    */
   ngOnInit(): void {
+    this._data.IsPictures = false;
+    this._data.MenuText = MenuText.album;
+
     this.libraryForm = this.fb.group({
       base: ['', [Validators.required, Validators.pattern(Regex.Folder)]],
       name: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]]
@@ -42,7 +45,6 @@ export class LibraryComponent implements OnInit {
   saveLibrary() {
     let form: ILibrary = this.libraryForm.value;
     let data: ILibrary = { name: form.name, base: form.base, library: this.electron.path.join(form.base, form.name) };
-
 
     // Return on validation errors
     if (this.libraryForm.invalid) {

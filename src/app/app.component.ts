@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ElectronService } from './core/services';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -8,8 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
-  constructor(private electron: ElectronService, private translate: TranslateService) {
+  constructor(private translate: TranslateService, ) {
     this.translate.setDefaultLang('en');
   }
 
