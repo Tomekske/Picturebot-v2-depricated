@@ -18,19 +18,19 @@
       <div fxFlex="35">
         <mat-toolbar color="primary">
           <div matTooltip="Start organizing">
-            <button mat-icon-button [disabled]="isOrganized" class="example-icon" (click)="startClickEvent()">
+            <button type="button" mat-icon-button [disabled]="isOrganized" class="example-icon" (click)="startClickEvent()">
             <mat-icon>play_arrow</mat-icon>
             </button>
           </div>
           <div>
-            <button mat-icon-button class="example-icon" (click)="editAlbum()" matTooltip="Edit album" id="test-open-album-id">
+            <button type="button" mat-icon-button class="example-icon" (click)="editAlbum()" matTooltip="Edit album" id="test-open-album-id">
               <mat-icon>create</mat-icon>
             </button>
           </div>
-          <button mat-icon-button class="example-icon" (click)="openInExplorerEvent()" matTooltip="{{ explorerTooltip }}">
+          <button type="button" mat-icon-button class="example-icon" (click)="openInExplorerEvent()" matTooltip="{{ explorerTooltip }}">
             <mat-icon>open_in_new</mat-icon>
           </button>
-          <button mat-icon-button class="example-icon" (click)="deleteAlbum()" matTooltip="{{ explorerTooltip }}">
+          <button type="button" mat-icon-button class="example-icon" (click)="deleteAlbum()" matTooltip="{{ explorerTooltip }}">
             <mat-icon>delete</mat-icon>
           </button>
         </mat-toolbar>

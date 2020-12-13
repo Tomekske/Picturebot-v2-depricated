@@ -127,7 +127,6 @@ export class ToolbarComponent implements OnInit {
     // Updating the album, because the album won't be updated if the collection hasn't changed
     this._data.IsStarted = true;
 
-
     this._snack.open(`Album '${this.selectedAlbum.album}' organized`, "Dismiss", {
       duration: 4000,
       horizontalPosition: "end"

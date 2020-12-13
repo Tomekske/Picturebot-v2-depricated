@@ -84,7 +84,7 @@ export class PicturesComponent implements OnInit {
       }
     });
 
-    // Monitor wether the album is edited
+    // Monitor whether the album is edited
     this._data.ctxIsAlbumUpdated.subscribe(state => {
       if(state) {
         // Get the albums within a certain collection
@@ -93,11 +93,22 @@ export class PicturesComponent implements OnInit {
       }
     });
 
+    // Monitor whether an album is organized
     this._data.ctxIsStarted.subscribe(state => {
-      if(state) {
-        // Get the albums within a certain collection
-        this.albums = IpcFrontend.getAlbums(this.selectedCollection);
-        this.isOrganized = true;
+      // Checks are needed to select the correct album since the subscription is triggered twice
+      if(state && this.albums.length !== 0) {
+        // Iterate over pictures until the correct album is found
+        this.albums.forEach((album) => {
+          if(album.album === this._data.selectedAlbum.album) {
+            // Get the old index number of the selected album
+            let index: number = this.albums.indexOf(this._data.selectedAlbum);
+            // Obtain the updated album information
+            this.albums = IpcFrontend.getAlbums(this.selectedCollection);
+            this.selectedAlbumEvent(this.albums[index]);
+            this.displayPictures();
+            this.isOrganized = true;
+          }
+        });
       }
     });
   }
@@ -133,7 +144,6 @@ export class PicturesComponent implements OnInit {
     } else if(this.selectedFlow == this.tabFlows.favorites) {
       IpcFrontend.getFavoritesFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
         let isFavorite = IpcFrontend.getIsFavoriteBaseFlowWherePreview(picture.preview);
-
         this.pictureList.push({ location: `file://${picture.preview}`, preview: picture.preview, base: picture.base });
       });
 
@@ -164,6 +174,7 @@ export class PicturesComponent implements OnInit {
    * Display the tab flow in the tab component 
    */
   displayFlows(flows: IFlow) {
+    this.flows = [];
     // Display the the flows in the tab selector in a specified order
     this.flows.push(flows.preview);
     this.flows.push(flows.favorites);
