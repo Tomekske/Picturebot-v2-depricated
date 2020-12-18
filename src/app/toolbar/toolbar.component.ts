@@ -34,9 +34,29 @@ export class ToolbarComponent implements OnInit {
   ngOnInit(): void {
     this.isOrganized = true;
 
+    // Monitor whether a new album is saved
+    this._data.ctxIsAlbumSaved.subscribe(state => {
+      if(state) {
+        this.albums = IpcFrontend.getAlbums(this.selectedCollection);
+      }
+    });
+
     // Monitor whether the user switches pages and display the menu text accordingly
     this._data.ctxIsPictures.subscribe(state => this.isPictures = state);
     this._data.ctxMenuText.subscribe(text => this.menuText = text);
+    this._data.ctxIsCollectionSaved.subscribe(state => {
+      if(state) {
+        // Get all the collections
+        IpcFrontend.getCollections().forEach((collection: ICollection) => this.collections.push(collection.collection));
+
+        // Display a default collection when the collection array isn't empty
+        if(this.collections.length != 0) {
+          this.selectedCollection = this.collections[0];
+          this.selectedCollectionEvent();  
+        }
+        this.albums = IpcFrontend.getAlbums(this.selectedCollection);
+      }
+    });
 
     // Get all the collections
     IpcFrontend.getCollections().forEach((collection: ICollection) => {
@@ -46,8 +66,9 @@ export class ToolbarComponent implements OnInit {
     // Display a default collection when the collection array isn't empty
     if(this.collections.length != 0) {
       this.selectedCollection = this.collections[0];
-      this.selectedCollectionEvent();  
+      this.selectedCollectionEvent();
     }
+    this.albums = IpcFrontend.getAlbums(this.selectedCollection);
 
     // Monitor wether a new album is selected
     this._data.ctxSelectedAlbum.subscribe(album => {
@@ -137,6 +158,7 @@ export class ToolbarComponent implements OnInit {
    * Get all collections when clicking on the selection box
    */
   selectionClickEvent() {
+    // Make sure to clear the collections array before pushing the collections from the database on the array
     if (this.collections.length != 0) {
       this.collections = [];
     }
@@ -171,6 +193,8 @@ export class ToolbarComponent implements OnInit {
         IpcFrontend.deleteAlbum(this.selectedAlbum);
 
         this._data.isAlbumDeleted = true;
+
+        this.albums = IpcFrontend.getAlbums(this.selectedCollection);
 
         this._snack.open(`Album '${this.selectedAlbum.album}' deleted`, "Dismiss", {
           duration: 4000,

@@ -83,6 +83,7 @@ export class CollectionComponent implements OnInit {
       panelClass: "snackbar-id"
     });
 
+    this._data.IsCollectionSaved = true;
     this._router.navigateByUrl('/main');
   }
 

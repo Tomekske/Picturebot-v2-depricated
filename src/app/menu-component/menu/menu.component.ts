@@ -102,7 +102,15 @@ selectedCollection: ICollection;
             onSelected: () => {
               Helper.openInExplorer("D:\\Pictures", this._snack);
             }
+          },
+          {
+            label: 'Debug Pictures',
+            icon: 'insert_photo',
+            onSelected: () => {
+              Helper.openInExplorer("D:\\e2e", this._snack);
+            }
           }
+
         ]
       });  
     }

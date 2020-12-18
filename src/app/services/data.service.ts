@@ -50,6 +50,14 @@ export class DataService {
   private _srcMenuText = new Subject<string>();
   public ctxMenuText = this._srcMenuText.asObservable();
 
+  private _isCollectionSaved: boolean;
+  private _srcIsCollectionSaved = new Subject<boolean>();
+  public ctxIsCollectionSaved = this._srcIsCollectionSaved.asObservable();
+
+  private _isAlbumSaved: boolean;
+  private _srcIsAlbumSaved = new Subject<boolean>();
+  public ctxIsAlbumSaved = this._srcIsAlbumSaved.asObservable();
+
   constructor() { }
 
   /**
@@ -245,5 +253,35 @@ export class DataService {
    */
   get MenuText() {
     return this._menuText;
+  }
+
+  /**
+   * Get the is collection saved state
+   */
+  set IsCollectionSaved(state: boolean) {
+    this._isCollectionSaved = state;
+    this._srcIsCollectionSaved.next(state);
+  }
+
+  /**
+   * Set the is collection saved state
+   */
+  get IsCollectionSaved() {
+    return this._isCollectionSaved;
+  }
+
+    /**
+   * Set the is album saved state
+   */
+  set isAlbumSaved(state: boolean) {
+    this._isAlbumSaved = state;
+    this._srcIsAlbumSaved.next(state);
+  }
+
+  /**
+   * Get the is album saved state
+   */
+  get isAlbumSaved() {
+    return this._isAlbumSaved;
   }
 }

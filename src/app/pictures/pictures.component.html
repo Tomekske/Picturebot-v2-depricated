@@ -22,7 +22,7 @@
                   <button mat-icon-button class="example-icon" (click)="openPictureInformation(i)" matTooltip="Info">
                     <mat-icon>info</mat-icon>
                   </button>
-                  <button mat-icon-button class="example-icon" (click)="deletePicture(i)" matTooltip="Delete picture">
+                  <button [disabled]="isOrganized" mat-icon-button class="example-icon" (click)="deletePicture(i)" matTooltip="Delete picture">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </mat-toolbar>

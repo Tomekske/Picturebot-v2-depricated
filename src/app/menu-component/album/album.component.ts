@@ -106,7 +106,8 @@ export class AlbumComponent implements OnInit {
       duration: 4000,
       horizontalPosition: "end"
     });
-        
+
+    this._data.isAlbumSaved = true;   
     this._router.navigateByUrl('/main');
   }
 
