@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ElectronService } from '../../core/services/electron/electron.service';
-import { IAlbum, IBase, ICollection } from '../../../../shared/database/interfaces';
+import { IAlbum, IBase, ICollection, ISettings } from '../../../../shared/database/interfaces';
+import { IFileTypes } from '../../../../shared/helper/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Helper } from '../../../../shared/helper/helper';
 import { DataService } from 'app/services/data.service';
 import { Stats } from 'original-fs';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
-import { Regex, Message, MenuText } from '../../../../shared/helper/enums';
+import { Regex, Message, MenuText, FileTypes } from '../../../../shared/helper/enums';
 
 @Component({
   selector: 'app-album',
@@ -20,11 +21,13 @@ export class AlbumComponent implements OnInit {
   collections = [];
   hasPictures: boolean;
   message = Message;
+  isRawExtension: boolean;
 
   constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _data: DataService, private _router: Router) { }
   picturesDropzone: File[] = [];
   pictures: IBase[] = [];
   hashedPictures: IBase[] = [];
+  settings: ISettings;
 
   /**
    * On init lifecycle hook
@@ -32,7 +35,8 @@ export class AlbumComponent implements OnInit {
   ngOnInit(): void {
     this._data.IsPictures = false;
     this._data.MenuText = MenuText.album;
-    
+    this.settings = IpcFrontend.getSettings();
+ 
     IpcFrontend.getCollections().forEach((collection: ICollection) => {
       this.collections.push(collection.collection);
     });
@@ -61,7 +65,7 @@ export class AlbumComponent implements OnInit {
     let formatedDate = Helper.formatDate(dropzone.date);
 
     // Return on validation errors
-    if (this.albumForm.invalid || this.picturesDropzone.length == 0) {
+    if (this.albumForm.invalid || this.picturesDropzone.length == 0 || !this.isRawExtension || !this.settings) {
       this.hasPictures = this.picturesDropzone.length == 0 ? false : true;
       this._snack.open(`Input values are invalid!`, "Dismiss", {
         duration: 4000,
@@ -78,7 +82,8 @@ export class AlbumComponent implements OnInit {
       name: dropzone.name, 
       date: formatedDate, 
       album: this.electron.path.join(dropzone.collection, `${dropzone.name} ${formatedDate}`), 
-      started: 0
+      started: 0,
+      raw: 1
     };
 
     // Iterate over all the pictures within the dropzone
@@ -118,6 +123,11 @@ export class AlbumComponent implements OnInit {
 	onSelect(event) {
     this.hasPictures = true;
     this.picturesDropzone.push(...event.addedFiles);
+
+    event.addedFiles.forEach(pictures => {
+      let extension = this.electron.path.extname(pictures.name);
+      this.isRawExtension = FileTypes.Raw.includes(extension);
+    });
 	}
 
   /**

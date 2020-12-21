@@ -10,7 +10,6 @@ import { IpcFrontend } from '../../../shared/ipc/frontend';
 import { DialogPictureDeleteComponent } from 'app/dialogs/dialog-picture-delete/dialog-picture-delete.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Helper } from '../../../shared/helper/helper';
-import { cwd } from 'process';
 
 /**
  * Display interface containing properties 
@@ -55,18 +54,13 @@ export class PicturesComponent implements OnInit {
 
     // Monitor for collection changes
     this._data.ctxSelectedCollection.subscribe(collection => {
-      console.log("Text");
-      console.log(`COLLECTION: ${collection}`);
       this.isVisible = false;
       this.selectedCollection = collection;
       // Get the albums within a certain collection
       this.albums = IpcFrontend.getAlbums(collection);
 
-      console.log(this.albums);
-
       // Select the first album as the default album
       if (typeof this.albums[0] !== 'undefined' && this.albums.length !== 0) {
-        console.log("ERIIIN");
         // Make the album selector visible
         this.isVisible = this._data.isAlbumSelectorVisible;
 

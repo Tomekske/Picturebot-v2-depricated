@@ -15,3 +15,11 @@ export interface IRegex {
     /** Name contains white spaces validator */
     NameWhiteSpaces: RegExp;
 }
+
+/**
+ * Interface contains frequently used filetypes
+ */
+export interface IFileTypes {
+    /** RAW file types */
+    Raw: string[]
+}

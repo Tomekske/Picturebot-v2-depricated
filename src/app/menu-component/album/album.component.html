@@ -38,7 +38,13 @@
                                 <ngx-dropzone-label>{{ p.name }} ({{ p.type }})</ngx-dropzone-label>
                             </ngx-dropzone-preview>
                         </ngx-dropzone>
-                        <mat-error *ngIf="!hasPictures && picturesDropzone.length === 0" id="error-dropzone-required-id">
+                        <mat-error *ngIf="!settings" id="error-conversion-settings-id">
+                            {{ message.PercentageSettings }}
+                        </mat-error>
+                        <mat-error *ngIf="!isRawExtension && picturesDropzone.length !== 0" id="error-extension-id">
+                            {{ message.Extension }}
+                        </mat-error>
+                        <mat-error *ngIf="!hasPictures && picturesDropzone.length === 0 && settings" id="error-dropzone-required-id">
                             {{ message.Dropzone }}
                         </mat-error>
                         <div *ngIf="hasPictures" id="error-dropzone-required-id">

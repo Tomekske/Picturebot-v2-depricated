@@ -72,6 +72,8 @@ export interface IAlbum {
     album?: string;
     /** Checks if organizing has started */
     started?: number;
+    /** Checks if file formats are of RAW type */
+    raw?: number;
 }
 
 /**

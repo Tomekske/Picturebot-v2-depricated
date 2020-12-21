@@ -41,21 +41,21 @@ export class SettingsComponent implements OnInit {
     // If the settings row is empty initialize the object with empty values
     if (isEmpty) {
       this.formData = {
-        uploadEdited: ['', [Validators.required, Validators.pattern(Regex.Website)]],
-        uploadSocialMedia: ['', [Validators.required, Validators.pattern(Regex.Website)]],
-        sofwareEditing: ['', [Validators.required, Validators.pattern(Regex.File)]],
-        sofwarePostProcessing: ['', [Validators.required, Validators.pattern(Regex.File)]],
+        uploadEdited: ['', Validators.pattern(Regex.Website)],
+        uploadSocialMedia: ['', Validators.pattern(Regex.Website)],
+        sofwareEditing: ['', Validators.pattern(Regex.File)],
+        sofwarePostProcessing: ['', Validators.pattern(Regex.File)],
         conversion: ['', [Validators.required, Validators.pattern(Regex.Percentage)]]
-  
+
       };
     } else {
       let settings: ISettings = IpcFrontend.getSettings();
 
       this.formData = {
-        uploadEdited: [settings.uploadEdited, [Validators.required, Validators.pattern(Regex.Website)]],
-        uploadSocialMedia: [settings.uploadSocialMedia, [Validators.required, Validators.pattern(Regex.Website)]],
-        sofwareEditing: [settings.sofwareEditing, [Validators.required, Validators.pattern(Regex.File)]],
-        sofwarePostProcessing: [settings.sofwarePostProcessing, [Validators.required, Validators.pattern(Regex.File)]],
+        uploadEdited: [settings.uploadEdited, Validators.pattern(Regex.Website)],
+        uploadSocialMedia: [settings.uploadSocialMedia, Validators.pattern(Regex.Website)],
+        sofwareEditing: [settings.sofwareEditing, Validators.pattern(Regex.File)],
+        sofwarePostProcessing: [settings.sofwarePostProcessing, Validators.pattern(Regex.File)],
         conversion: [settings.conversion, [Validators.required, Validators.pattern(Regex.Percentage)]]
       };
     }

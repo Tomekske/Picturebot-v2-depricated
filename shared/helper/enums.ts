@@ -1,4 +1,4 @@
-import { IRegex } from './interfaces';
+import { IRegex, IFileTypes } from './interfaces';
 import * as path from 'path';
 import { Helper } from '../helper/helper';
 
@@ -41,7 +41,11 @@ export enum Message {
     /** Field may not contain white spaces */
     NoWhiteSpaces = "Field is not allowed to contain white spaces",
     /** No libraries error */
-    Library = "Please add a library"
+    Library = "Please add a library",
+    /** Conversion rate isn't configured in the settings page */
+    PercentageSettings = "Configure the conversion rate in the settings page",
+    /** Incorrect File extension error message */
+    Extension = "Files are not a RAW format"
 }
 
 /**
@@ -50,7 +54,9 @@ export enum Message {
 export enum App {
     /** Application name */
     name = "Picturebot",
+    /** Production database name */
     productionDb = "database.db",
+    /** Debug database name */
     debugDb = "debug.db"
 }
 
@@ -66,4 +72,11 @@ export enum MenuText {
     album = "Add an album page",
     /** Settings page name */
     settings = "Settings page"
+}
+
+/**
+ * Enum contains frequently used filetypes
+ */
+export let FileTypes: IFileTypes = {
+    Raw: [".K25", ".CR", ".CR2", ".CR3", ".ARI", ".ARW", ".EIP", ".NRW", ".RWZ", ".RW2", ".NEF", ".RAF", ".RAW", ".DCR", ".DNG", ".SRF", ".3FR", ".MEF", ".FFF", ".MOS", ".MFW", ".CRW", ".BAY", ".ORF", ".SR2", ".SRW", ".J6I", ".RWL", ".CS1", ".KDC", ".X3F", ".ERF", ".MRW", ".IIQ", ".PEF", ".CXI"]
 }

@@ -10,9 +10,6 @@
             <button mat-button  matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('uploadEdited')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-uploadEdited-id">
               <mat-icon>close</mat-icon>
             </button>
-            <mat-error *ngIf="form.uploadEdited.errors?.required && !form.uploadEdited.dirty" id="error-uploadEdited-required-id">
-              {{ message.Required }}
-            </mat-error>
             <mat-error *ngIf="form.uploadEdited.errors?.pattern" id="error-uploadEdited-pattern-id">
               {{ message.Website }}
             </mat-error>  
@@ -23,9 +20,6 @@
             <button mat-button  matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('uploadSocialMedia')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-uploadSocialMedia-id">
               <mat-icon>close</mat-icon>
             </button>
-            <mat-error *ngIf="form.uploadSocialMedia.errors?.required && !form.uploadSocialMedia.dirty" id="error-uploadSocialMedia-required-id">
-              {{ message.Required }}
-            </mat-error>
             <mat-error *ngIf="form.uploadSocialMedia.errors?.pattern" id="error-uploadSocialMedia-pattern-id">
               {{ message.Website }}
             </mat-error>  
@@ -41,9 +35,6 @@
             <button mat-button  matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('sofwareEditing')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-sofwareEditing-id">
               <mat-icon>close</mat-icon>
             </button>
-            <mat-error *ngIf="form.sofwareEditing.errors?.required && !form.sofwareEditing.dirty" id="error-sofwareEditing-required-id">
-              {{ message.Required }}
-            </mat-error>
             <mat-error *ngIf="form.sofwareEditing.errors?.pattern" id="error-sofwareEditing-pattern-id">
               {{ message.Executable }}
             </mat-error>  
@@ -54,9 +45,6 @@
             <button mat-button  matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('sofwarePostProcessing')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-sofwarePostProcessing-id">
               <mat-icon>close</mat-icon>
             </button>
-            <mat-error *ngIf="form.sofwarePostProcessing.errors?.required && !form.sofwarePostProcessing.dirty" id="error-sofwarePostProcessing-required-id">
-              {{ message.Required }}
-            </mat-error>
             <mat-error *ngIf="form.sofwarePostProcessing.errors?.pattern" id="error-sofwarePostProcessing-pattern-id">
               {{ message.Executable }}
             </mat-error>  

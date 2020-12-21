@@ -19,6 +19,7 @@ export class DbAlbum extends Sqlite {
             "name" varchar(50) NOT NULL,
             "date" date NOT NULL,
             "started" INTEGER NULL,
+            "raw" INTEGER NULL,
             "album" varchar(250) NOT NULL PRIMARY KEY)`;
 
         Logger.Log().debug(`Query: ${query}`);
@@ -42,7 +43,7 @@ export class DbAlbum extends Sqlite {
      */
     insertRow(args) {
         const stmt = this.connection.prepare(`INSERT INTO Album VALUES (
-            @collection, @name, @date, @started, @album);`
+            @collection, @name, @date, @started, @raw, @album);`
         );
 
         Logger.Log().debug(`Query: INSERT INTO Album VALUES ("${JSON.stringify(args)}")`);
