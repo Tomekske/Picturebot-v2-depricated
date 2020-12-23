@@ -27,6 +27,13 @@
                   </button>
                 </mat-toolbar>
               </div>
+              <div *ngIf="selectedFlow === tabFlows.favorites" class="overlay">
+                <mat-toolbar fxLayoutAlign="end center" style="background-color: transparent;">
+                  <button mat-icon-button class="example-icon" (click)="openPictureInPostProcessingProgram(i)" matTooltip="Favorite">
+                    <mat-icon>brush</mat-icon>
+                  </button>
+                </mat-toolbar>
+              </div>
             </div>
           </mat-grid-tile>
         </div>

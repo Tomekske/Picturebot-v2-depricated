@@ -123,8 +123,8 @@ export class ToolbarComponent implements OnInit {
       else if (flow == startFlows.preview) {
         IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album).forEach((picture: IPreview) => {
           // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
-          let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5, true));
-          let baseDestination = this._electron.path.join(picture.album, startFlows.preview, Helper.renameOrganizesPicture(picture, counter, 5));
+          let destination = this._electron.path.join(picture.album, startFlows.preview, Helper.renameOrganizesPicture(picture, ++counter, 5, true));
+          let baseDestination = this._electron.path.join(picture.album, startFlows.base, Helper.renameOrganizesPicture(picture, counter, 5));
 
           // Rename pictures with the new file name
           this._electron.fs.rename(picture.preview, destination, function (err) {

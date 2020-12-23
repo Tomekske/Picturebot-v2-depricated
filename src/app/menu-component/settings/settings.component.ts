@@ -43,7 +43,6 @@ export class SettingsComponent implements OnInit {
       this.formData = {
         uploadEdited: ['', Validators.pattern(Regex.Website)],
         uploadSocialMedia: ['', Validators.pattern(Regex.Website)],
-        sofwareEditing: ['', Validators.pattern(Regex.File)],
         sofwarePostProcessing: ['', Validators.pattern(Regex.File)],
         conversion: ['', [Validators.required, Validators.pattern(Regex.Percentage)]]
 
@@ -54,7 +53,6 @@ export class SettingsComponent implements OnInit {
       this.formData = {
         uploadEdited: [settings.uploadEdited, Validators.pattern(Regex.Website)],
         uploadSocialMedia: [settings.uploadSocialMedia, Validators.pattern(Regex.Website)],
-        sofwareEditing: [settings.sofwareEditing, Validators.pattern(Regex.File)],
         sofwarePostProcessing: [settings.sofwarePostProcessing, Validators.pattern(Regex.File)],
         conversion: [settings.conversion, [Validators.required, Validators.pattern(Regex.Percentage)]]
       };

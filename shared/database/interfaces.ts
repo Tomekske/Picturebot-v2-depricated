@@ -18,8 +18,6 @@ export interface ISettings {
     uploadEdited?: string;
     /** Upload URL for pictures within the edited flow */
     uploadSocialMedia?: string;
-    /** Path to the software used to edit pictures */
-    sofwareEditing?: string;
     /** Path to the software used to post-process pictures */
     sofwarePostProcessing?: string;
     /** Default RAW picture conversion percentage */
@@ -36,8 +34,6 @@ export interface IFlow {
     base?: string;
     /** Preview flow name */
     preview?: string;
-    /** files flow name */
-    files?: string;
     /** Edited flow name */
     edited?: string;
     /** Social-media flow name */

@@ -119,6 +119,7 @@ export class Helper {
     /**
      * Opens a directory in the explorer
      * @param path Path to open in the explorer
+     * @param snack Snackbar reference
      */
     static openInExplorer(path: string, snack: MatSnackBar) {
         let message: string;
@@ -208,5 +209,37 @@ export class Helper {
         let version: string = isMain ? app.getVersion() : remote.app.getVersion();
 
         return version.includes("dev") ? false : true;
+    }
+
+    /**
+     * 
+     * @param program Program executable
+     * @param options Path to open the file
+     * @param snack Snackbar reference
+     */
+    static ExternalProgram(program: string, options: string, snack: MatSnackBar) {
+        let message: string;
+
+        if(program) {
+            if(fs.existsSync(options)) {
+                // Get executable name without the extension
+                message = `Editing in ${path.parse(program).name}`;
+    
+                cp.exec(`"${program}" "${options}"`);
+                Logger.Log().debug(`File: ${message}`);
+            } else {
+                message = `Unable to open file '${options}'`;
+    
+                Logger.Log().error(`File: ${message}`);
+            }    
+        } else {
+            message = "No editing software is configured"
+        }
+
+        // Display message to the user
+        snack.open(message, "Dismiss", {
+            duration: 4000,
+            horizontalPosition: "end"
+        });
     }
 }

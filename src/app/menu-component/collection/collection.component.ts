@@ -39,7 +39,6 @@ export class CollectionComponent implements OnInit {
       backup: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
       base: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
       preview: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
-      files: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
       edited: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
       socialMedia: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
       favorites: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]]
@@ -60,7 +59,7 @@ export class CollectionComponent implements OnInit {
     let form: ICollection = this.collectionForm.value;
     let data: ICollection = {
       library: form.library, name: form.name, backup: form.backup, base: form.base,
-      preview: form.preview, files: form.files, edited: form.edited, socialMedia: form.socialMedia,
+      preview: form.preview, edited: form.edited, socialMedia: form.socialMedia,
       favorites: form.favorites, collection: this.electron.path.join(form.library, form.name)
     };
 

@@ -17,7 +17,7 @@ export class DbFavoriteFlow extends Sqlite {
         let query: string = `CREATE TABLE IF NOT EXISTS favoriteFlow(
             "collection" varchar(400) NOT NULL,
             "album" varchar(200) NOT NULL,
-            "preview" varchar(400),
+            "preview" varchar(400) NOT NULL,
             "base" varchar(400) NOT NULL PRIMARY KEY)`;
 
         Logger.Log().debug(`Query: ${query}`);

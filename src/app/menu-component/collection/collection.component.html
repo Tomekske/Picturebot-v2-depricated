@@ -71,19 +71,6 @@
                     </mat-error>  
                 </mat-form-field>
                 <mat-form-field class="example-full-width" style="width: 100%;">
-                    <mat-label>Files flow</mat-label>
-                    <input formControlName="files" matInput type="text" id="input-files-id">
-                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('files')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-files-id">
-                        <mat-icon>close</mat-icon>
-                    </button>
-                    <mat-error *ngIf="form.files.errors?.required && !form.files.dirty" id="error-files-id">
-                        {{ message.Required }}
-                    </mat-error>
-                    <mat-error *ngIf="form.files.errors?.pattern" id="error-files-id">
-                        {{ message.NoWhiteSpaces }}
-                    </mat-error>  
-                </mat-form-field>
-                <mat-form-field class="example-full-width" style="width: 100%;">
                     <mat-label>Favorites flow</mat-label>
                     <input formControlName="favorites" matInput type="text" id="input-favorites-id">
                     <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('favorites')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-favorites-id">

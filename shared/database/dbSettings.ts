@@ -16,7 +16,6 @@ export class DbSettings extends Sqlite {
         let query: string = `CREATE TABLE IF NOT EXISTS Settings(
             "uploadEdited" varchar(200), 
             "uploadSocialMedia" varchar(200), 
-            "sofwareEditing" varchar(200), 
             "sofwarePostProcessing" varchar(200), 
             "conversion" varchar(3));`;
         
@@ -40,7 +39,7 @@ export class DbSettings extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO Settings VALUES (@uploadEdited, @uploadSocialMedia, @sofwareEditing, @sofwarePostProcessing, @conversion);");
+        const stmt = this.connection.prepare("INSERT INTO Settings VALUES (@uploadEdited, @uploadSocialMedia, @sofwarePostProcessing, @conversion);");
         
         Logger.Log().debug(`Query: INSERT INTO Settings VALUES ("${JSON.stringify(args)}")`);
         stmt.run(args);
@@ -51,7 +50,7 @@ export class DbSettings extends Sqlite {
      * @param args Updated values
      */
     updateRow(args) {
-        const stmt = this.connection.prepare("UPDATE Settings set uploadEdited=@uploadEdited, uploadSocialMedia=@uploadSocialMedia, sofwareEditing = @sofwareEditing, sofwarePostProcessing=@sofwarePostProcessing, conversion=@conversion;");
+        const stmt = this.connection.prepare("UPDATE Settings set uploadEdited=@uploadEdited, uploadSocialMedia=@uploadSocialMedia, sofwarePostProcessing=@sofwarePostProcessing, conversion=@conversion;");
         
         Logger.Log().debug(`Query: UPDATE Settings set "${JSON.stringify(args)}"`);     
         stmt.run(args);

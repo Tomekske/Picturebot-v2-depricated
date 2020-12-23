@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef, NgZone } f
 import { MatTabGroup } from '@angular/material/tabs';
 import { DataService } from 'app/services/data.service';
 import { Subscription } from 'rxjs';
-import { IAlbum, IBase, IFlow, IPreview } from '../../../shared/database/interfaces';
+import { IAlbum, IBase, IFlow, IPreview, ISettings } from '../../../shared/database/interfaces';
 import { Logger } from '../../../shared/logger/logger';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogPictureInfoComponent } from 'app/dialogs/dialog-picture-info/dialog-picture-info.component';
@@ -252,5 +252,15 @@ export class PicturesComponent implements OnInit {
       let x: IBase = { collection: this.selectedCollection, album: this.selectedAlbum.album, preview: pictures[index].preview, base: pictures[index].base}
       IpcFrontend.saveFavorite(x);
     }
+  }
+
+  /**
+   * Open a favorited picture within a post processing editing program
+   * @param index Index of the picture within the array
+   */
+  openPictureInPostProcessingProgram(index: number) {
+    let settings: ISettings = IpcFrontend.getSettings();
+
+    Helper.ExternalProgram(settings.sofwarePostProcessing, this.pictureList[index].base, this._snack);
   }
 }

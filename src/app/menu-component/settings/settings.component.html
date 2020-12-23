@@ -30,16 +30,6 @@
         <mat-card>
           <h4>Software settings</h4>
           <mat-form-field style="width: 100%;">
-            <mat-label>Editing software</mat-label>
-            <input matInput formControlName="sofwareEditing" type="text" id="input-sofwareEditing-id">
-            <button mat-button  matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('sofwareEditing')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-sofwareEditing-id">
-              <mat-icon>close</mat-icon>
-            </button>
-            <mat-error *ngIf="form.sofwareEditing.errors?.pattern" id="error-sofwareEditing-pattern-id">
-              {{ message.Executable }}
-            </mat-error>  
-          </mat-form-field>
-          <mat-form-field style="width: 100%;">
             <mat-label>Post processing software</mat-label>
             <input matInput formControlName="sofwarePostProcessing" type="text" id="input-sofwarePostProcessing-id">
             <button mat-button  matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('sofwarePostProcessing')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-sofwarePostProcessing-id">
