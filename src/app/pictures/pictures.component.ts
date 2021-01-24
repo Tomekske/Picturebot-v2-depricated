@@ -149,9 +149,17 @@ export class PicturesComponent implements OnInit {
 
       this.isOrganized = Boolean(this.selectedAlbum.started);
     } else if(this.selectedFlow == this.tabFlows.edited) {
-      // Edited flow is selected
+      IpcFrontend.getEditedFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
+        this.pictureList.push({ location: `file://${picture.preview}`, preview: picture.preview, base: picture.base });
+      });
+
+      this.isOrganized = Boolean(this.selectedAlbum.started);    
     } else if(this.selectedFlow == this.tabFlows.socialMedia) {
-      // Social media flow is selected
+      IpcFrontend.getSocialMediaFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
+        this.pictureList.push({ location: `file://${picture.preview}`, preview: picture.preview, base: picture.base });
+      });
+
+      this.isOrganized = Boolean(this.selectedAlbum.started);    
     } else {
       Logger.Log().error(`Selected flow: invalid flow is selected`);
     }
@@ -168,6 +176,8 @@ export class PicturesComponent implements OnInit {
 
     this.displayFlows(this.tabFlows);
     this.displayPictures();
+    
+    IpcFrontend.selectedAlbum(album);
   }
 
   /**

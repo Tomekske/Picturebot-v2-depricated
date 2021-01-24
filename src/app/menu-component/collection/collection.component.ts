@@ -36,12 +36,12 @@ export class CollectionComponent implements OnInit {
     this.collectionForm = this.fb.group({
       library: defaultLibrary,
       name: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
-      backup: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
-      base: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
-      preview: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
-      edited: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
-      socialMedia: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
-      favorites: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]]
+      backup: ['Backup', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      base: ['Raw', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      preview: ['Preview', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      edited: ['Edited', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      socialMedia: ['Instagram', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]],
+      favorites: ['Favorites', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]]
     });
   }
 

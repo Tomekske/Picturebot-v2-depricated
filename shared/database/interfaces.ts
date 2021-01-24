@@ -127,3 +127,27 @@ export interface IPreview extends IPicture {
     /** Location of the converted picture */
     preview: string;
 }
+
+/**
+ * Interface containing editedFlow properties
+ */
+export interface IEdited extends IPicture {
+    /** Edited flow name */
+    edited: string;
+    /** Location of the converted picture */
+    preview: string;
+    /** Destination of the RAW picture */
+    base: string;
+}
+
+/**
+ * Interface containing socialMediaFlow properties
+ */
+export interface ISocialMedia extends IPicture {
+    /** Social-media flow name */
+    socialMedia: string;
+    /** Location of the converted picture */
+    preview: string;
+    /** Destination of the RAW picture */
+    base: string;
+}

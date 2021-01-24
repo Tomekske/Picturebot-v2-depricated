@@ -8,13 +8,16 @@ import { DbCollection } from '../database/dbCollection';
 import { DbLibrary } from '../database/dbLibrary';
 import { DbSettings } from '../database/dbSettings';
 import { DbAlbum } from '../database/dbAlbum';
-import { IAlbum, IBackup, IBase, ICollection, IFlow, ILibrary, IPreview } from '../database/interfaces';
+import { IAlbum, IBackup, IBase, ICollection, IFlow, ILibrary, IPreview, IEdited, ISocialMedia } from '../database/interfaces';
 import { Helper } from '../helper/helper';
 import { Logger } from '../logger/logger';
 import { DbBaseFlow } from '../database/dbBaseFlow';
 import { DbBackupFlow } from '../database/dbBackupFlow';
 import { DbPreviewFlow } from '../database/dbPreviewFlow';
 import { DbFavoriteFlow } from '../database/dbFavoriteFlow';
+import { DbEditedFlow } from '../database/dbEditedFlow';
+import { DbSocialMediaFlow } from '../database/dbSocialMediaFlow';
+var watch = require('node-watch');
 
 /**
  * Static class contains methods to communicate with the backend 
@@ -539,6 +542,110 @@ export class  IpcBackend {
             db.dbClose();
 
             event.returnValue = "";
+        });
+    }
+
+    /**
+     * Update the selected album in the main process
+     * @param album Selected album
+     */
+    static selectedAlbum() {
+        ipcMain.on('selected-album', (event, album: IAlbum) => {
+            Logger.Log().debug('ipcMain: selected-album');
+            console.log(album);
+            const db = new DbCollection();
+            let flows: IFlow = db.queryFlows(album.collection);
+            db.dbClose();
+
+            watch(path.join(album.album, flows.edited), (event, name) => {
+                // Create database
+                const dbFlow = new DbPreviewFlow();
+                let picture: IPreview = dbFlow.queryBaseWhereName(Helper.BasenameWithoutExtension(name));
+                db.dbClose();
+
+                const dbEdited = new DbEditedFlow();
+                const pathEdited = path.join(album.album, flows.edited, path.basename(name));
+
+                if (event == 'update') {
+                    try {
+                        let data: IEdited = { collection: album.collection, album: album.album, preview: picture.preview, base: picture.base, edited: pathEdited };
+                        dbEdited.insertRow(data);
+    
+                    } catch (error) {
+                        console.log("OOOOPS");
+                    }
+                }
+            
+                if (event == 'remove') {
+                    console.log(`REMOVED EDITED: ${name}`);
+                    dbEdited.deleteWhereEdited(pathEdited);
+
+                }
+
+                dbEdited.dbClose();
+            });
+
+            // Social media flow
+            watch(path.join(album.album, flows.socialMedia), (event, name) => {
+                // Create database
+                const dbFlow = new DbPreviewFlow();
+                let picture: IPreview = dbFlow.queryBaseWhereName(Helper.BasenameWithoutExtension(name));
+                db.dbClose();
+
+                const dbSocialMedia = new DbSocialMediaFlow();
+                const pathSocialMedia = path.join(album.album, flows.socialMedia, path.basename(name));
+
+                if (event == 'update') {
+                    try {
+                        let data: ISocialMedia = { collection: album.collection, album: album.album, preview: picture.preview, base: picture.base, socialMedia: pathSocialMedia };
+                        dbSocialMedia.insertRow(data);
+    
+                    } catch (error) {
+                        console.log("OOOOPS");
+                    }
+                }
+            
+                if (event == 'remove') {
+                    dbSocialMedia.deleteWhereSocialMedia(pathSocialMedia);
+                }
+
+                dbSocialMedia.dbClose();
+            });
+
+            //selectedAlbum = album
+            event.returnValue = "";
+        }); 
+    }
+
+    /**
+     * Get pictures from a specified album of the edited flow
+     */
+    static getEditedFlowPictures() {
+        ipcMain.on('get-editedFlow-pictures', (event, args) => {
+            Logger.Log().debug('get-editedFlow-pictures');
+        
+            // Create database
+            const db = new DbEditedFlow();
+            let result = db.queryAllWhereAlbum(args);
+
+            db.dbClose();
+            event.returnValue = result;
+        });
+    }
+
+    /**
+     * Get pictures from a specified album of the social media flow
+     */
+    static getSocialMediaFlowPictures() {
+        ipcMain.on('get-socialMediaFlow-pictures', (event, args) => {
+            Logger.Log().debug('get-socialMediaFlow-pictures');
+        
+            // Create database
+            const db = new DbSocialMediaFlow();
+            let result = db.queryAllWhereAlbum(args);
+
+            db.dbClose();
+            event.returnValue = result;
         });
     }
 }

@@ -1,11 +1,11 @@
 import { app, BrowserWindow, screen, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import * as fs from 'fs';
 import { Logger } from './shared/logger/logger';
 import { Updater } from './shared/updater/updater';
 import { IpcBackend } from './shared/ipc/backend';
 import { Helper } from './shared/helper/helper';
-
 let win: BrowserWindow = null;
 
 const args = process.argv.slice(1),
@@ -155,6 +155,8 @@ function ipcPictures() {
   IpcBackend.updateFavorited();
   IpcBackend.saveFavorite();
   IpcBackend.deleteFavoriteWhereBase();
+  IpcBackend.getEditedFlowPictures();
+  IpcBackend.getSocialMediaFlowPictures();
 }
 
 /**
@@ -165,6 +167,7 @@ function ipcAlbums() {
   IpcBackend.getAlbums();
   IpcBackend.deleteAlbum();
   IpcBackend.updateAlbum();
+  IpcBackend.selectedAlbum();
 }
 
 /**

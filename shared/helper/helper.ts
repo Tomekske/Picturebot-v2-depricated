@@ -242,4 +242,12 @@ export class Helper {
             horizontalPosition: "end"
         });
     }
+
+    /**
+     * Get the filename of a specified file without the extension
+     * @param file Filename
+     */
+    static BasenameWithoutExtension(file: string): string{
+        return path.basename(file).split('.')[0]
+    }
 }

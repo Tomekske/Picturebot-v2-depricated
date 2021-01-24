@@ -109,6 +109,18 @@ export class DbPreviewFlow extends Sqlite {
     }
 
     /**
+     * Method to query all records from a certain album
+     * @param album Selected album
+     */
+    queryBaseWhereName(picture) {
+        let query: string = `SELECT base, preview FROM previewFlow WHERE name LIKE '${picture}%';`
+        const stmt = this.connection.prepare(query);
+
+        Logger.Log().debug(`Query: ${query}`);
+        return stmt.get();
+    }
+
+    /**
      * Delete a picture relation from the database
      * @param path Path to the picture
      */

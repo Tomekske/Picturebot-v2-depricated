@@ -218,4 +218,28 @@ export class  IpcFrontend {
     static deleteFavoriteWhereBase(favorite: string) {
         ipcRenderer.sendSync("delete-favorite-where-base", favorite);
     }
+
+    /**
+     * Set the selected album
+     * @param album Selected album
+     */
+    static selectedAlbum(album: IAlbum) {
+        ipcRenderer.sendSync("selected-album", album);
+    }
+
+    /**
+     * Get pictures from a specified album of the edited flow
+     * @param album Selected album
+     */
+    static getEditedFlowPictures(album: string) {
+        return ipcRenderer.sendSync("get-editedFlow-pictures", album);   
+    }
+
+    /**
+     * Get pictures from a specified album of the social media flow
+     * @param album Selected album
+     */
+    static getSocialMediaFlowPictures(album: string) {
+        return ipcRenderer.sendSync("get-socialMediaFlow-pictures", album);   
+    }
 }
