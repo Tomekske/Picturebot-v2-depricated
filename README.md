@@ -20,33 +20,46 @@ The second oldest pictures in the shoot is marked with index two, etc..
 
     <shoot_02-06-2020_2.jpg>
 
-<a href="https://imgur.com/cPW5UyG"><img src="https://i.imgur.com/cPW5UyG.png" title="source: imgur.com" /></a>
+<a href="https://imgur.com/a/Ug8Tllf"><img src="https://i.imgur.com/Ug8Tllf.png" title="source: imgur.com" /></a>
 
 ----
 ## Structure
-* **Library:** fdfff
-* **Collection:** fdfff
-* **Album:** fdfff
+* **Library:** Is the main folder where all collections and ablums are stored
+* **Collection:** Multiple collections can be linked to a library, their purpose is to hold multiple albums
+* **Album:** Contains pictures organized in flows
 
+### Example
+```bash
+United states (library)
+├── Arizona (collection)
+│   ├── Grand canyon (album)
+│   └── Monument valley (album)
+├── Florida (collection)
+│   ├── Miami (album)
+│   └── Disney world (album)
+└── California (collection)
+    ├── Los Angeles (album)
+    └── San Francisco (album)
+```
+> Note: every album contains workflows
 ----
 ## Workflow
 
 1. Create a library 
 2. Create a collection and link it to a library
 3. Create an album and link an album to a collection
-3. Drag pictures to the dropzone
-4. Save the pictures
+4. Drag pictures to the dropzone and save the pictures
 5. Delete blurred, unsharp and duplicated pictures
-6. Rename the pictures accordingly to the shoot
-7. Edit the pictures within the selection flow
+6. Click on the start organizing button
+7. Favorite the pictures you did like to edit
 8. After editing the picture save the picture within the edited flow
 
 <a href="https://imgur.com/A1pWAMZ"><img src="https://i.imgur.com/A1pWAMZ.gif" title="source: imgur.com" /></a>
 
 ----
-## Download
+## Converting pictures
 
-* [Picturebot - 1.8.3](https://github.com/Tomekske/PicturebotGUI/releases/download/v1.8.0/Setup_Picturebot_V1.8.0.msi)
+Converting RAW images to a JPG format is done by using [ImageMagick](https://imagemagick.org/script/download.php).
 
 ----
 ## Manual
@@ -100,7 +113,3 @@ An in depth manual can be found on the wiki page of this Git repository [wiki](h
 | Different themes                                                                                                          | Low   | :x: |
 | Let the user decide how they want to format the datetime format                                                           | Low	| :x: |
 
-----
-## Converting pictures
-
-Converting RAW images to a JPG format is done by using [ImageMagick](https://imagemagick.org/), [download](https://imagemagick.org/script/download.php) ImageMagick.
