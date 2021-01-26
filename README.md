@@ -41,7 +41,7 @@ United states (library)
     ├── Los Angeles (album)
     └── San Francisco (album)
 ```
-> Note: every album contains workflows
+> :warning: Every album contains workflows
 ----
 ## Workflow
 
@@ -60,6 +60,8 @@ United states (library)
 ## Converting pictures
 
 Converting RAW images to a JPG format is done by using [ImageMagick](https://imagemagick.org/script/download.php).
+
+> :warning: A converersion percentage must be configured within the settings page
 
 ----
 ## Manual
@@ -91,25 +93,19 @@ An in depth manual can be found on the wiki page of this Git repository [wiki](h
 
 | Functionality	| Priority	| Status	|
 | ------- | ----------------------------- | --------------- |
-| Port the application to WPF using dotnet core(front-end and back-end), refactor code in doing so                          | High      | :x: |
-| Move to a database system instead of working with absolute file paths                                                     | High      | :x: |
-| Add functionality to import pictures to the new database system once the new system is rolled out                         | High      | :x: |
-| Investigate and implement an alternative for the JSON configuration file                                                  | High      | :x: |
-| Speed up converting RAW pictures to a JPG picture format                                                                  | High      | :x: |
-| Add pictures to an existing shoots                                                                                        | High      | :x: |
-| Detect whether an external memory-card is connected and automatically open the directory when adding a new shoot          | High      | :x: |
-| Display an error message when the user tries to open the workspace directory when a workspace is not added yet            | High      | :white_check_mark: |
-| Add / configure an installer to install Picturebot on a machine                                                           | High      | :white_check_mark: |
-| Add a picture rating system and the ability to filter pictures based on their rating                                      | Medium    | :x: |
+| Add picture lazy loading                                                                                                  | High    | :x: |
+| Delete collections                                                                                                        | High    | :x: |
+| Delete libraries                                                                                                          | High    | :x: |
+| Add functionality to import legacy albums to the new database system                                                      | High    | :x: |
+| Add pictures to an existing shoots                                                                                        | High    | :x: |
+| Display update status' when the application is updating                                                                   | High	  | :x: |
 | Visual representation whether a shoot is fully edited, partially edited, or not edited at all                             | Medium	| :x: |
 | Investigate whether it is possible to add a tool to automatically upload pictures to google pictures                      | Medium	| :x: |
-| Ability to delete a picture when the user is browsing the pictures in the slideshow                                       | Medium	| :x: |
-| Update the application whenever a newer version is available without overwriting the user’s settings                      | Medium	| :x: |
-| Investigate and implement the best way how to add a picture within the backup flow to the base flow                       | Medium	| :x: |
+| Detect whether an external memory-card is connected and automatically open the directory when adding a new shoot          | Medium  | :x: |
+| Investigate and implement the best way how to add a pictures within the backup flow to the base flow                      | Medium	| :x: |
 | Add meta-data information to pictures                                                                                     | Medium	| :x: |
-| Import mixed file formats shoots (RAW and JPG combined)                                                                   | Medium	| :x: |
-| CI to run C# tests                                                                                                        | Medium	| :x: |
-| Investigate and implement a way of dragging pictures to lightroom, since lightroom doesn’t support a CLI to open files    | Low	| :x: |
-| Different themes                                                                                                          | Low   | :x: |
-| Let the user decide how they want to format the datetime format                                                           | Low	| :x: |
-
+| Import compressed pictures                                                                                                | Medium	| :x: |
+| Investigate and implement a way of dragging pictures to lightroom, since lightroom doesn’t support a CLI to open files    | Low     | :x: |
+| Different themes                                                                                                          | Low     | :x: |
+| Let the user decide how they want to format the datetime format                                                           | Low     | :x: |
+| Add a picture rating system and the ability to filter pictures based on their rating                                      | Low  | :x: |
