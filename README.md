@@ -11,7 +11,7 @@ An album contains workflows, every workflow has a unique purpose. There are six 
 
 The idea is that the filesystem is mirrored within the application, actions such as library, collection and album deletion are non destructive. Which means that only the database link is deleted. Only picture deletions are destructive, the idea behind is that deleted pictures still can be restored from the backup flow.
 
-All pictures follow a special naming convention
+Another feature is that all pictures follow a special naming convention, this is done automatically by the program
 
     <shoot_dd-mm-YYYY_index.extension>
 
