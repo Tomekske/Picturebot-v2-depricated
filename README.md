@@ -55,6 +55,7 @@ United states (library)
 8. After editing the picture save the picture within the edited flow
 
 <a href="https://imgur.com/A1pWAMZ"><img src="https://i.imgur.com/A1pWAMZ.gif" title="source: imgur.com" /></a>
+<a href="https://imgur.com/DtsMSJm"><img src="https://i.imgur.com/DtsMSJm.gif" title="source: imgur.com" /></a>
 
 ----
 ## Converting pictures
