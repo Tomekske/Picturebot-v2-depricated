@@ -9,6 +9,8 @@ An album contains workflows, every workflow has a unique purpose. There are six 
 * **Edited** flow contains pictures that are edited
 * **Social media** flow contains cropped pictures that are used to post on social media
 
+The idea is that the filesystem is mirrored within the application, actions such as library, collection and album deletion are non destructive. Which means that only the database link is deleted. Only picture deletions are destructive, the idea behind is that deleted pictures still can be restored from the backup flow.
+
 All pictures follow a special naming convention
 
     <shoot_dd-mm-YYYY_index.extension>
@@ -41,7 +43,9 @@ United states (library)
     ├── Los Angeles (album)
     └── San Francisco (album)
 ```
+
 > :warning: Every album contains workflows
+
 ----
 ## Workflow
 
@@ -67,8 +71,6 @@ Converting RAW images to a JPG format is done by using [ImageMagick](https://ima
 ## Manual
 
 > Under construction :warning:
-
-An in depth manual can be found on the wiki page of this Git repository [wiki](https://github.com/Tomekske/PicturebotGUI/wiki).
 
 ----
 ## Features
