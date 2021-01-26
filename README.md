@@ -75,20 +75,13 @@ Converting RAW images to a JPG format is done by using [ImageMagick](https://ima
 ----
 ## Features
 
-* Add, update and delete workspaces
-* Switch between workspaces
-* Reorder workspace order
-* Add a new shoot to the workspace
-* Rename shoot and pictures accordingly 
-* Delete shoots
+* Add, update and delete libraries, collections and albums
+* Rename pictures within a shoot accordingly
 * Delete pictures
-* Open current workspace in explorer
-* Open current shoot in explorer
-* Edit pictures
-* Upload pictures to the cloud in a very basic and straightforward way
+* Open current library, collection and album in explorer
+* Open a picture with an external editing program
 * Convert RAW pictures to a JPG picture format
 * Picture slideshow when displaying pictures in full screen
-* View log file with the user’s default editor
 
 ----
 ## TODO
