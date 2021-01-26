@@ -54,8 +54,7 @@ United states (library)
 7. Favorite the pictures you did like to edit
 8. After editing the picture save the picture within the edited flow
 
-<a href="https://imgur.com/A1pWAMZ"><img src="https://i.imgur.com/A1pWAMZ.gif" title="source: imgur.com" /></a>
-<a href="https://imgur.com/70XgcPf"><img src="https://i.imgur.com/70XgcPf.gif" title="source: imgur.com" /></a>
+![work_flow_8fps](https://user-images.githubusercontent.com/22329280/105846464-82647e80-5fdc-11eb-8dcb-96a40177a7a4.gif)
 
 ----
 ## Converting pictures
