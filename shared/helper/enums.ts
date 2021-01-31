@@ -11,7 +11,7 @@ export let Regex: IRegex = {
     /** Percentage 1-100 validator */
     Percentage: "^(100|[1-9][0-9]?)$",
     /** Windows folder path validator */
-    Folder: /^([a-zA-Z]):(\\\w+)+$/,
+    Folder: /[a-zA-Z]:[\\\/]([\w+\s]+[\\\/]?)+/,
     /** Windows file path validator */ 
     File: /^([a-zA-Z]):\\(.+\\)*(.+)\.(.+)$/,
     /** Name must not contain white spaces validator */

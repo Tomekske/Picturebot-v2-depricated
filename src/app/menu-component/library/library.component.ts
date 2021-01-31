@@ -27,7 +27,7 @@ export class LibraryComponent implements OnInit {
     this._data.MenuText = MenuText.album;
 
     this.libraryForm = this.fb.group({
-      base: ['', [Validators.required, Validators.pattern(Regex.Folder)]],
+      base: [''],
       name: ['', [Validators.required, Validators.pattern(Regex.NameNoWhiteSpaces)]]
     });
   }

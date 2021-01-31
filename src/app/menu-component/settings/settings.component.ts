@@ -44,7 +44,7 @@ export class SettingsComponent implements OnInit {
         uploadEdited: ['', Validators.pattern(Regex.Website)],
         uploadSocialMedia: ['', Validators.pattern(Regex.Website)],
         sofwarePostProcessing: ['', Validators.pattern(Regex.File)],
-        conversion: ['', [Validators.required, Validators.pattern(Regex.Percentage)]]
+        conversion: ['85', [Validators.required, Validators.pattern(Regex.Percentage)]]
 
       };
     } else {

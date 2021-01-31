@@ -17,7 +17,7 @@ export class DbSettings extends Sqlite {
             "uploadEdited" varchar(200), 
             "uploadSocialMedia" varchar(200), 
             "sofwarePostProcessing" varchar(200), 
-            "conversion" varchar(3));`;
+            "conversion" varchar(3)) DEFAULT '85';`;
         
         Logger.Log().debug(`Query: ${query}`);
         this.connection.exec(query);
