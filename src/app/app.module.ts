@@ -35,6 +35,8 @@ import { DialogPictureDeleteComponent } from './dialogs/dialog-picture-delete/di
 import { DialogAlbumDeleteComponent } from './dialogs/dialog-album-delete/dialog-album-delete.component';
 import { DialogAlbumEditComponent } from './dialogs/dialog-album-edit/dialog-album-edit.component';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DialogImportLegacyComponent } from './dialogs/dialog-import-legacy/dialog-import-legacy.component';
+
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -52,8 +54,9 @@ export const MY_FORMATS: MatDateFormats = {
   },
 };
 
+
 @NgModule({
-  declarations: [AppComponent, MenuComponent, SettingsComponent, ToolbarComponent, LibraryComponent, AlbumComponent, CollectionComponent, PicturesComponent, DialogPictureInfoComponent, DialogPictureDeleteComponent, DialogAlbumDeleteComponent, DialogAlbumEditComponent],
+  declarations: [AppComponent, MenuComponent, SettingsComponent, ToolbarComponent, LibraryComponent, AlbumComponent, CollectionComponent, PicturesComponent, DialogPictureInfoComponent, DialogPictureDeleteComponent, DialogAlbumDeleteComponent, DialogAlbumEditComponent, DialogImportLegacyComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -80,8 +83,8 @@ export const MY_FORMATS: MatDateFormats = {
       {path: 'settings', component: SettingsComponent},
       {path: 'addAlbum', component: AlbumComponent},
       {path: 'addCollection', component: CollectionComponent},
-      {path: 'addLibrary', component: LibraryComponent}
-    ])
+      {path: 'addLibrary', component: LibraryComponent},
+    ], { onSameUrlNavigation: 'reload'})
   ],
   providers: [DataService, 
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },

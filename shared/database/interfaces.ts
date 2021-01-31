@@ -151,3 +151,13 @@ export interface ISocialMedia extends IPicture {
     /** Destination of the RAW picture */
     base: string;
 }
+
+/**
+ * Interface containing legacy properties
+ */
+export interface ILegacy extends ICollection {
+    /** Legacy album path */
+    legacy: string;
+    /** Creation date of the picture */
+    date: string;
+}

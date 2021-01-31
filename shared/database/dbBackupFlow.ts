@@ -18,7 +18,6 @@ export class DbBackupFlow extends Sqlite {
             "collection" varchar(400) NOT NULL,
             "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
-            "base" varchar(400) NOT NULL,
             "backup" varchar(400) NOT NULL PRIMARY KEY,
             "date" varchar(10) NOT NULL,
             "time" varchar(8) NOT NULL)`;
@@ -43,7 +42,7 @@ export class DbBackupFlow extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO backupFlow VALUES (@collection, @name, @album, @base, @backup, @date, @time);");
+        const stmt = this.connection.prepare("INSERT INTO backupFlow VALUES (@collection, @name, @album, @backup, @date, @time);");
         
         Logger.Log().debug(`Query: INSERT INTO backupFlow VALUES ("${JSON.stringify(args)}")`);
         stmt.run(args);

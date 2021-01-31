@@ -8,7 +8,7 @@ import { DbCollection } from '../database/dbCollection';
 import { DbLibrary } from '../database/dbLibrary';
 import { DbSettings } from '../database/dbSettings';
 import { DbAlbum } from '../database/dbAlbum';
-import { IAlbum, IBackup, IBase, ICollection, IFlow, ILibrary, IPreview, IEdited, ISocialMedia } from '../database/interfaces';
+import { IAlbum, IBackup, IBase, ICollection, IFlow, ILibrary, IPreview, IEdited, ISocialMedia, ILegacy } from '../database/interfaces';
 import { Helper } from '../helper/helper';
 import { Logger } from '../logger/logger';
 import { DbBaseFlow } from '../database/dbBaseFlow';
@@ -17,6 +17,7 @@ import { DbPreviewFlow } from '../database/dbPreviewFlow';
 import { DbFavoriteFlow } from '../database/dbFavoriteFlow';
 import { DbEditedFlow } from '../database/dbEditedFlow';
 import { DbSocialMediaFlow } from '../database/dbSocialMediaFlow';
+import { Api } from '../database/api';
 var watch = require('node-watch');
 
 /**
@@ -196,7 +197,7 @@ export class  IpcBackend {
                 const destPreview: string = path.join(album.collection,`${album.name} ${album.date}`, flows.preview, `${picture.hashed.split('.')[0]}.jpg`);
                 
                 let dataBaseFlow: IBase = { collection: album.collection, name: picture.name, album: album.album, favorited: 0, backup: destBackup,preview: destPreview, base: destBase, date: picture.date, time: picture.time};
-                let dataBackupFlow: IBackup = { collection: album.collection, name: picture.name, album: album.album, base: destBase, backup: destBackup, date: picture.date, time: picture.time};
+                let dataBackupFlow: IBackup = { collection: album.collection, name: picture.name, album: album.album, backup: destBackup, date: picture.date, time: picture.time};
                 let dataPreviewFlow: IPreview = { collection: album.collection, name: picture.name, album: album.album, base: destBase, preview: destPreview, date: picture.date, time: picture.time}; 
         
                 // copy base
@@ -648,4 +649,168 @@ export class  IpcBackend {
             event.returnValue = result;
         });
     }
+
+    static importLegacyAlbum() {
+        ipcMain.on('import-legacy-album', (event, form: ILegacy) => {
+            Logger.Log().debug('import-legacy-album');
+            
+            interface ILocation {
+                source: string;
+                destination: string;
+            }
+
+            interface ILegacyAlbum {
+                base?: ILocation;
+                backup?: ILocation;
+                preview?: ILocation;
+                favorited?: {
+                    isFavorited: number;
+                    source: string;
+                }; 
+                edited?: ILocation;
+                socialMedia?: ILocation;
+                time?: string;
+            }
+
+            let album: IAlbum = {
+                album: path.join(form.collection, path.basename(form.legacy)),
+                collection: form.collection,
+                name: /(\w+( +\w+)*) \d+-\d+-\d+/.exec(form.legacy)[1].toString(), 
+                date: path.basename(form.legacy.split(" ").pop()),
+                started: 1,
+                raw: 1
+            }
+
+            // Create the album and get the flows of that album
+            Api.createAlbum(album);
+            let flows: IFlow = Api.getFlows(album);
+
+            // Map all pictures within every flow
+            if (fs.existsSync(form.legacy)) {
+                fs.readdirSync(path.join(form.legacy, form.backup)).forEach(pictureBackup => {
+                    let source = path.join(form.legacy, flows.backup, pictureBackup);
+                    let destination = path.join(album.album, flows.backup, pictureBackup);
+                    
+                    let backupStat = fs.statSync(source); 
+
+                    Api.insertBackupIntoDatabase({
+                        collection: form.collection,
+                        name: album.name,
+                        album: album.album,
+                        backup: destination,
+                        date: album.date,
+                        time: Helper.formatTime(backupStat.mtime.toISOString())
+                    });
+
+                    Helper.copyFile(source, destination);
+                });
+
+                fs.readdirSync(path.join(form.legacy, form.base)).forEach(pictureBase => {
+                    let obj: ILegacyAlbum = {};
+                    let source: string = path.join(form.legacy, form.base, pictureBase);
+                    let destination = path.join(album.album, flows.base, pictureBase);
+
+                    let baseStat = fs.statSync(source); 
+                    obj.time = Helper.formatTime(baseStat.mtime.toISOString());
+
+                    obj.base = { source: source, destination: destination};
+                    obj.favorited = { isFavorited: 0, source: ""};
+                    
+                    // Backup flow
+                    fs.readdirSync(path.join(form.legacy, form.backup)).forEach(pictureBackup => {
+                        let backupStat = fs.statSync(path.join(form.legacy, form.backup, pictureBackup));
+
+                        if(baseStat.size == backupStat.size && baseStat.mtimeMs == backupStat.mtimeMs) {
+                            obj.backup = { source: path.join(form.legacy, form.backup, pictureBackup), destination: path.join(form.collection, flows.backup, pictureBackup)};
+                        }
+                    });
+
+                    // Preview flow
+                    fs.readdirSync(path.join(form.legacy, form.preview)).forEach(picturePreview => {
+                        if(Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(picturePreview)) {
+                            obj.preview = { source: path.join(form.legacy, form.preview, picturePreview), destination: path.join(album.album, flows.preview, picturePreview)};
+                        }
+                    });
+
+                    // Edited flow
+                    fs.readdirSync(path.join(form.legacy, form.edited)).forEach(pictureEdited => {
+                        if(Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureEdited)) {
+                            obj.edited = { source: path.join(form.legacy, form.edited, pictureEdited), destination: path.join(album.album, flows.edited, pictureEdited)};
+
+                            Api.insertEditedIntoDatabase({
+                                collection: form.collection,
+                                album: album.album,
+                                preview: obj.preview.destination, 
+                                base: obj.base.destination,
+                                edited: obj.edited.destination
+                            });
+
+                            Helper.copyFile(obj.edited.source, obj.edited.destination);
+                        }
+                    });
+
+                    // Social-Media flow
+                    fs.readdirSync(path.join(form.legacy, form.socialMedia)).forEach(pictureSocialMedia => {
+                        if(Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureSocialMedia)) {
+                            obj.socialMedia = { source: path.join(form.legacy, form.socialMedia, pictureSocialMedia), destination: path.join(album.album, flows.socialMedia, pictureSocialMedia)};
+
+                            Api.insertSocialMediaIntoDatabase({
+                                collection: form.collection,
+                                album: album.album,
+                                preview: obj.preview.destination, 
+                                base: obj.base.destination,
+                                socialMedia: obj.socialMedia.destination
+                            });
+
+                            Helper.copyFile(obj.socialMedia.source, obj.socialMedia.destination);
+                        }
+                    });
+
+                    // Favorites flow
+                    fs.readdirSync(path.join(form.legacy, form.favorites)).forEach(pictureFavorites => {
+                        
+                        if(Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureFavorites)) {
+                            obj.favorited = { isFavorited: 1, source: path.join(form.legacy, form.socialMedia, pictureFavorites)};
+
+                            Api.insertFavoriteIntoDatabase({
+                                collection: form.collection,
+                                album: album.album,
+                                preview: obj.preview.destination, 
+                                base: obj.base.destination,
+                            });
+                        }
+                    });
+
+                    Api.insertBaseIntoDatabase({
+                        collection: form.collection,
+                        name: album.name,
+                        album: album.album,
+                        favorited: obj.favorited.isFavorited,
+                        backup: obj.backup.destination,
+                        preview: obj.preview.destination, 
+                        base: obj.base.destination,
+                        date: album.date,
+                        time: obj.time
+                    });
+
+                    Api.insertPreviewIntoDatabase({
+                        collection: form.collection,
+                        name: album.name,
+                        album: album.album,
+                        base: obj.base.destination,
+                        preview: obj.preview.destination, 
+                        date: album.date,
+                        time: obj.time
+                    });
+
+                    // copy to base flow
+                    Helper.copyFile(obj.base.source, obj.base.destination);
+                    // copy to preview flow
+                    Helper.copyFile(obj.preview.source, obj.preview.destination);
+
+                });
+            }   
+            event.returnValue = "";
+        });
+    }   
 }

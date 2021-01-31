@@ -1,0 +1,76 @@
+<h1 mat-dialog-title>Import legacy album</h1>
+<div mat-dialog-content>
+  <div>
+    <form class="example-form" [formGroup]="collectionForm">
+        <div style="padding-top: 1%;">
+            <mat-card>
+                <h4>Select collection</h4>
+                <mat-form-field appearance="fill" style="width: 100%;">
+                    <mat-label>Select collection</mat-label>
+                    <mat-select [disabled]="collections.length === 0" formControlName="collection" id="select-collection-id">
+                        <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="example-full-width" style="width: 100%;">
+                    <mat-label>Legacy album</mat-label>
+                    <input formControlName="legacy" matInput type="text" id="input-legacy-id">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('legacy')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-legacy-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </mat-card> 
+        </div>
+        <div style="padding-top: 1%;">
+            <mat-card>
+                <h4>Configure flow names</h4>
+                <mat-form-field class="example-full-width" style="width: 100%;">
+                    <mat-label>Base flow</mat-label>
+                    <input formControlName="base" matInput type="text" id="input-base-id">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('base')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-base-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <mat-form-field class="example-full-width" style="width: 100%;">
+                    <mat-label>Preview flow</mat-label>
+                    <input formControlName="preview" matInput type="text" id="input-preview-id">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('preview')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-preview-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <mat-form-field class="example-full-width" style="width: 100%;">
+                    <mat-label>Backup flow</mat-label>
+                    <input formControlName="backup" matInput type="text" id="input-backup-id">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('backup')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-backup-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <mat-form-field class="example-full-width" style="width: 100%;">
+                    <mat-label>Favorites flow</mat-label>
+                    <input formControlName="favorites" matInput type="text" id="input-favorites-id">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('favorites')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-favorites-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <mat-form-field class="example-full-width" style="width: 100%;">
+                    <mat-label>Edited flow</mat-label>
+                    <input formControlName="edited" matInput type="text" id="input-edited-id">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('edited')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-edited-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <mat-form-field class="example-full-width" style="width: 100%;">
+                    <mat-label>Social-Media flow</mat-label>
+                    <input formControlName="socialMedia" matInput type="text" id="input-socialmedia-id">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('socialMedia')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-socialMedia-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </mat-card>
+        </div>
+    </form>
+  </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="cancelClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="collectionForm.value" cdkFocusInitial>Ok</button>
+</div>

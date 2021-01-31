@@ -50,11 +50,8 @@ export class Helper {
      * @param destination Destination location
      */
     static copyFile(source: string, destination: string) {
-        fs.copyFile(source, destination, (err) => {
-            if (err) throw err;
-            
-            Logger.Log().debug(`Copy Picture: '${source}' -> '${destination}'`);
-        });
+        fs.copyFileSync(source, destination);
+        Logger.Log().debug(`Copy Picture: '${source}' -> '${destination}'`);
     }
 
     /**

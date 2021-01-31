@@ -168,6 +168,7 @@ function ipcAlbums() {
   IpcBackend.deleteAlbum();
   IpcBackend.updateAlbum();
   IpcBackend.selectedAlbum();
+  IpcBackend.importLegacyAlbum();
 }
 
 /**

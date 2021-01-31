@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { IAlbum, IBase } from '../database/interfaces';
+import { IAlbum, IBase, ILegacy } from '../database/interfaces';
 
 /**
  * Static class contains methods to communicate with the backend 
@@ -241,5 +241,13 @@ export class  IpcFrontend {
      */
     static getSocialMediaFlowPictures(album: string) {
         return ipcRenderer.sendSync("get-socialMediaFlow-pictures", album);   
+    }
+
+    /**
+     * Import a legacy album into the system
+     * @param form legacy m object
+     */
+    static importLegacyAlbum(form: ILegacy) {              
+        ipcRenderer.sendSync("import-legacy-album", form);
     }
 }

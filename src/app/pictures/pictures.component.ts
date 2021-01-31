@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef, NgZone } f
 import { MatTabGroup } from '@angular/material/tabs';
 import { DataService } from 'app/services/data.service';
 import { Subscription } from 'rxjs';
-import { IAlbum, IBase, IFlow, IPreview, ISettings } from '../../../shared/database/interfaces';
+import { IAlbum, IBase, IEdited, IFlow, IPreview, ISettings, ISocialMedia } from '../../../shared/database/interfaces';
 import { Logger } from '../../../shared/logger/logger';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogPictureInfoComponent } from 'app/dialogs/dialog-picture-info/dialog-picture-info.component';
@@ -10,6 +10,8 @@ import { IpcFrontend } from '../../../shared/ipc/frontend';
 import { DialogPictureDeleteComponent } from 'app/dialogs/dialog-picture-delete/dialog-picture-delete.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Helper } from '../../../shared/helper/helper';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 /**
  * Display interface containing properties 
@@ -44,12 +46,17 @@ export class PicturesComponent implements OnInit {
   isVisible: boolean = false;
   isOrganized: boolean;
 
-  constructor(private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar) { }
+  constructor(private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar, private _router: Router, private _location: Location) { }
   
   /**
    * On init lifecycle hook
    */
   ngOnInit(): void {
+    // Making sure it's possible to reload a current URL
+    this._router.routeReuseStrategy.shouldReuseRoute = () => {
+      return false;
+    };
+
     this._data.IsPictures = true;
 
     // Monitor for collection changes
@@ -149,14 +156,14 @@ export class PicturesComponent implements OnInit {
 
       this.isOrganized = Boolean(this.selectedAlbum.started);
     } else if(this.selectedFlow == this.tabFlows.edited) {
-      IpcFrontend.getEditedFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
-        this.pictureList.push({ location: `file://${picture.preview}`, preview: picture.preview, base: picture.base });
+      IpcFrontend.getEditedFlowPictures(this.selectedAlbum.album).forEach((picture: IEdited) => {
+        this.pictureList.push({ location: `file://${picture.edited}`, preview: picture.edited, base: picture.base });
       });
 
       this.isOrganized = Boolean(this.selectedAlbum.started);    
     } else if(this.selectedFlow == this.tabFlows.socialMedia) {
-      IpcFrontend.getSocialMediaFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
-        this.pictureList.push({ location: `file://${picture.preview}`, preview: picture.preview, base: picture.base });
+      IpcFrontend.getSocialMediaFlowPictures(this.selectedAlbum.album).forEach((picture: ISocialMedia) => {
+        this.pictureList.push({ location: `file://${picture.socialMedia}`, preview: picture.socialMedia, base: picture.base });
       });
 
       this.isOrganized = Boolean(this.selectedAlbum.started);    
