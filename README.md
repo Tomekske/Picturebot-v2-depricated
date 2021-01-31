@@ -1,6 +1,6 @@
 # Picturebot
 Picturebot is photo organizer app which allows the user to organize photos in a proper way. It allows the user to easily add pictures to albums. 
-An album contains workflows, every workflow has a unique purpose. There are six defined workflows: backup, base, preview, favorties, edited and social media.
+An album contains workflows, every workflow has a unique purpose. There are six defined workflows: backup, base, preview, favorites, edited and social media.
 
 * **Backup** flow's purpose is to backup pictures taken in a shoot
 * **Base** flow contains all filtered photos (blurred, unsharp, duplicate, … pictures are deleted)
@@ -26,7 +26,7 @@ The second oldest pictures in the shoot is marked with index two, etc..
 
 ----
 ## Structure
-* **Library:** Is the main folder where all collections and ablums are stored
+* **Library:** Is the main folder where all collections and albums are stored
 * **Collection:** Multiple collections can be linked to a library, their purpose is to hold multiple albums
 * **Album:** Contains pictures organized in flows
 
@@ -92,10 +92,10 @@ Converting RAW images to a JPG format is done by using [ImageMagick](https://ima
 | Database API                                                                                                              | High    | :x: |
 | Delete collections                                                                                                        | High    | :x: |
 | Delete libraries                                                                                                          | High    | :x: |
-| Add functionality to import legacy albums to the new database system (Dev tab)                                            | High    | :x: |
+| Add functionality to import legacy albums to the new database system                                                      | High    | :white_check_mark: |
 | Add pictures to an existing shoots                                                                                        | High    | :x: |
 | Display update status' when the application is updating                                                                   | High	  | :x: |
-| Fix: Date component layout issues in producation                                                                          | High	  | :x: |
+| Fix: Date component layout issues in production                                                                          | High	  | :x: |
 | Conversion percentage default value                                                                                       | High	  | :x: |
 | Automatically set the album date                                                                                          | Medium	| :x: |
 | Visual representation whether a shoot is fully edited, partially edited, or not edited at all                             | Medium	| :x: |
