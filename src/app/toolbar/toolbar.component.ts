@@ -217,9 +217,10 @@ export class ToolbarComponent implements OnInit {
       let updatedAlbum: IAlbum = {  
         collection: this.selectedAlbum.collection,
         name: form.album, 
-        date: Helper.formatDate(form.date), 
-        album: this._electron.path.join(this.selectedAlbum.collection, `${form.album} ${Helper.formatDate(form.date)}`), // error
-        started: this.selectedAlbum.started
+        date: Helper.formatDate(form.date),
+        started: this.selectedAlbum.started,
+        raw: this.selectedAlbum.raw,
+        album: this._electron.path.join(this.selectedAlbum.collection, `${form.album} ${Helper.formatDate(form.date)}`)
       };
 
       IpcFrontend.updateAlbum(this.selectedAlbum.album, updatedAlbum);

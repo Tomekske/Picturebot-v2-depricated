@@ -21,8 +21,12 @@ export class DbSocialMediaFlow extends Sqlite {
             "base" varchar(400) NOT NULL,
             "socialMedia" varchar(400) NOT NULL PRIMARY KEY)`;
 
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch(err) {
+            Logger.Log().error(`DbSocialMediaFlow createTable query error: ${err}`);
+        }
     }
 
     /**
@@ -30,9 +34,15 @@ export class DbSocialMediaFlow extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='socialMediaFlow'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbSocialMediaFlow tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -41,10 +51,12 @@ export class DbSocialMediaFlow extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO socialMediaFlow VALUES (@collection, @album, @preview, @base, @socialMedia);");
-        
-        Logger.Log().debug(`Query: INSERT INTO socialMediaFlow VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+        try {
+            Logger.Log().debug(`Query: INSERT INTO socialMediaFlow VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare("INSERT INTO socialMediaFlow VALUES (@collection, @album, @preview, @base, @socialMedia);").run(args);
+        } catch(err) {
+            Logger.Log().error(`DbSocialMediaFlow insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -52,18 +64,27 @@ export class DbSocialMediaFlow extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT DISTINCT * FROM socialMediaFlow;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbSocialMediaFlow queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     deleteWhereSocialMedia(socialMedia: string) {
         let query: string = `Delete FROM socialMediaFlow WHERE socialMedia='${socialMedia}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.prepare(query).run();
+        } catch(err) {
+            Logger.Log().error(`DbSocialMediaFlow deleteWhereSocialMedia query error: ${err}`);
+        }
     }
 
     /**
@@ -72,9 +93,49 @@ export class DbSocialMediaFlow extends Sqlite {
      */
     queryAllWhereAlbum(album) {
         let query: string = `SELECT DISTINCT * FROM socialMediaFlow WHERE album='${album}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();   
+        } catch(err) {
+            Logger.Log().error(`DbSocialMediaFlow queryAllWhereAlbum query error: ${err}`);
+        }
+
+        return result;
+    }
+
+    /**
+     * Delete pictures relations located in a specified album from the database
+     * @param album Album where the pictures are located in
+     */
+    deletePicturesWhereAlbum(album: string) {
+        let query: string = `Delete FROM socialMediaFlow WHERE album='${album}'`;
+        
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.prepare(query).run();
+        } catch(err) {
+            Logger.Log().error(`DbSocialMediaFlow deletePicturesWhereAlbum query error: ${err}`);
+        }
+    }
+
+    /**
+     * Update album's name within the album, base, preview and social-media record
+     * @param value Current album name
+     * @param updated Updated album name
+     */
+    updateAlbum(value: string, updated: string) {
+        let query: string = `UPDATE socialMediaFlow SET album=REPLACE(album,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), preview=REPLACE(preview,'${value}','${updated}'), socialMedia=REPLACE(socialMedia,'${value}','${updated}');`;
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbSocialMediaFlow updateAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 }

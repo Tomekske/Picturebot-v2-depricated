@@ -18,8 +18,12 @@ export class DbLibrary extends Sqlite {
             "base" varchar(200) NOT NULL, 
             "library" varchar(400) NOT NULL PRIMARY KEY)`;
         
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch(err) {
+            Logger.Log().error(`DbLibrary createTable query error: ${err}`);
+        }
     }
 
     /**
@@ -27,9 +31,15 @@ export class DbLibrary extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Library'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbLibrary tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -38,10 +48,12 @@ export class DbLibrary extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO Library VALUES (@name, @base, @library);");
-        
-        Logger.Log().debug(`Query: INSERT INTO Library VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+        try {
+            Logger.Log().debug(`Query: INSERT INTO Library VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare("INSERT INTO Library VALUES (@name, @base, @library);").run(args);
+        } catch(err) {
+            Logger.Log().error(`DbLibrary insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -49,10 +61,16 @@ export class DbLibrary extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT DISTINCT * FROM Library;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbLibrary queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -60,9 +78,15 @@ export class DbLibrary extends Sqlite {
      */
     queryLibraries() {
         let query: string = 'SELECT DISTINCT library FROM Library DESC;'
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();   
+        } catch(err) {
+            Logger.Log().error(`DbLibrary queryLibraries query error: ${err}`);
+        }
+
+        return result;
     }
 }

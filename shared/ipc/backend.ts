@@ -17,8 +17,14 @@ import { DbPreviewFlow } from '../database/dbPreviewFlow';
 import { DbFavoriteFlow } from '../database/dbFavoriteFlow';
 import { DbEditedFlow } from '../database/dbEditedFlow';
 import { DbSocialMediaFlow } from '../database/dbSocialMediaFlow';
+import { WatcherEdited } from '../watcher/watcherEdited';
+import { WatcherSocialMedia } from '../watcher/watcherSocialMedia';
 import { Api } from '../database/api';
-var watch = require('node-watch');
+
+
+let oldAlbum: IAlbum;
+let stalkerEdited: any;
+let stalkerSocialMedia: any;
 
 /**
  * Static class contains methods to communicate with the backend 
@@ -293,10 +299,6 @@ export class  IpcBackend {
             dbBase.updateBase(update);
             dbBase.updatePreview(update);
             dbBase.dbClose();
-
-            const dbBackup = new DbBackupFlow();
-            dbBackup.updateBase(update);
-            dbBackup.dbClose();
             
             event.returnValue = "";
         });
@@ -369,25 +371,12 @@ export class  IpcBackend {
     static updateAlbum() {
         ipcMain.on('update-album', (event, currentAlbum: string, updatedAlbum: IAlbum) => {
             Logger.Log().debug('ipcMain: update-album');
+
+            // Close stalker before editing the album
+            stalkerEdited.close();
+            stalkerSocialMedia.close();
         
-            // Create database
-            const db = new DbAlbum();
-            db.deleteAlbum(currentAlbum);   
-            db.insertRow(updatedAlbum);
-            db.dbClose();
-
-            // Edit the album name in associated tables
-            const backupDb = new DbBackupFlow();
-            backupDb.updateAlbum(currentAlbum, updatedAlbum.album);
-            backupDb.dbClose();
-
-            const baseDb = new DbBaseFlow();
-            baseDb.updateAlbum(currentAlbum, updatedAlbum.album);
-            baseDb.dbClose();
-
-            const previewDb = new DbPreviewFlow();
-            previewDb.updateAlbum(currentAlbum, updatedAlbum.album);
-            previewDb.dbClose();
+            Api.updateAlbum(currentAlbum, updatedAlbum);
 
             event.returnValue = "";
         });    
@@ -465,25 +454,7 @@ export class  IpcBackend {
         ipcMain.on('delete-album', (event, album: IAlbum) => {
             Logger.Log().debug('ipcMain: delete-album');
         
-            const dbAlbum = new DbAlbum();
-            dbAlbum.deleteAlbum(album.album);   
-            dbAlbum.dbClose();
-
-            const dbPreviewFlow = new DbPreviewFlow();
-            dbPreviewFlow.deletePicturesWhereAlbum(album.album);   
-            dbPreviewFlow.dbClose();
-
-            const dbBaseFlow = new DbBaseFlow();
-            dbBaseFlow.deletePicturesWhereAlbum(album.album);   
-            dbBaseFlow.dbClose();
-
-            const dbBackupFlow = new DbBackupFlow();
-            dbBackupFlow.deletePicturesWhereAlbum(album.album);   
-            dbBackupFlow.dbClose();
-
-            const dbFavorite = new DbFavoriteFlow();
-            dbFavorite.deletePicturesWhereAlbum(album.album);
-            dbFavorite.dbClose();
+            Api.deleteAlbum(album);
 
             event.returnValue = "";
         });    
@@ -552,68 +523,33 @@ export class  IpcBackend {
      */
     static selectedAlbum() {
         ipcMain.on('selected-album', (event, album: IAlbum) => {
+            let flows = Api.getFlows(album);
+
             Logger.Log().debug('ipcMain: selected-album');
-            console.log(album);
-            const db = new DbCollection();
-            let flows: IFlow = db.queryFlows(album.collection);
-            db.dbClose();
-
-            watch(path.join(album.album, flows.edited), (event, name) => {
-                // Create database
-                const dbFlow = new DbPreviewFlow();
-                let picture: IPreview = dbFlow.queryBaseWhereName(Helper.BasenameWithoutExtension(name));
-                db.dbClose();
-
-                const dbEdited = new DbEditedFlow();
-                const pathEdited = path.join(album.album, flows.edited, path.basename(name));
-
-                if (event == 'update') {
-                    try {
-                        let data: IEdited = { collection: album.collection, album: album.album, preview: picture.preview, base: picture.base, edited: pathEdited };
-                        dbEdited.insertRow(data);
-    
-                    } catch (error) {
-                        console.log("OOOOPS");
-                    }
-                }
             
-                if (event == 'remove') {
-                    console.log(`REMOVED EDITED: ${name}`);
-                    dbEdited.deleteWhereEdited(pathEdited);
+            // Create a new stalker when an album isn't selected yet
+            if(!oldAlbum) {
+                let watcherSocialMedia = new WatcherSocialMedia(path.join(album.album, flows.socialMedia), album);
+                stalkerSocialMedia = watcherSocialMedia.stalker();
 
+                let watcherEdited = new WatcherEdited(path.join(album.album, flows.edited), album);
+                stalkerEdited = watcherEdited.stalker();
+            } else {
+                if(oldAlbum.album != album.album) {
+                    // Close the previously created stalkers
+                    stalkerSocialMedia.close();
+                    stalkerEdited.close();
+
+                    // Create new stalkers
+                    let watcherSocialMedia = new WatcherSocialMedia(path.join(album.album, flows.socialMedia), album);
+                    stalkerSocialMedia = watcherSocialMedia.stalker();
+
+                    let watcherEdited = new WatcherEdited(path.join(album.album, flows.edited), album);
+                    stalkerEdited = watcherEdited.stalker();
                 }
-
-                dbEdited.dbClose();
-            });
-
-            // Social media flow
-            watch(path.join(album.album, flows.socialMedia), (event, name) => {
-                // Create database
-                const dbFlow = new DbPreviewFlow();
-                let picture: IPreview = dbFlow.queryBaseWhereName(Helper.BasenameWithoutExtension(name));
-                db.dbClose();
-
-                const dbSocialMedia = new DbSocialMediaFlow();
-                const pathSocialMedia = path.join(album.album, flows.socialMedia, path.basename(name));
-
-                if (event == 'update') {
-                    try {
-                        let data: ISocialMedia = { collection: album.collection, album: album.album, preview: picture.preview, base: picture.base, socialMedia: pathSocialMedia };
-                        dbSocialMedia.insertRow(data);
-    
-                    } catch (error) {
-                        console.log("OOOOPS");
-                    }
-                }
+            }
+            oldAlbum = album;
             
-                if (event == 'remove') {
-                    dbSocialMedia.deleteWhereSocialMedia(pathSocialMedia);
-                }
-
-                dbSocialMedia.dbClose();
-            });
-
-            //selectedAlbum = album
             event.returnValue = "";
         }); 
     }
@@ -754,7 +690,7 @@ export class  IpcBackend {
                         if(Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureSocialMedia)) {
                             obj.socialMedia = { source: path.join(form.legacy, form.socialMedia, pictureSocialMedia), destination: path.join(album.album, flows.socialMedia, pictureSocialMedia)};
 
-                            Api.insertSocialMediaIntoDatabase({
+                            Api.AddSocialMediaPicture({
                                 collection: form.collection,
                                 album: album.album,
                                 preview: obj.preview.destination, 

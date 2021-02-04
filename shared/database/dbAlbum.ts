@@ -22,8 +22,12 @@ export class DbAlbum extends Sqlite {
             "raw" INTEGER NULL,
             "album" varchar(250) NOT NULL PRIMARY KEY)`;
 
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch(err) {
+            Logger.Log().error(`DbAlbum createTable query error: ${err}`);
+        }
     }
     
     /**
@@ -31,9 +35,15 @@ export class DbAlbum extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Album'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbAlbum tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -42,12 +52,12 @@ export class DbAlbum extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare(`INSERT INTO Album VALUES (
-            @collection, @name, @date, @started, @raw, @album);`
-        );
-
-        Logger.Log().debug(`Query: INSERT INTO Album VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+        try {
+            Logger.Log().debug(`Query: INSERT INTO Album VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare(`INSERT INTO Album VALUES (@collection, @name, @date, @started, @raw, @album);`).run(args);
+        } catch(err) {
+            Logger.Log().error(`DbAlbum insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -57,10 +67,13 @@ export class DbAlbum extends Sqlite {
      */
     updateStartedRecord(isStarted, album) {
         let query: string = `UPDATE album SET started=${isStarted} WHERE album='${album}'`;
-        const stmt = this.connection.prepare(query);
-
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+    
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbAlbum updateStartedRecord query error: ${err}`);
+        }
     }
 
     /**
@@ -68,10 +81,16 @@ export class DbAlbum extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT DISTINCT * FROM Album;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbAlbum queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -80,10 +99,16 @@ export class DbAlbum extends Sqlite {
      */
     queryAlbums(collection) {
         let query: string = `SELECT album, collection, name, date, started FROM Album WHERE collection='${collection}' ORDER BY name ASC;`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();   
+        } catch(err) {
+            Logger.Log().error(`DbAlbum queryAlbums query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -92,10 +117,16 @@ export class DbAlbum extends Sqlite {
      */
     querySingleAlbum(collection) {
         let query: string = `SELECT * FROM Album WHERE collection='${collection}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbAlbum querySingleAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -104,9 +135,15 @@ export class DbAlbum extends Sqlite {
      */
     queryStarted(album) {
         let query: string = `SELECT started FROM Album WHERE album='${album}';`;
-        const started = this.connection.prepare(query).pluck().get();
+        let started = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            started = this.connection.prepare(query).pluck().get();
+        } catch(err) {
+            Logger.Log().error(`DbAlbum queryStarted query error: ${err}`);
+        }
+
         return ((started == 1) ? true : false);
     }
 
@@ -116,9 +153,12 @@ export class DbAlbum extends Sqlite {
      */
     deleteAlbum(album: string) {
         let query: string = `Delete FROM album WHERE album='${album}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.prepare(query).run();
+        } catch(err) {
+            Logger.Log().error(`DbAlbum deleteAlbum query error: ${err}`);
+        }
     }
 }

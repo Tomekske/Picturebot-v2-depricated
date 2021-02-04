@@ -21,8 +21,12 @@ export class DbEditedFlow extends Sqlite {
             "base" varchar(400) NOT NULL,
             "edited" varchar(400) NOT NULL PRIMARY KEY)`;
 
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch(err) {
+            Logger.Log().error(`DbEditedFlow createTable query error: ${err}`);
+        }
     }
 
     /**
@@ -30,9 +34,15 @@ export class DbEditedFlow extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='editedFlow'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbEditedFlow tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -40,11 +50,13 @@ export class DbEditedFlow extends Sqlite {
      * Method to insert data into table's row
      * @param args Data needed to insert into the table's row
      */
-    insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO editedFlow VALUES (@collection, @album, @preview, @base, @edited);");
-        
-        Logger.Log().debug(`Query: INSERT INTO editedFlow VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+    insertRow(args) {      
+        try {
+            Logger.Log().debug(`Query: INSERT INTO editedFlow VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare("INSERT INTO editedFlow VALUES (@collection, @album, @preview, @base, @edited);").run(args);
+        } catch(err) {
+            Logger.Log().error(`DbEditedFlow insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -52,18 +64,30 @@ export class DbEditedFlow extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT DISTINCT * FROM editedFlow;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbEditedFlow queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     deleteWhereEdited(edited: string) {
         let query: string = `Delete FROM editedFlow WHERE edited='${edited}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbEditedFlow deleteWhereEdited query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -72,9 +96,52 @@ export class DbEditedFlow extends Sqlite {
      */
     queryAllWhereAlbum(album) {
         let query: string = `SELECT DISTINCT * FROM editedFlow WHERE album='${album}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();   
+        } catch(err) {
+            Logger.Log().error(`DbEditedFlow queryAllWhereAlbum query error: ${err}`);
+        }
+
+        return result;
+    }
+
+    /**
+     * Delete pictures relations located in a specified album from the database
+     * @param album Album where the pictures are located in
+     */
+    deletePicturesWhereAlbum(album: string) {
+        let query: string = `Delete FROM editedFlow WHERE album='${album}'`;
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbEditedFlow deletePicturesWhereAlbum query error: ${err}`);
+        }
+
+        return result;
+    }
+
+    /**
+     * Update album's name within the album, base and preview record
+     * @param value Current album name
+     * @param updated Updated album name
+     */
+    updateAlbum(value: string, updated: string) {
+        let query: string = `UPDATE DbEditedFlow SET album=REPLACE(album,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), preview=REPLACE(preview,'${value}','${updated}'), edited=REPLACE(edited,'${value}','${updated}');`;
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbEditedFlow updateAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 }

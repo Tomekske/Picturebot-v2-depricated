@@ -111,10 +111,10 @@ selectedCollection: ICollection;
             }
           },
           {
-            label: 'Pictures',
+            label: 'Pictures old',
             icon: 'insert_photo',
             onSelected: () => {
-              Helper.openInExplorer("D:\\Pictures", this._snack);
+              Helper.openInExplorer("D:\\Pictures (old)", this._snack);
             }
           },
           {

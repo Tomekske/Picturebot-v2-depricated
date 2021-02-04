@@ -24,8 +24,8 @@ export class Logger {
                 }
           },
           "categories": {
-            "default": { "appenders": [ "console", "file" ], "level": "DEBUG" },
-            "file": { "appenders": [ "file"], "level": "DEBUG" }
+            "default": { "appenders": [ "console", "file" ], "level": "ERROR" },
+            "file": { "appenders": [ "file"], "level": "ERROR" }
           }
         });
       

@@ -96,7 +96,7 @@ Converting RAW images to a JPG format is done by using [ImageMagick](https://ima
 | Add pictures to an existing shoots                                                                                        | High    | :x: |
 | Display update status' when the application is updating                                                                   | High	  | :x: |
 | Fix: Date component layout issues in production                                                                          | High	  | :x: |
-| Conversion percentage default value                                                                                       | High	  | :x: |
+| Conversion percentage default value                                                                                       | High	  | :white_check_mark: |
 | Automatically set the album date                                                                                          | Medium	| :x: |
 | Visual representation whether a shoot is fully edited, partially edited, or not edited at all                             | Medium	| :x: |
 | Investigate whether it is possible to add a tool to automatically upload pictures to google pictures                      | Medium	| :x: |

@@ -20,8 +20,12 @@ export class DbFavoriteFlow extends Sqlite {
             "preview" varchar(400) NOT NULL,
             "base" varchar(400) NOT NULL PRIMARY KEY)`;
 
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch(err) {
+            Logger.Log().error(`DbFavoriteFlow createTable query error: ${err}`);
+        }
     }
 
     /**
@@ -29,9 +33,15 @@ export class DbFavoriteFlow extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='favoriteFlow'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbFavoriteFlow tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -40,10 +50,12 @@ export class DbFavoriteFlow extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO favoriteFlow VALUES (@collection, @album, @preview, @base);");
-        
-        Logger.Log().debug(`Query: INSERT INTO favoriteFlow VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+        try {
+            Logger.Log().debug(`Query: INSERT INTO favoriteFlow VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare("INSERT INTO favoriteFlow VALUES (@collection, @album, @preview, @base);").run(args);
+        } catch(err) {
+            Logger.Log().error(`DbFavoriteFlow insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -51,10 +63,16 @@ export class DbFavoriteFlow extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT DISTINCT * FROM favoriteFlow;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbFavoriteFlow queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -63,10 +81,16 @@ export class DbFavoriteFlow extends Sqlite {
      */
     deletePicturesWhereAlbum(album: string) {
         let query: string = `Delete FROM favoriteFlow WHERE album='${album}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbFavoriteFlow deletePicturesWhereAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -75,10 +99,16 @@ export class DbFavoriteFlow extends Sqlite {
      */
     deletePictureWhereBase(base: string) {
         let query: string = `Delete FROM favoriteFlow WHERE base='${base}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbFavoriteFlow deletePictureWhereBase query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -87,10 +117,16 @@ export class DbFavoriteFlow extends Sqlite {
      */
     deletePicture(path: string) {
         let query: string = `Delete FROM favoriteFlow WHERE preview='${path}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbFavoriteFlow deletePicture query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -99,9 +135,15 @@ export class DbFavoriteFlow extends Sqlite {
      */
     queryAllWhereAlbum(album) {
         let query: string = `SELECT DISTINCT * FROM favoriteFlow WHERE album='${album}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();   
+        } catch(err) {
+            Logger.Log().error(`DbFavoriteFlow queryAllWhereAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 }

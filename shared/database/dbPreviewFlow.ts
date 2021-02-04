@@ -23,8 +23,12 @@ export class DbPreviewFlow extends Sqlite {
             "date" varchar(10) NOT NULL,
             "time" varchar(8) NOT NULL)`;
 
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow createTable query error: ${err}`);
+        }
     }
 
     /**
@@ -32,9 +36,15 @@ export class DbPreviewFlow extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='previewFlow'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -43,10 +53,12 @@ export class DbPreviewFlow extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO PreviewFlow VALUES (@collection, @name, @album, @base, @preview, @date, @time);");
-        
-        Logger.Log().debug(`Query: INSERT INTO PreviewFlow VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+        try {
+            Logger.Log().debug(`Query: INSERT INTO PreviewFlow VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare("INSERT INTO PreviewFlow VALUES (@collection, @name, @album, @base, @preview, @date, @time);").run(args);
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -55,10 +67,13 @@ export class DbPreviewFlow extends Sqlite {
      */
     updateName(update) {
         let query: string = `UPDATE previewFlow SET name='${update.name}' WHERE preview='${update.preview}' AND album='${update.album}';`;
-        const stmt = this.connection.prepare(query);
-
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow updateName query error: ${err}`);
+        }
     }
 
     /**
@@ -67,10 +82,13 @@ export class DbPreviewFlow extends Sqlite {
      */
     updatePreview(update) {
         let query: string = `UPDATE previewFlow SET preview='${update.updatedPreview}' WHERE name='${update.name}' AND album='${update.album}';`;
-        const stmt = this.connection.prepare(query);
-
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow updatePreview query error: ${err}`);
+        }
     }
 
     /**
@@ -79,10 +97,13 @@ export class DbPreviewFlow extends Sqlite {
      */
     updateBase(update) {
         let query: string = `UPDATE previewFlow SET base='${update.base}' WHERE name='${update.name}' AND album='${update.album}';`;
-        const stmt = this.connection.prepare(query);
-
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow updateBase query error: ${err}`);
+        }
     }
 
     /**
@@ -90,10 +111,16 @@ export class DbPreviewFlow extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT DISTINCT * FROM previewFlow;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -102,10 +129,16 @@ export class DbPreviewFlow extends Sqlite {
      */
     queryAllWhereAlbum(album) {
         let query: string = `SELECT DISTINCT * FROM previewFlow WHERE album='${album}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();   
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow queryAllWhereAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -113,11 +146,17 @@ export class DbPreviewFlow extends Sqlite {
      * @param album Selected album
      */
     queryBaseWhereName(picture) {
-        let query: string = `SELECT base, preview FROM previewFlow WHERE name LIKE '${picture}%';`
-        const stmt = this.connection.prepare(query);
+        let query: string = `SELECT * FROM previewFlow WHERE name LIKE '${picture}%';`
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow queryBaseWhereName query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -126,10 +165,16 @@ export class DbPreviewFlow extends Sqlite {
      */
     deletePicture(path: string) {
         let query: string = `Delete FROM previewFlow WHERE preview='${path}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow deletePicture query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -138,10 +183,16 @@ export class DbPreviewFlow extends Sqlite {
      */
     deletePicturesWhereAlbum(album: string) {
         let query: string = `Delete FROM previewFlow WHERE album='${album}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow deletePicturesWhereAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -151,9 +202,15 @@ export class DbPreviewFlow extends Sqlite {
      */
     updateAlbum(value: string, updated: string) {
         let query: string = `UPDATE previewFlow SET album=REPLACE(album,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), preview=REPLACE(preview,'${value}','${updated}');`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbPreviewFlow updateAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 }

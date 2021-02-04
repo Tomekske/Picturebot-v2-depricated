@@ -22,8 +22,12 @@ export class DbBackupFlow extends Sqlite {
             "date" varchar(10) NOT NULL,
             "time" varchar(8) NOT NULL)`;
 
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch(err) {
+            Logger.Log().error(`DbBackupFlow createTable query error: ${err}`);
+        }
     }
 
     /**
@@ -31,9 +35,15 @@ export class DbBackupFlow extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='backupFlow'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbBackupFlow tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -42,10 +52,12 @@ export class DbBackupFlow extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO backupFlow VALUES (@collection, @name, @album, @backup, @date, @time);");
-        
-        Logger.Log().debug(`Query: INSERT INTO backupFlow VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+        try {
+            Logger.Log().debug(`Query: INSERT INTO backupFlow VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare("INSERT INTO backupFlow VALUES (@collection, @name, @album, @backup, @date, @time);").run(args);
+        } catch(err) {
+            Logger.Log().error(`DbBackupFlow insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -53,10 +65,16 @@ export class DbBackupFlow extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT DISTINCT * FROM backupFlow;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbBackupFlow queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -65,10 +83,16 @@ export class DbBackupFlow extends Sqlite {
      */
     queryBackupFlow(album: string) {
         let query: string = `SELECT * FROM backupFlow where album='${album}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();  
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();   
+        } catch(err) {
+            Logger.Log().error(`DbBackupFlow queryBackupFlow query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -77,34 +101,34 @@ export class DbBackupFlow extends Sqlite {
      */
     deletePicturesWhereAlbum(album: string) {
         let query: string = `Delete FROM backupFlow WHERE album='${album}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbBackupFlow deletePicturesWhereAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
-     * Update album's name within the album, base and backup record
+     * Update album's name within the album and backup record
      * @param value Current album name
      * @param updated Updated album name
      */
     updateAlbum(value: string, updated: string) {
-        let query: string = `UPDATE backupFlow SET album=REPLACE(album,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), backup=REPLACE(backup,'${value}','${updated}');`;
-        const stmt = this.connection.prepare(query);
+        let query: string = `UPDATE backupFlow SET album=REPLACE(album,'${value}','${updated}'), backup=REPLACE(backup,'${value}','${updated}');`;
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
-    }
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbBackupFlow updateAlbum query error: ${err}`);
+        }
 
-    /**
-     * Method to update the base location
-     * @param update updated values
-     */
-    updateBase(update) {
-        let query: string = `UPDATE backupFlow SET base='${update.updatedBase}' WHERE backup='${update.backup}' AND album='${update.album}';`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        return result;
     }
 }

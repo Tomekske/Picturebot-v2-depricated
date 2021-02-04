@@ -25,8 +25,12 @@ export class DbBaseFlow extends Sqlite {
             "date" varchar(10) NOT NULL,
             "time" varchar(8) NOT NULL)`;
 
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow createTable query error: ${err}`);
+        }
     }
 
     /**
@@ -34,9 +38,15 @@ export class DbBaseFlow extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='baseFlow'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -46,9 +56,13 @@ export class DbBaseFlow extends Sqlite {
      */
     insertRow(args) {
         const stmt = this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @favorited, @backup, @preview, @base, @date, @time);");
-        
-        Logger.Log().debug(`Query: INSERT INTO baseFlow VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+
+        try {
+            Logger.Log().debug(`Query: INSERT INTO baseFlow VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @favorited, @backup, @preview, @base, @date, @time);").run(args);
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -57,10 +71,16 @@ export class DbBaseFlow extends Sqlite {
      */
     updateName(update) {
         let query: string = `UPDATE baseFlow SET name='${update.name}' WHERE base='${update.base}' AND album='${update.album}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow updateName query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -69,10 +89,16 @@ export class DbBaseFlow extends Sqlite {
      */
     updateBase(update) {
         let query: string = `UPDATE baseFlow SET base='${update.updatedBase}' WHERE name='${update.name}' AND album='${update.album}';`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow updateBase query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -81,10 +107,16 @@ export class DbBaseFlow extends Sqlite {
      */
     updatePreview(update) {
         let query: string = `UPDATE baseFlow SET preview='${update.preview}' WHERE name='${update.name}' AND album='${update.album}';`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow updatePreview query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -92,10 +124,16 @@ export class DbBaseFlow extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT DISTINCT * FROM baseFlow;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -104,10 +142,16 @@ export class DbBaseFlow extends Sqlite {
      */
     queryBaseFlow(album: string) {
         let query: string = `SELECT * FROM baseFlow where album='${album}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();  
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();   
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow queryBaseFlow query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -116,10 +160,16 @@ export class DbBaseFlow extends Sqlite {
      */
     deletePicture(path: string) {
         let query: string = `Delete FROM baseFlow WHERE base='${path}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow deletePicture query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -128,10 +178,16 @@ export class DbBaseFlow extends Sqlite {
      */
     deletePicturesWhereAlbum(album: string) {
         let query: string = `Delete FROM baseFlow WHERE album='${album}'`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow deletePicturesWhereAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -141,10 +197,16 @@ export class DbBaseFlow extends Sqlite {
      */
     updateAlbum(value: string, updated: string) {
         let query: string = `UPDATE baseFlow SET album=REPLACE(album,'${value}','${updated}'), preview=REPLACE(preview,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), backup=REPLACE(backup,'${value}','${updated}');`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow updateAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -153,8 +215,15 @@ export class DbBaseFlow extends Sqlite {
      */
     getIsFavoriteWherePreview(preview: string) {
         let query: string = `SELECT favorited FROM baseFlow WHERE preview='${preview}';`;
-        const count = this.connection.prepare(query).pluck().get();
-        Logger.Log().debug(`Query: ${query}`);
+        let count = 0;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow getIsFavoriteWherePreview query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -165,9 +234,15 @@ export class DbBaseFlow extends Sqlite {
      */
     updateFavorited(preview: string, isFavorited: number) {
         let query: string = `UPDATE baseFlow SET favorited='${isFavorited}' WHERE preview='${preview}';`;
-        const stmt = this.connection.prepare(query);
-        
-        Logger.Log().debug(`Query: ${query}`);
-        stmt.run();
+        let result = null;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();   
+        } catch(err) {
+            Logger.Log().error(`DbBaseFlow updateFavorited query error: ${err}`);
+        }
+
+        return result;
     }
 }

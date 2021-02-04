@@ -17,10 +17,14 @@ export class DbSettings extends Sqlite {
             "uploadEdited" varchar(200), 
             "uploadSocialMedia" varchar(200), 
             "sofwarePostProcessing" varchar(200), 
-            "conversion" varchar(3)) DEFAULT '85';`;
+            "conversion" varchar(3));`;
         
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch(err) {
+            Logger.Log().error(`DbSettings createTable query error: ${err}`);
+        }
     }
 
     /**
@@ -28,9 +32,15 @@ export class DbSettings extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Settings'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();        
+        } catch(err) {
+            Logger.Log().error(`DbSettings tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -39,10 +49,12 @@ export class DbSettings extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO Settings VALUES (@uploadEdited, @uploadSocialMedia, @sofwarePostProcessing, @conversion);");
-        
-        Logger.Log().debug(`Query: INSERT INTO Settings VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+        try {
+            Logger.Log().debug(`Query: INSERT INTO Settings VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare("INSERT INTO Settings VALUES (@uploadEdited, @uploadSocialMedia, @sofwarePostProcessing, @conversion);").run(args);
+        } catch(err) {
+            Logger.Log().error(`DbSettings insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -50,10 +62,12 @@ export class DbSettings extends Sqlite {
      * @param args Updated values
      */
     updateRow(args) {
-        const stmt = this.connection.prepare("UPDATE Settings set uploadEdited=@uploadEdited, uploadSocialMedia=@uploadSocialMedia, sofwarePostProcessing=@sofwarePostProcessing, conversion=@conversion;");
-        
-        Logger.Log().debug(`Query: UPDATE Settings set "${JSON.stringify(args)}"`);     
-        stmt.run(args);
+        try {
+            Logger.Log().debug(`Query: UPDATE Settings set "${JSON.stringify(args)}"`);     
+            this.connection.prepare("UPDATE Settings set uploadEdited=@uploadEdited, uploadSocialMedia=@uploadSocialMedia, sofwarePostProcessing=@sofwarePostProcessing, conversion=@conversion;").run(args);   
+        } catch(err) {
+            Logger.Log().error(`DbSettings updateRow query error: ${err}`);
+        }
     }
 
     /**
@@ -61,10 +75,16 @@ export class DbSettings extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT * FROM Settings';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();   
+        } catch(err) {
+            Logger.Log().error(`DbSettings queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -72,10 +92,16 @@ export class DbSettings extends Sqlite {
      */
     isEmpty() {
         let query: string = "SELECT count(1) FROM Settings;";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return ((count == 0) ? true : false);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();
+        } catch(err) {
+            Logger.Log().error(`DbSettings isEmpty query error: ${err}`);
+        }
+
+        return ((count == 1) ? true : false);
     }
 
     /**
@@ -83,9 +109,15 @@ export class DbSettings extends Sqlite {
      */
     queryConversion() {
         let query: string = 'SELECT conversion FROM Settings';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.pluck().get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).pluck().get();   
+        } catch(err) {
+            Logger.Log().error(`DbSettings queryConversion query error: ${err}`);
+        }
+
+        return result;
     }
 }

@@ -6,10 +6,11 @@ import { Logger } from './shared/logger/logger';
 import { Updater } from './shared/updater/updater';
 import { IpcBackend } from './shared/ipc/backend';
 import { Helper } from './shared/helper/helper';
+import { Api } from './shared/database/api';
+
 let win: BrowserWindow = null;
 
-const args = process.argv.slice(1),
-  serve = args.some(val => val === '--serve');
+const args = process.argv.slice(1), serve = args.some(val => val === '--serve');
 
 function createWindow(): BrowserWindow {
 
@@ -99,6 +100,8 @@ try {
   if(Helper.isProduction(true)) {
     checkForUpdates();
   }
+
+  Api.defaultSettings();
 
   // Ipc functions
   ipcAlbums();

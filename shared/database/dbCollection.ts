@@ -9,7 +9,7 @@ export class DbCollection extends Sqlite {
     constructor() {
         super();
     }
-    
+
     /**
      * Method to collection the album table
      */
@@ -25,8 +25,12 @@ export class DbCollection extends Sqlite {
             "favorites" varchar(40) NOT NULL,
             "collection" varchar(250) NOT NULL PRIMARY KEY)`;
 
-        Logger.Log().debug(`Query: ${query}`);
-        this.connection.exec(query);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            this.connection.exec(query);
+        } catch (err) {
+            Logger.Log().error(`DbCollection createTable query error: ${err}`);
+        }
     }
 
     /**
@@ -34,9 +38,15 @@ export class DbCollection extends Sqlite {
      */
     tableExists() {
         let query: string = "SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Collection'";
-        const count = this.connection.prepare(query).pluck().get();
+        let count = 0;
 
-        Logger.Log().debug(`Query: ${query}`);
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            count = this.connection.prepare(query).pluck().get();
+        } catch (err) {
+            Logger.Log().error(`DbCollection tableExists query error: ${err}`);
+        }
+
         return ((count == 1) ? true : false);
     }
 
@@ -45,12 +55,12 @@ export class DbCollection extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare(`INSERT INTO Collection VALUES (
-            @library, @name, @backup, @base, @preview, @edited, @socialMedia, @favorites, @collection);`
-        );
-
-        Logger.Log().debug(`Query: INSERT INTO Collection VALUES ("${JSON.stringify(args)}")`);
-        stmt.run(args);
+        try {
+            Logger.Log().debug(`Query: INSERT INTO Collection VALUES ("${JSON.stringify(args)}")`);
+            this.connection.prepare(`INSERT INTO Collection VALUES (@library, @name, @backup, @base, @preview, @edited, @socialMedia, @favorites, @collection);`).run(args);
+        } catch (err) {
+            Logger.Log().error(`DbCollection insertRow query error: ${err}`);
+        }
     }
 
     /**
@@ -58,10 +68,16 @@ export class DbCollection extends Sqlite {
      */
     queryAll() {
         let query: string = 'SELECT DISTINCT * FROM Collection;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();
+        } catch (err) {
+            Logger.Log().error(`DbCollection queryAll query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -70,10 +86,16 @@ export class DbCollection extends Sqlite {
      */
     queryAllWhereCollection(collection: string) {
         let query: string = `SELECT * FROM Collection WHERE collection='${collection}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();
+        } catch (err) {
+            Logger.Log().error(`DbCollection queryAllWhereCollection query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -81,10 +103,16 @@ export class DbCollection extends Sqlite {
      */
     queryCollections() {
         let query: string = 'SELECT DISTINCT collection FROM Collection DESC;';
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.all();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).all();
+        } catch (err) {
+            Logger.Log().error(`DbCollection queryCollections query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -93,10 +121,16 @@ export class DbCollection extends Sqlite {
      */
     queryFlows(collection: string) {
         let query: string = `SELECT preview, favorites, edited, socialMedia FROM Collection WHERE collection='${collection}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();
+        } catch (err) {
+            Logger.Log().error(`DbCollection queryFlows query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -105,10 +139,16 @@ export class DbCollection extends Sqlite {
      */
     queryRenameStartedFlows(collection: string) {
         let query: string = `SELECT base, preview, backup FROM Collection WHERE collection='${collection}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();  
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();
+        } catch (err) {
+            Logger.Log().error(`DbCollection queryRenameStartedFlows query error: ${err}`);
+        }
+
+        return result;
     }
 
     /**
@@ -117,9 +157,15 @@ export class DbCollection extends Sqlite {
      */
     queryAllFlows(collection: string) {
         let query: string = `SELECT backup, base, preview, edited, socialMedia, favorites FROM Collection WHERE collection='${collection}';`;
-        const stmt = this.connection.prepare(query);
+        let result = null;
 
-        Logger.Log().debug(`Query: ${query}`);
-        return stmt.get();
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).get();
+        } catch (err) {
+            Logger.Log().error(`DbCollection queryAllFlows query error: ${err}`);
+        }
+
+        return result;
     }
 }
