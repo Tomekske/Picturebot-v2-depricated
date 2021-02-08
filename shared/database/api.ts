@@ -31,13 +31,13 @@ export class Api {
 
             const collectionDb = new DbCollection();
             let flows: IFlow = collectionDb.queryAllFlows(album.collection);
-      
+
             // Creating flow directories
             Object.values(flows).forEach(flow => {
-              // The selection flow is a virtual directory, so it doesn't need to be created
-              if(flow != flows.favorites) {
-                Helper.createDirectory(path.join(album.album, flow));
-              }
+                // The selection flow is a virtual directory, so it doesn't need to be created
+                if (flow != flows.favorites) {
+                    Helper.createDirectory(path.join(album.album, flow));
+                }
             });
 
             collectionDb.dbClose();
@@ -162,7 +162,7 @@ export class Api {
     static defaultSettings() {
         const db = new DbSettings();
 
-        if(db.isEmpty()) {
+        if (db.isEmpty()) {
             let settings: ISettings = { conversion: "85", sofwarePostProcessing: "", uploadEdited: "", uploadSocialMedia: "" };
             db.insertRow(settings);
         }
@@ -176,7 +176,7 @@ export class Api {
      */
     static getPreviewPictureWhereName(fullPath: string): IPreview {
         let db = new DbPreviewFlow();
-        let picture: IPreview = db.queryBaseWhereName(Helper.BasenameWithoutExtension(fullPath)); 
+        let picture: IPreview = db.queryBaseWhereName(Helper.BasenameWithoutExtension(fullPath));
         db.dbClose();
 
         return picture;
@@ -189,19 +189,19 @@ export class Api {
     static deleteAlbum(album: IAlbum) {
         // Delete the album from the album table and from all flows
         const dbAlbum = new DbAlbum();
-        dbAlbum.deleteAlbum(album.album);   
+        dbAlbum.deleteAlbum(album.album);
         dbAlbum.dbClose();
 
         const dbPreviewFlow = new DbPreviewFlow();
-        dbPreviewFlow.deletePicturesWhereAlbum(album.album);   
+        dbPreviewFlow.deletePicturesWhereAlbum(album.album);
         dbPreviewFlow.dbClose();
 
         const dbBaseFlow = new DbBaseFlow();
-        dbBaseFlow.deletePicturesWhereAlbum(album.album);   
+        dbBaseFlow.deletePicturesWhereAlbum(album.album);
         dbBaseFlow.dbClose();
 
         const dbBackupFlow = new DbBackupFlow();
-        dbBackupFlow.deletePicturesWhereAlbum(album.album);   
+        dbBackupFlow.deletePicturesWhereAlbum(album.album);
         dbBackupFlow.dbClose();
 
         const dbFavorite = new DbFavoriteFlow();
@@ -219,35 +219,87 @@ export class Api {
 
     /**
      * Update the current album
-     * @param album Current a;bim
+     * @param current Current album
      * @param updated Updated album
      */
-    static updateAlbum(album: string, updated: IAlbum) {
-            // Create database
-            let db = new DbAlbum();
-            db.deleteAlbum(album);   
-            db.insertRow(updated);
-            db.dbClose();
+    static updateAlbum(current: IAlbum, updated: IAlbum) {
+        // Create database
+        let dbAlbum = new DbAlbum();
+        dbAlbum.updateAlbum(current, updated);
+        dbAlbum.dbClose();
 
-            // Edit the album name in associated tables
-            let backupDb = new DbBackupFlow();
-            backupDb.updateAlbum(album, updated.album);
-            backupDb.dbClose();
+        // Edit the album name in associated tables
+        let backupDb = new DbBackupFlow();
+        backupDb.updateAlbum(current, updated);
+        backupDb.dbClose();
 
-            let baseDb = new DbBaseFlow();
-            baseDb.updateAlbum(album, updated.album);
-            baseDb.dbClose();
+        let baseDb = new DbBaseFlow();
+        baseDb.updateAlbum(current, updated);
+        baseDb.dbClose();
 
-            let previewDb = new DbPreviewFlow();
-            previewDb.updateAlbum(album, updated.album);
-            previewDb.dbClose();
+        let previewDb = new DbPreviewFlow();
+        previewDb.updateAlbum(current, updated);
+        previewDb.dbClose();
 
-            let editedDb = new DbEditedFlow();
-            editedDb.updateAlbum(album, updated.album);
-            editedDb.dbClose();
+        let favoriteDb = new DbFavoriteFlow();
+        favoriteDb.updateAlbum(current, updated);
+        favoriteDb.dbClose();
 
-            let socialMediaDb = new DbSocialMediaFlow();
-            socialMediaDb.updateAlbum(album, updated.album);
-            socialMediaDb.dbClose();
+        let editedDb = new DbEditedFlow();
+        editedDb.updateAlbum(current, updated);
+        editedDb.dbClose();
+
+        let socialMediaDb = new DbSocialMediaFlow();
+        socialMediaDb.updateAlbum(current, updated);
+        socialMediaDb.dbClose();
+    }
+
+    /**
+     * Get all the pictures within the base flow
+     * @param album Album object
+     */
+    static getBaseFlowPictures(album: IAlbum): IBase[] {
+        let db = new DbBaseFlow();
+        let pictures: IBase[] = db.queryBaseFlow(album.album);
+        db.dbClose();
+
+        return pictures;
+    }
+
+    /**
+     * Get all the pictures within the preview flow
+     * @param album Album object
+     */
+    static getPreviewFlowPictures(album: IAlbum): IPreview[] {
+        let db = new DbPreviewFlow();
+        let pictures: IPreview[] = db.queryPreviewFlow(album.album);
+        db.dbClose();
+
+        return pictures;
+    }
+
+
+    /**
+     * Get all the pictures within the edited flow
+     * @param album Album object
+     */
+    static getEditedFlowPictures(album: IAlbum): IEdited[] {
+        let db = new DbEditedFlow();
+        let pictures: IEdited[] = db.queryEditedFlow(album.album);
+        db.dbClose();
+
+        return pictures;
+    }
+
+    /**
+     * Get all the pictures within the social-media flow
+     * @param album Album object
+     */
+    static getSocialMediaFlowPictures(album: IAlbum): ISocialMedia[] {
+        let db = new DbSocialMediaFlow();
+        let pictures: ISocialMedia[] = db.queryEditedFlow(album.album);
+        db.dbClose();
+
+        return pictures;
     }
 }

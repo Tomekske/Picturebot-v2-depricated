@@ -4,7 +4,7 @@ import { IAlbum, IBase, ILegacy } from '../database/interfaces';
 /**
  * Static class contains methods to communicate with the backend 
  */
-export class  IpcFrontend {
+export class IpcFrontend {
     /**
      * Get settings from the database
      */
@@ -89,7 +89,7 @@ export class  IpcFrontend {
     static getPreviewFlowPictures(album: string) {
         return ipcRenderer.sendSync("get-previewFLow-pictures", album);
     }
-    
+
     /**
      * Update the name object of the base flow
      * @param data The updated value
@@ -111,7 +111,7 @@ export class  IpcFrontend {
      * @param album Selected album
      */
     static getFavoritesFlowPictures(album: string) {
-        return ipcRenderer.sendSync("get-favoritesFlow-pictures", album);   
+        return ipcRenderer.sendSync("get-favoritesFlow-pictures", album);
     }
 
     /**
@@ -141,10 +141,10 @@ export class  IpcFrontend {
 
     /**
      * Save an album to the database
-     * @param currentAlbum Selected album name
-     * @param updatedAlbum Updated album
+     * @param currentAlbum Selected album object
+     * @param updatedAlbum Updated album object
      */
-    static updateAlbum(currentAlbum: string, updatedAlbum: IAlbum) {
+    static updateAlbum(currentAlbum: IAlbum, updatedAlbum: IAlbum) {
         ipcRenderer.sendSync("update-album", currentAlbum, updatedAlbum);
     }
 
@@ -232,7 +232,7 @@ export class  IpcFrontend {
      * @param album Selected album
      */
     static getEditedFlowPictures(album: string) {
-        return ipcRenderer.sendSync("get-editedFlow-pictures", album);   
+        return ipcRenderer.sendSync("get-editedFlow-pictures", album);
     }
 
     /**
@@ -240,14 +240,14 @@ export class  IpcFrontend {
      * @param album Selected album
      */
     static getSocialMediaFlowPictures(album: string) {
-        return ipcRenderer.sendSync("get-socialMediaFlow-pictures", album);   
+        return ipcRenderer.sendSync("get-socialMediaFlow-pictures", album);
     }
 
     /**
      * Import a legacy album into the system
      * @param form legacy m object
      */
-    static importLegacyAlbum(form: ILegacy) {              
+    static importLegacyAlbum(form: ILegacy) {
         ipcRenderer.sendSync("import-legacy-album", form);
     }
 }

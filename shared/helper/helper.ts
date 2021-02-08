@@ -5,7 +5,7 @@ import * as hasha from 'hasha';
 import * as cp from 'child_process';
 
 import { Logger } from '../../shared/logger/logger';
-import { IBase } from '../database/interfaces';
+import { IAlbum, IBase, IFlow } from '../database/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { app, remote } from 'electron';
 import { renderFlagCheckIfStmt } from '@angular/compiler/src/render3/view/template';
@@ -27,7 +27,7 @@ export class Helper {
      */
     static createDirectory(directory: string) {
         // Create a new directory if the path doesn't exists
-        if (!fs.existsSync(directory)){
+        if (!fs.existsSync(directory)) {
             fs.mkdir(directory, err => {
                 console.log(err);
             });
@@ -50,12 +50,16 @@ export class Helper {
      * @param destination Destination location
      */
     static copyFile(source: string, destination: string) {
-        fs.copyFileSync(source, destination);
-        Logger.Log().debug(`Copy Picture: '${source}' -> '${destination}'`);
+        try {
+            fs.copyFileSync(source, destination);
+            Logger.Log().debug(`Copy Picture: '${source}' -> '${destination}'`);
+        } catch (error) {
+            Logger.Log().error(error);
+        }
     }
 
     /**
-     * Sort dateTimes array
+     * Sort dateTimes array (from oldest -> youngest)
      * @param a DateTime a
      * @param b DateTime b
      */
@@ -122,7 +126,7 @@ export class Helper {
         let message: string;
 
         // Only open the path in the explorer if the path exists
-        if(fs.existsSync(path)) {
+        if (fs.existsSync(path)) {
             message = `Opened '${path}' in explorer`;
 
             cp.exec(`start "" "${path}"`);
@@ -148,7 +152,7 @@ export class Helper {
         let message: string;
 
         // Only open the path in the explorer if the path exists
-        if(fs.existsSync(path)) {
+        if (fs.existsSync(path)) {
             message = `File '${path}' opened`;
 
             cp.exec(`"${path}"`);
@@ -171,7 +175,7 @@ export class Helper {
      * @param path Path to the picture
      */
     static deletePicture(path: string) {
-        if(fs.existsSync(path)) {
+        if (fs.existsSync(path)) {
             try {
                 fs.unlinkSync(path);
                 Logger.Log().debug(`Delete picture: picture '${path}' deleted`);
@@ -189,7 +193,7 @@ export class Helper {
      * @param destination Destination location of the folder
      */
     static renameDirectory(source: string, destination: string) {
-        if(fs.existsSync(source)) {
+        if (fs.existsSync(source)) {
             fs.renameSync(source, destination);
             Logger.Log().debug(`Rename directory: directory '${source}' -> '${destination}' renamed`);
 
@@ -217,18 +221,18 @@ export class Helper {
     static ExternalProgram(program: string, options: string, snack: MatSnackBar) {
         let message: string;
 
-        if(program) {
-            if(fs.existsSync(options)) {
+        if (program) {
+            if (fs.existsSync(options)) {
                 // Get executable name without the extension
                 message = `Editing in ${path.parse(program).name}`;
-    
+
                 cp.exec(`"${program}" "${options}"`);
                 Logger.Log().debug(`File: ${message}`);
             } else {
                 message = `Unable to open file '${options}'`;
-    
+
                 Logger.Log().error(`File: ${message}`);
-            }    
+            }
         } else {
             message = "No editing software is configured"
         }
@@ -244,7 +248,42 @@ export class Helper {
      * Get the filename of a specified file without the extension
      * @param file Filename
      */
-    static BasenameWithoutExtension(file: string): string{
+    static BasenameWithoutExtension(file: string): string {
         return path.basename(file).split('.')[0]
+    }
+
+    /**
+     * Parse a filename using an album name and date
+     * Example: Rio De Janeiro 24-05-2020 -> Rio_De_Janeiro_24-05-20
+     * Example: Arizona 24-05-2020 -> Arizona_24-05-20
+     * @param name Album name containing whitespaces 
+     * @param date Album date
+     */
+    static ParsePictureNameWithDate(name: string, date: string): string {
+        return `${name.split(" ").join("_")}_${date}`;
+    }
+
+    /**
+     * Parse a filename using an album name
+     * Example: Rio De Janeiro -> Rio_De_Janeiro
+     * Example: Arizona -> Arizona   
+     * @param name Album name containing whitespaces 
+     */
+    static ParsePictureNameWithoutDate(name: string): string {
+        return name.split(" ").join("_");
+    }
+
+    /**
+     * Copy a file to another location
+     * @param source Source location
+     * @param destination Destination location
+     */
+    static renameFile(source: string, destination: string) {
+        try {
+            fs.renameSync(source, destination);
+            Logger.Log().debug(`Copy Picture: '${source}' -> '${destination}'`);
+        } catch (error) {
+            Logger.Log().error(error);
+        }
     }
 }

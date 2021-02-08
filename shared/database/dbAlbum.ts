@@ -1,4 +1,5 @@
 import { Logger } from '../logger/logger';
+import { IAlbum } from './interfaces';
 import { Sqlite } from './sqlite';
 
 export class DbAlbum extends Sqlite {
@@ -25,11 +26,11 @@ export class DbAlbum extends Sqlite {
         try {
             Logger.Log().debug(`Query: ${query}`);
             this.connection.exec(query);
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbAlbum createTable query error: ${err}`);
         }
     }
-    
+
     /**
      * Method to check whether the album table exists
      */
@@ -39,8 +40,8 @@ export class DbAlbum extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            count = this.connection.prepare(query).pluck().get();        
-        } catch(err) {
+            count = this.connection.prepare(query).pluck().get();
+        } catch (err) {
             Logger.Log().error(`DbAlbum tableExists query error: ${err}`);
         }
 
@@ -55,7 +56,7 @@ export class DbAlbum extends Sqlite {
         try {
             Logger.Log().debug(`Query: INSERT INTO Album VALUES ("${JSON.stringify(args)}")`);
             this.connection.prepare(`INSERT INTO Album VALUES (@collection, @name, @date, @started, @raw, @album);`).run(args);
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbAlbum insertRow query error: ${err}`);
         }
     }
@@ -67,11 +68,11 @@ export class DbAlbum extends Sqlite {
      */
     updateStartedRecord(isStarted, album) {
         let query: string = `UPDATE album SET started=${isStarted} WHERE album='${album}'`;
-    
+
         try {
             Logger.Log().debug(`Query: ${query}`);
-            this.connection.prepare(query).run();   
-        } catch(err) {
+            this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbAlbum updateStartedRecord query error: ${err}`);
         }
     }
@@ -85,8 +86,8 @@ export class DbAlbum extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).get();   
-        } catch(err) {
+            result = this.connection.prepare(query).get();
+        } catch (err) {
             Logger.Log().error(`DbAlbum queryAll query error: ${err}`);
         }
 
@@ -103,8 +104,8 @@ export class DbAlbum extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).all();   
-        } catch(err) {
+            result = this.connection.prepare(query).all();
+        } catch (err) {
             Logger.Log().error(`DbAlbum queryAlbums query error: ${err}`);
         }
 
@@ -121,8 +122,8 @@ export class DbAlbum extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).get();   
-        } catch(err) {
+            result = this.connection.prepare(query).get();
+        } catch (err) {
             Logger.Log().error(`DbAlbum querySingleAlbum query error: ${err}`);
         }
 
@@ -140,7 +141,7 @@ export class DbAlbum extends Sqlite {
         try {
             Logger.Log().debug(`Query: ${query}`);
             started = this.connection.prepare(query).pluck().get();
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbAlbum queryStarted query error: ${err}`);
         }
 
@@ -157,8 +158,29 @@ export class DbAlbum extends Sqlite {
         try {
             Logger.Log().debug(`Query: ${query}`);
             this.connection.prepare(query).run();
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbAlbum deleteAlbum query error: ${err}`);
         }
+    }
+
+    /**
+     * Update album's name within the album and backup record
+     * @param value Current album name
+     * @param updated Updated album name
+     */
+    updateAlbum(current: IAlbum, album: IAlbum) {
+        let result = null;
+        let query: string = `UPDATE album SET 
+            name=REPLACE(name, '${current.name}', '${album.name}'),
+            album=REPLACE(album, '${current.album}', '${album.album}');`;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();
+        } catch (err) {
+            Logger.Log().error(`DbBackupFlow updateAlbum query error: ${err}`);
+        }
+
+        return result;
     }
 }

@@ -1,4 +1,5 @@
 import { Logger } from '../logger/logger';
+import { IAlbum } from './interfaces';
 import { Sqlite } from './sqlite';
 
 export class DbBackupFlow extends Sqlite {
@@ -9,7 +10,7 @@ export class DbBackupFlow extends Sqlite {
     constructor() {
         super();
     }
-    
+
     /**
      * Method to create the backupFlow table
      */
@@ -25,7 +26,7 @@ export class DbBackupFlow extends Sqlite {
         try {
             Logger.Log().debug(`Query: ${query}`);
             this.connection.exec(query);
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbBackupFlow createTable query error: ${err}`);
         }
     }
@@ -39,8 +40,8 @@ export class DbBackupFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            count = this.connection.prepare(query).pluck().get();        
-        } catch(err) {
+            count = this.connection.prepare(query).pluck().get();
+        } catch (err) {
             Logger.Log().error(`DbBackupFlow tableExists query error: ${err}`);
         }
 
@@ -55,7 +56,7 @@ export class DbBackupFlow extends Sqlite {
         try {
             Logger.Log().debug(`Query: INSERT INTO backupFlow VALUES ("${JSON.stringify(args)}")`);
             this.connection.prepare("INSERT INTO backupFlow VALUES (@collection, @name, @album, @backup, @date, @time);").run(args);
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbBackupFlow insertRow query error: ${err}`);
         }
     }
@@ -69,8 +70,8 @@ export class DbBackupFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).get();   
-        } catch(err) {
+            result = this.connection.prepare(query).get();
+        } catch (err) {
             Logger.Log().error(`DbBackupFlow queryAll query error: ${err}`);
         }
 
@@ -87,8 +88,8 @@ export class DbBackupFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).all();   
-        } catch(err) {
+            result = this.connection.prepare(query).all();
+        } catch (err) {
             Logger.Log().error(`DbBackupFlow queryBackupFlow query error: ${err}`);
         }
 
@@ -105,8 +106,8 @@ export class DbBackupFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbBackupFlow deletePicturesWhereAlbum query error: ${err}`);
         }
 
@@ -118,14 +119,16 @@ export class DbBackupFlow extends Sqlite {
      * @param value Current album name
      * @param updated Updated album name
      */
-    updateAlbum(value: string, updated: string) {
-        let query: string = `UPDATE backupFlow SET album=REPLACE(album,'${value}','${updated}'), backup=REPLACE(backup,'${value}','${updated}');`;
+    updateAlbum(current: IAlbum, album: IAlbum) {
         let result = null;
+        let query: string = `UPDATE backupFlow SET 
+            album=REPLACE(album,'${current.album}', '${album.album}'), 
+            backup=REPLACE(backup,'${current.album}', '${album.album}');`;
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbBackupFlow updateAlbum query error: ${err}`);
         }
 

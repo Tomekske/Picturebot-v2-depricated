@@ -11,19 +11,19 @@ export class WatcherEdited extends Watcher {
     listener() {
         let _this = this;
 
-        return function(changeType, fullPath, currentStat, previousStat) {
+        return function (changeType, fullPath, currentStat, previousStat) {
             let flows: IFlow = Api.getFlows(_this.album);
             let picture: IPreview = Api.getPreviewPictureWhereName(fullPath);
 
-            const pathEdited = path.join(_this.album.album, flows.socialMedia, path.basename(fullPath));
+            const pathEdited = path.join(_this.album.album, flows.edited, path.basename(fullPath));
             let pictureEdited: IEdited = { collection: _this.album.collection, album: _this.album.album, preview: picture.preview, base: picture.base, edited: pathEdited };
-            
+
             switch (changeType) {
                 case 'create': Api.AddEditedPicture(pictureEdited); break;
                 case 'update': break;
                 case 'delete': Api.deleteEditedPicture(pictureEdited); break;
                 default: Logger.Log().debug(`Watcher: unhandled type detected: ${changeType}`);
-            } 
+            }
         }
     }
 }

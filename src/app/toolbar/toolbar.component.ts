@@ -25,8 +25,8 @@ export class ToolbarComponent implements OnInit {
   selectedAlbum: IAlbum;
   isPictures: boolean = true;
   menuText: string = "";
-  
-  constructor(private _electron: ElectronService, private _data: DataService, private _router: Router, private _snack: MatSnackBar, private cdRef:ChangeDetectorRef, private _dialog: MatDialog) { }
+
+  constructor(private _electron: ElectronService, private _data: DataService, private _router: Router, private _snack: MatSnackBar, private cdRef: ChangeDetectorRef, private _dialog: MatDialog) { }
 
   /**
    * On init lifecycle hook
@@ -36,7 +36,7 @@ export class ToolbarComponent implements OnInit {
 
     // Monitor whether a new album is saved
     this._data.ctxIsAlbumSaved.subscribe(state => {
-      if(state) {
+      if (state) {
         this.albums = IpcFrontend.getAlbums(this.selectedCollection);
       }
     });
@@ -45,14 +45,14 @@ export class ToolbarComponent implements OnInit {
     this._data.ctxIsPictures.subscribe(state => this.isPictures = state);
     this._data.ctxMenuText.subscribe(text => this.menuText = text);
     this._data.ctxIsCollectionSaved.subscribe(state => {
-      if(state) {
+      if (state) {
         // Get all the collections
         IpcFrontend.getCollections().forEach((collection: ICollection) => this.collections.push(collection.collection));
 
         // Display a default collection when the collection array isn't empty
-        if(this.collections.length != 0) {
+        if (this.collections.length != 0) {
           this.selectedCollection = this.collections[0];
-          this.selectedCollectionEvent();  
+          this.selectedCollectionEvent();
         }
         this.albums = IpcFrontend.getAlbums(this.selectedCollection);
       }
@@ -64,7 +64,7 @@ export class ToolbarComponent implements OnInit {
     });
 
     // Display a default collection when the collection array isn't empty
-    if(this.collections.length != 0) {
+    if (this.collections.length != 0) {
       this.selectedCollection = this.collections[0];
       this.selectedCollectionEvent();
     }
@@ -85,7 +85,7 @@ export class ToolbarComponent implements OnInit {
   selectedCollectionEvent() {
     this._data.selectedCollection = this.selectedCollection;
     this._data.isAlbumSelectorVisible = true;
-      
+
     this._router.navigateByUrl('/main');
   }
 
@@ -182,14 +182,14 @@ export class ToolbarComponent implements OnInit {
    */
   deleteAlbum() {
     // Picture deletion dialog
-    this._dialog.open(DialogAlbumDeleteComponent, { 
-      data: { 
+    this._dialog.open(DialogAlbumDeleteComponent, {
+      data: {
         album: this.selectedAlbum,
         flow: this._data.selectedFlow
       }
     }).afterClosed().subscribe(confirmed => {
       // Only delete pictures on confirmation
-      if(confirmed) {
+      if (confirmed) {
         IpcFrontend.deleteAlbum(this.selectedAlbum);
 
         this._data.isAlbumDeleted = true;
@@ -209,22 +209,22 @@ export class ToolbarComponent implements OnInit {
    */
   editAlbum() {
     // Picture deletion dialog
-    this._dialog.open(DialogAlbumEditComponent, { 
-      data: { 
+    this._dialog.open(DialogAlbumEditComponent, {
+      data: {
         album: this.selectedAlbum
       }
     }).afterClosed().subscribe(form => {
-      let updatedAlbum: IAlbum = {  
+      let updatedAlbum: IAlbum = {
         collection: this.selectedAlbum.collection,
-        name: form.album, 
+        name: form.album,
         date: Helper.formatDate(form.date),
         started: this.selectedAlbum.started,
         raw: this.selectedAlbum.raw,
         album: this._electron.path.join(this.selectedAlbum.collection, `${form.album} ${Helper.formatDate(form.date)}`)
       };
 
-      IpcFrontend.updateAlbum(this.selectedAlbum.album, updatedAlbum);
-      Helper.renameDirectory(this.selectedAlbum.album, updatedAlbum.album);
+      IpcFrontend.updateAlbum(this.selectedAlbum, updatedAlbum);
+
       this._data.isAlbumUpdated = true;
     });
   }

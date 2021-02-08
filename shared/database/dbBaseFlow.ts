@@ -1,5 +1,9 @@
 import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
+import * as path from 'path';
+import { IAlbum, IFlow } from './interfaces';
+import { Api } from './api';
+import { Helper } from '../helper/helper';
 
 export class DbBaseFlow extends Sqlite {
 
@@ -28,7 +32,7 @@ export class DbBaseFlow extends Sqlite {
         try {
             Logger.Log().debug(`Query: ${query}`);
             this.connection.exec(query);
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow createTable query error: ${err}`);
         }
     }
@@ -42,8 +46,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            count = this.connection.prepare(query).pluck().get();        
-        } catch(err) {
+            count = this.connection.prepare(query).pluck().get();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow tableExists query error: ${err}`);
         }
 
@@ -60,7 +64,7 @@ export class DbBaseFlow extends Sqlite {
         try {
             Logger.Log().debug(`Query: INSERT INTO baseFlow VALUES ("${JSON.stringify(args)}")`);
             this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @favorited, @backup, @preview, @base, @date, @time);").run(args);
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow insertRow query error: ${err}`);
         }
     }
@@ -75,8 +79,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow updateName query error: ${err}`);
         }
 
@@ -93,8 +97,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow updateBase query error: ${err}`);
         }
 
@@ -111,8 +115,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow updatePreview query error: ${err}`);
         }
 
@@ -128,8 +132,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).get();   
-        } catch(err) {
+            result = this.connection.prepare(query).get();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow queryAll query error: ${err}`);
         }
 
@@ -146,8 +150,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).all();   
-        } catch(err) {
+            result = this.connection.prepare(query).all();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow queryBaseFlow query error: ${err}`);
         }
 
@@ -164,8 +168,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow deletePicture query error: ${err}`);
         }
 
@@ -182,8 +186,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow deletePicturesWhereAlbum query error: ${err}`);
         }
 
@@ -195,14 +199,20 @@ export class DbBaseFlow extends Sqlite {
      * @param value Current album name
      * @param updated Updated album name
      */
-    updateAlbum(value: string, updated: string) {
-        let query: string = `UPDATE baseFlow SET album=REPLACE(album,'${value}','${updated}'), preview=REPLACE(preview,'${value}','${updated}'), base=REPLACE(base,'${value}','${updated}'), backup=REPLACE(backup,'${value}','${updated}');`;
+    updateAlbum(current: IAlbum, album: IAlbum) {
         let result = null;
+        let flows: IFlow = Api.getFlows(current);
+        let query: string = `UPDATE baseFlow SET 
+            name=REPLACE(name, '${Helper.ParsePictureNameWithoutDate(path.basename(current.album))}', '${Helper.ParsePictureNameWithoutDate(path.basename(album.album))}'), 
+            album=REPLACE(album,'${current.album}', '${album.album}'), 
+            backup=REPLACE(backup, '${current.album}', '${album.album}'),      
+            preview=REPLACE(preview, '${path.join(current.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(current.album)))}', '${path.join(album.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(album.album)))}'), 
+            base=REPLACE(base, '${path.join(current.album, flows.base, Helper.ParsePictureNameWithoutDate(path.basename(current.album)))}','${path.join(album.album, flows.base, Helper.ParsePictureNameWithoutDate(path.basename(album.album)))}')`;
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow updateAlbum query error: ${err}`);
         }
 
@@ -219,8 +229,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            count = this.connection.prepare(query).pluck().get();        
-        } catch(err) {
+            count = this.connection.prepare(query).pluck().get();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow getIsFavoriteWherePreview query error: ${err}`);
         }
 
@@ -238,8 +248,8 @@ export class DbBaseFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbBaseFlow updateFavorited query error: ${err}`);
         }
 

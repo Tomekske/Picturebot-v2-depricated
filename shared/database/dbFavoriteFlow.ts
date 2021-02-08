@@ -1,5 +1,9 @@
 import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
+import * as path from 'path';
+import { IAlbum, IFlow } from './interfaces';
+import { Api } from './api';
+import { Helper } from '../helper/helper';
 
 export class DbFavoriteFlow extends Sqlite {
 
@@ -23,7 +27,7 @@ export class DbFavoriteFlow extends Sqlite {
         try {
             Logger.Log().debug(`Query: ${query}`);
             this.connection.exec(query);
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbFavoriteFlow createTable query error: ${err}`);
         }
     }
@@ -37,8 +41,8 @@ export class DbFavoriteFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            count = this.connection.prepare(query).pluck().get();        
-        } catch(err) {
+            count = this.connection.prepare(query).pluck().get();
+        } catch (err) {
             Logger.Log().error(`DbFavoriteFlow tableExists query error: ${err}`);
         }
 
@@ -53,7 +57,7 @@ export class DbFavoriteFlow extends Sqlite {
         try {
             Logger.Log().debug(`Query: INSERT INTO favoriteFlow VALUES ("${JSON.stringify(args)}")`);
             this.connection.prepare("INSERT INTO favoriteFlow VALUES (@collection, @album, @preview, @base);").run(args);
-        } catch(err) {
+        } catch (err) {
             Logger.Log().error(`DbFavoriteFlow insertRow query error: ${err}`);
         }
     }
@@ -67,8 +71,8 @@ export class DbFavoriteFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).get();   
-        } catch(err) {
+            result = this.connection.prepare(query).get();
+        } catch (err) {
             Logger.Log().error(`DbFavoriteFlow queryAll query error: ${err}`);
         }
 
@@ -85,8 +89,8 @@ export class DbFavoriteFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbFavoriteFlow deletePicturesWhereAlbum query error: ${err}`);
         }
 
@@ -103,8 +107,8 @@ export class DbFavoriteFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbFavoriteFlow deletePictureWhereBase query error: ${err}`);
         }
 
@@ -121,8 +125,8 @@ export class DbFavoriteFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();   
-        } catch(err) {
+            result = this.connection.prepare(query).run();
+        } catch (err) {
             Logger.Log().error(`DbFavoriteFlow deletePicture query error: ${err}`);
         }
 
@@ -139,9 +143,32 @@ export class DbFavoriteFlow extends Sqlite {
 
         try {
             Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).all();   
-        } catch(err) {
+            result = this.connection.prepare(query).all();
+        } catch (err) {
             Logger.Log().error(`DbFavoriteFlow queryAllWhereAlbum query error: ${err}`);
+        }
+
+        return result;
+    }
+
+    /**
+     * Update album's name within the album, base, preview and social-media record
+     * @param value Current album name
+     * @param updated Updated album name
+     */
+    updateAlbum(current: IAlbum, album: IAlbum) {
+        let result = null;
+        let flows: IFlow = Api.getFlows(current);
+        let query: string = `UPDATE favoriteFlow SET 
+            album=REPLACE(album,'${current.album}', '${album.album}'), 
+            base=REPLACE(base, '${path.join(current.album, flows.base, Helper.ParsePictureNameWithoutDate(path.basename(current.album)))}','${path.join(album.album, flows.base, Helper.ParsePictureNameWithoutDate(path.basename(album.album)))}'),
+            preview=REPLACE(preview, '${path.join(current.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(current.album)))}', '${path.join(album.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(album.album)))}')`;
+
+        try {
+            Logger.Log().debug(`Query: ${query}`);
+            result = this.connection.prepare(query).run();
+        } catch (err) {
+            Logger.Log().error(`DbSocialMediaFlow updateAlbum query error: ${err}`);
         }
 
         return result;

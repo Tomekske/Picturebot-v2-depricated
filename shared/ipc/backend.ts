@@ -1,6 +1,5 @@
-import { app, BrowserWindow, screen, ipcMain, remote } from 'electron';
+import { ipcMain } from 'electron';
 import * as path from 'path';
-import * as url from 'url';
 import * as fs from 'fs';
 import * as cp from 'child_process';
 
@@ -21,7 +20,6 @@ import { WatcherEdited } from '../watcher/watcherEdited';
 import { WatcherSocialMedia } from '../watcher/watcherSocialMedia';
 import { Api } from '../database/api';
 
-
 let oldAlbum: IAlbum;
 let stalkerEdited: any;
 let stalkerSocialMedia: any;
@@ -29,14 +27,14 @@ let stalkerSocialMedia: any;
 /**
  * Static class contains methods to communicate with the backend 
  */
-export class  IpcBackend {
+export class IpcBackend {
     /**
      * Get settings from the database
      */
     static getSettings() {
         ipcMain.on('get-settings', (event) => {
             Logger.Log().debug('ipcMain: get-settings');
-        
+
             const db = new DbSettings();
             let result = db.queryAll();
 
@@ -51,10 +49,10 @@ export class  IpcBackend {
     static saveSettings() {
         ipcMain.on('save-settings', (event, args) => {
             Logger.Log().debug('ipcMain: save-settings');
-        
+
             // Create database
             const db = new DbSettings();
-            
+
             // If table exists update database
             db.isEmpty() ? db.insertRow(args) : db.updateRow(args);
             db.dbClose();
@@ -67,10 +65,10 @@ export class  IpcBackend {
     static checkSettingsEmpty() {
         ipcMain.on('check-settings-empty', (event) => {
             Logger.Log().debug('ipcMain: check-settings-empty');
-        
+
             const db = new DbSettings();
             let result = db.isEmpty();
-        
+
             db.dbClose();
             event.returnValue = result;
         });
@@ -82,11 +80,11 @@ export class  IpcBackend {
     static getLibraries() {
         ipcMain.on('get-libraries', (event, args: ILibrary) => {
             Logger.Log().debug('ipcMain: get-libraries');
-        
+
             // Create database
             const db = new DbLibrary();
             let result = db.queryLibraries();
-            
+
             db.dbClose();
             event.returnValue = result;
         });
@@ -98,14 +96,14 @@ export class  IpcBackend {
     static saveLibrary() {
         ipcMain.on('save-library', (event, args: ILibrary) => {
             Logger.Log().debug('ipcMain: save-library');
-        
+
             // Create database
             const db = new DbLibrary();
-        
+
             // Insert data and close database
             db.insertRow(args);
             db.dbClose();
-        
+
             Helper.createDirectory(args.library);
         });
     }
@@ -116,11 +114,11 @@ export class  IpcBackend {
     static getCollections() {
         ipcMain.on('get-collections', (event, args: ILibrary) => {
             Logger.Log().debug('ipcMain: get-collections');
-        
+
             // Create database
             const db = new DbCollection();
             let result = db.queryCollections();
-            
+
             db.dbClose();
             event.returnValue = result;
         });
@@ -132,14 +130,14 @@ export class  IpcBackend {
     static getAllCollectionWhereCollection() {
         ipcMain.on('get-all-collections-where-collection', (event, collection: string) => {
             Logger.Log().debug('ipcMain: get-all-collections-where-collection');
-        
+
             // Create database
             const db = new DbCollection();
             let result = db.queryAllWhereCollection(collection);
-            
+
             db.dbClose();
             event.returnValue = result;
-        });    
+        });
     }
 
     /**
@@ -148,15 +146,15 @@ export class  IpcBackend {
     static saveCollection() {
         ipcMain.on('save-collection', (event, args: ICollection) => {
             Logger.Log().debug('ipcMain: save-collection');
-        
+
             // Create database
             const db = new DbCollection();
-        
+
             db.insertRow(args);
             db.dbClose();
-        
+
             Helper.createDirectory(args.collection);
-        });    
+        });
     }
 
     /**
@@ -165,74 +163,74 @@ export class  IpcBackend {
     static savePictures() {
         ipcMain.on('save-pictures', (event, args: IBase[], album: IAlbum) => {
             Logger.Log().debug('ipcMain: save-pictures');
-        
+
             const dbSettings = new DbSettings();
-        
+
             // Create database
             const albumDb = new DbAlbum();
-        
+
             albumDb.insertRow(album);
             albumDb.dbClose();
-        
+
             //Create album
             Helper.createDirectory(album.album);
-        
+
             if (Helper.isDirectory(album.album)) {
-              const collectionDb = new DbCollection();
-              let flows: IFlow = collectionDb.queryAllFlows(album.collection);
-        
-              // Creating flow directories
-              Object.values(flows).forEach(flow => {
-                // The selection flow is a virtual directory, so it doesn't need to be created
-                if(flow != flows.favorites) {
-                  Helper.createDirectory(path.join(album.album, flow));
-                }
-              });
-        
-              collectionDb.dbClose();
-        
-              // pictures
-              const picDb = new DbBaseFlow();
-              const backupDb = new DbBackupFlow();
-              const dbPreview = new DbPreviewFlow();
-           
-              // pipeline
-              args.forEach((picture: IBase) => {
-                const destBase: string = path.join(album.collection,`${album.name} ${album.date}`, flows.base, picture.hashed);
-                const destBackup: string = path.join(album.collection,`${album.name} ${album.date}`, flows.backup, picture.hashed);
-                const destPreview: string = path.join(album.collection,`${album.name} ${album.date}`, flows.preview, `${picture.hashed.split('.')[0]}.jpg`);
-                
-                let dataBaseFlow: IBase = { collection: album.collection, name: picture.name, album: album.album, favorited: 0, backup: destBackup,preview: destPreview, base: destBase, date: picture.date, time: picture.time};
-                let dataBackupFlow: IBackup = { collection: album.collection, name: picture.name, album: album.album, backup: destBackup, date: picture.date, time: picture.time};
-                let dataPreviewFlow: IPreview = { collection: album.collection, name: picture.name, album: album.album, base: destBase, preview: destPreview, date: picture.date, time: picture.time}; 
-        
-                // copy base
-                Helper.copyFile(picture.source, path.join(path.dirname(destBase), picture.hashed));
-        
-                // Insert data into database
-                picDb.insertRow(dataBaseFlow);
-        
-                // copy backup
-                Helper.copyFile(picture.source, path.join(path.dirname(destBackup), picture.hashed));
-        
-                // Insert data into database
-                backupDb.insertRow(dataBackupFlow);
-                
-                // convert preview
-                const convert = `magick convert \"${picture.source}\" -quality ${dbSettings.queryConversion()} -verbose \"${destPreview}\"`  
-                cp.execSync(convert);
-        
-                dbPreview.insertRow(dataPreviewFlow);
-        
-                Logger.Log().debug(convert);
-              });
-        
-              picDb.dbClose();
-              backupDb.dbClose();
-              dbPreview.dbClose();
-              dbSettings.dbClose();
+                const collectionDb = new DbCollection();
+                let flows: IFlow = collectionDb.queryAllFlows(album.collection);
+
+                // Creating flow directories
+                Object.values(flows).forEach(flow => {
+                    // The selection flow is a virtual directory, so it doesn't need to be created
+                    if (flow != flows.favorites) {
+                        Helper.createDirectory(path.join(album.album, flow));
+                    }
+                });
+
+                collectionDb.dbClose();
+
+                // pictures
+                const picDb = new DbBaseFlow();
+                const backupDb = new DbBackupFlow();
+                const dbPreview = new DbPreviewFlow();
+
+                // pipeline
+                args.forEach((picture: IBase) => {
+                    const destBase: string = path.join(album.collection, `${album.name} ${album.date}`, flows.base, picture.hashed);
+                    const destBackup: string = path.join(album.collection, `${album.name} ${album.date}`, flows.backup, picture.hashed);
+                    const destPreview: string = path.join(album.collection, `${album.name} ${album.date}`, flows.preview, `${picture.hashed.split('.')[0]}.jpg`);
+
+                    let dataBaseFlow: IBase = { collection: album.collection, name: picture.name, album: album.album, favorited: 0, backup: destBackup, preview: destPreview, base: destBase, date: picture.date, time: picture.time };
+                    let dataBackupFlow: IBackup = { collection: album.collection, name: picture.name, album: album.album, backup: destBackup, date: picture.date, time: picture.time };
+                    let dataPreviewFlow: IPreview = { collection: album.collection, name: picture.name, album: album.album, base: destBase, preview: destPreview, date: picture.date, time: picture.time };
+
+                    // copy base
+                    Helper.copyFile(picture.source, path.join(path.dirname(destBase), picture.hashed));
+
+                    // Insert data into database
+                    picDb.insertRow(dataBaseFlow);
+
+                    // copy backup
+                    Helper.copyFile(picture.source, path.join(path.dirname(destBackup), picture.hashed));
+
+                    // Insert data into database
+                    backupDb.insertRow(dataBackupFlow);
+
+                    // convert preview
+                    const convert = `magick convert \"${picture.source}\" -quality ${dbSettings.queryConversion()} -verbose \"${destPreview}\"`
+                    cp.execSync(convert);
+
+                    dbPreview.insertRow(dataPreviewFlow);
+
+                    Logger.Log().debug(convert);
+                });
+
+                picDb.dbClose();
+                backupDb.dbClose();
+                dbPreview.dbClose();
+                dbSettings.dbClose();
             }
-        
+
             event.returnValue = "";
         });
     }
@@ -243,14 +241,14 @@ export class  IpcBackend {
     static updatePreviewFlowName() {
         ipcMain.on('update-name-previewFlow', (event, update) => {
             Logger.Log().debug('ipcMain: update-name-previewFlow');
-        
+
             const db = new DbPreviewFlow();
-        
+
             db.updateName(update);
             db.updatePreview(update);
             db.updateBase(update);
             db.dbClose();
-            
+
             event.returnValue = "";
         });
     }
@@ -261,7 +259,7 @@ export class  IpcBackend {
     static getPreviewFlowPictures() {
         ipcMain.on('get-previewFLow-pictures', (event, args) => {
             Logger.Log().debug('get-previewFlow-pictures');
-        
+
             // Create database
             const db = new DbPreviewFlow();
             let result = db.queryAllWhereAlbum(args);
@@ -277,7 +275,7 @@ export class  IpcBackend {
     static getFavoritesFlowPictures() {
         ipcMain.on('get-favoritesFlow-pictures', (event, args) => {
             Logger.Log().debug('get-previewFlow-pictures');
-        
+
             // Create database
             const db = new DbFavoriteFlow();
             let result = db.queryAllWhereAlbum(args);
@@ -286,20 +284,20 @@ export class  IpcBackend {
             event.returnValue = result;
         });
     }
-    
+
     /**
      * Update the name object of the base flow
      */
     static updateBaseFlowName() {
         ipcMain.on('update-name-baseFlow', (event, update) => {
             Logger.Log().debug('ipcMain: update-name-baseFlow');
-        
+
             const dbBase = new DbBaseFlow();
             dbBase.updateName(update);
             dbBase.updateBase(update);
             dbBase.updatePreview(update);
             dbBase.dbClose();
-            
+
             event.returnValue = "";
         });
     }
@@ -310,7 +308,7 @@ export class  IpcBackend {
     static getBaseFlowPictures() {
         ipcMain.on('get-baseFLow-pictures', (event, album: string) => {
             Logger.Log().debug('ipcMain: get-baseFLow-pictures');
-        
+
             const db = new DbBaseFlow();
             let result = db.queryBaseFlow(album);
 
@@ -325,13 +323,13 @@ export class  IpcBackend {
     static getStartingFlows() {
         ipcMain.on('get-started-flow', (event, collection: string) => {
             Logger.Log().debug('ipcMain: get-started-flow');
-        
+
             const db = new DbCollection();
             let result = db.queryRenameStartedFlows(collection);
 
             db.dbClose();
             event.returnValue = result;
-        });    
+        });
     }
 
     /**
@@ -340,11 +338,11 @@ export class  IpcBackend {
     static updateAlbumIsOrganized() {
         ipcMain.on("update-album-started", (event, album: IAlbum, isOrganized: boolean) => {
             Logger.Log().debug('ipcMain: update-album-started');
-        
+
             const db = new DbAlbum();
-        
+
             db.updateStartedRecord(isOrganized ? 1 : 0, album.album);
-        
+
             event.returnValue = "";
         });
     }
@@ -355,11 +353,11 @@ export class  IpcBackend {
     static getAlbums() {
         ipcMain.on('get-albums', (event, args) => {
             Logger.Log().debug('ipcMain: get-albums');
-        
+
             // Create database
             const db = new DbAlbum();
             let result = db.queryAlbums(args);
-        
+
             db.dbClose();
             event.returnValue = result;
         });
@@ -369,17 +367,47 @@ export class  IpcBackend {
      * Save an album to the database
      */
     static updateAlbum() {
-        ipcMain.on('update-album', (event, currentAlbum: string, updatedAlbum: IAlbum) => {
+        ipcMain.on('update-album', (event, currentAlbum: IAlbum, updatedAlbum: IAlbum) => {
             Logger.Log().debug('ipcMain: update-album');
 
             // Close stalker before editing the album
             stalkerEdited.close();
             stalkerSocialMedia.close();
-        
+
+            let flows: IFlow = Api.getFlows(currentAlbum);
+
+            // Rename pictures within the flows
+            Api.getBaseFlowPictures(currentAlbum).forEach((picture: IBase) => {
+                let name = `${Helper.ParsePictureNameWithDate(updatedAlbum.name, updatedAlbum.date)}_${picture.name.split("_").slice(-1)[0]}`;
+                let destination: string = path.join(currentAlbum.album, flows.base, name);
+                Helper.renameFile(picture.base, destination);
+            });
+
+            Api.getPreviewFlowPictures(currentAlbum).forEach((picture: IPreview) => {
+                let name = `${Helper.ParsePictureNameWithDate(updatedAlbum.name, updatedAlbum.date)}_${picture.name.split("_").slice(-1)[0]}`;
+                let destination: string = path.join(currentAlbum.album, flows.preview, name);
+                Helper.renameFile(picture.preview, destination);
+            });
+
+            Api.getEditedFlowPictures(currentAlbum).forEach((picture: IEdited) => {
+                let name = `${Helper.ParsePictureNameWithDate(updatedAlbum.name, updatedAlbum.date)}_${picture.edited.split("\\").slice(-1)[0].split("_").slice(-1)[0]}`;
+                let destination: string = path.join(currentAlbum.album, flows.edited, name);
+                Helper.renameFile(picture.edited, destination);
+            });
+
+            Api.getSocialMediaFlowPictures(currentAlbum).forEach((picture: ISocialMedia) => {
+                let name = `${Helper.ParsePictureNameWithDate(updatedAlbum.name, updatedAlbum.date)}_${picture.socialMedia.split("\\").slice(-1)[0].split("_").slice(-1)[0]}`;
+                let destination: string = path.join(currentAlbum.album, flows.socialMedia, name);
+
+                Helper.renameFile(picture.socialMedia, destination);
+            });
+
+            Helper.renameDirectory(currentAlbum.album, updatedAlbum.album);
+
             Api.updateAlbum(currentAlbum, updatedAlbum);
 
             event.returnValue = "";
-        });    
+        });
     }
 
     /**
@@ -388,10 +416,10 @@ export class  IpcBackend {
     static getTabFlows() {
         ipcMain.on('get-tab-flows', (event, collection: string) => {
             Logger.Log().debug('ipcMain: get-tab-flows');
-        
+
             const db = new DbCollection();
             let result = db.queryFlows(collection);
-        
+
             db.dbClose();
             event.returnValue = result;
         });
@@ -403,15 +431,15 @@ export class  IpcBackend {
     static previewFlowDeletePicture() {
         ipcMain.on('previewFlow-delete-picture', (event, path: string) => {
             Logger.Log().debug('ipcMain: previewFlow-delete-picture');
-        
+
             const db = new DbPreviewFlow();
             db.deletePicture(path);
-        
+
             db.dbClose();
 
             Helper.deletePicture(path);
             event.returnValue = "";
-        });    
+        });
     }
 
     /**
@@ -421,14 +449,14 @@ export class  IpcBackend {
         ipcMain.on('baseFlow-delete-picture', (event, path: string) => {
 
             Logger.Log().debug('ipcMain: previewFlow-delete-picture');
-        
+
             const db = new DbBaseFlow();
             db.deletePicture(path);
-        
+
             db.dbClose();
             Helper.deletePicture(path);
             event.returnValue = "";
-        });    
+        });
     }
 
     /**
@@ -437,13 +465,13 @@ export class  IpcBackend {
     static favoriteFlowDeletePicture() {
         ipcMain.on('favoriteFlow-delete-picture', (event, path: string) => {
             Logger.Log().debug('ipcMain: favoriteFlow-delete-picture');
-        
+
             const db = new DbFavoriteFlow();
             db.deletePicture(path);
             db.dbClose();
 
             event.returnValue = "";
-        });    
+        });
     }
 
     /**
@@ -453,11 +481,11 @@ export class  IpcBackend {
     static deleteAlbum() {
         ipcMain.on('delete-album', (event, album: IAlbum) => {
             Logger.Log().debug('ipcMain: delete-album');
-        
+
             Api.deleteAlbum(album);
 
             event.returnValue = "";
-        });    
+        });
     }
 
     /**
@@ -465,7 +493,7 @@ export class  IpcBackend {
      */
     static getIsFavoriteBaseFlowWherePreview() {
         //ipcRenderer.sendSync("get-isFavorite-baseFlow-where-preview", preview);
-        ipcMain.on('get-isFavorite-baseFlow-where-preview', (event, preview: string) => { 
+        ipcMain.on('get-isFavorite-baseFlow-where-preview', (event, preview: string) => {
             const db = new DbBaseFlow();
             let isFavorite = db.getIsFavoriteWherePreview(preview);
             db.dbClose();
@@ -478,7 +506,7 @@ export class  IpcBackend {
      * Update the favorited boolean of a specified picture
      */
     static updateFavorited() {
-        ipcMain.on('update-favorited', (event, preview: string, isFavorited: boolean) => { 
+        ipcMain.on('update-favorited', (event, preview: string, isFavorited: boolean) => {
             const db = new DbBaseFlow();
             db.updateFavorited(preview, ((isFavorited == true) ? 1 : 0));
             db.dbClose();
@@ -526,16 +554,16 @@ export class  IpcBackend {
             let flows = Api.getFlows(album);
 
             Logger.Log().debug('ipcMain: selected-album');
-            
+
             // Create a new stalker when an album isn't selected yet
-            if(!oldAlbum) {
+            if (!oldAlbum) {
                 let watcherSocialMedia = new WatcherSocialMedia(path.join(album.album, flows.socialMedia), album);
                 stalkerSocialMedia = watcherSocialMedia.stalker();
 
                 let watcherEdited = new WatcherEdited(path.join(album.album, flows.edited), album);
                 stalkerEdited = watcherEdited.stalker();
             } else {
-                if(oldAlbum.album != album.album) {
+                if (oldAlbum.album != album.album) {
                     // Close the previously created stalkers
                     stalkerSocialMedia.close();
                     stalkerEdited.close();
@@ -549,9 +577,9 @@ export class  IpcBackend {
                 }
             }
             oldAlbum = album;
-            
+
             event.returnValue = "";
-        }); 
+        });
     }
 
     /**
@@ -560,7 +588,7 @@ export class  IpcBackend {
     static getEditedFlowPictures() {
         ipcMain.on('get-editedFlow-pictures', (event, args) => {
             Logger.Log().debug('get-editedFlow-pictures');
-        
+
             // Create database
             const db = new DbEditedFlow();
             let result = db.queryAllWhereAlbum(args);
@@ -576,7 +604,7 @@ export class  IpcBackend {
     static getSocialMediaFlowPictures() {
         ipcMain.on('get-socialMediaFlow-pictures', (event, args) => {
             Logger.Log().debug('get-socialMediaFlow-pictures');
-        
+
             // Create database
             const db = new DbSocialMediaFlow();
             let result = db.queryAllWhereAlbum(args);
@@ -589,7 +617,7 @@ export class  IpcBackend {
     static importLegacyAlbum() {
         ipcMain.on('import-legacy-album', (event, form: ILegacy) => {
             Logger.Log().debug('import-legacy-album');
-            
+
             interface ILocation {
                 source: string;
                 destination: string;
@@ -602,7 +630,7 @@ export class  IpcBackend {
                 favorited?: {
                     isFavorited: number;
                     source: string;
-                }; 
+                };
                 edited?: ILocation;
                 socialMedia?: ILocation;
                 time?: string;
@@ -611,7 +639,7 @@ export class  IpcBackend {
             let album: IAlbum = {
                 album: path.join(form.collection, path.basename(form.legacy)),
                 collection: form.collection,
-                name: /(\w+( +\w+)*) \d+-\d+-\d+/.exec(form.legacy)[1].toString(), 
+                name: /(\w+( +\w+)*) \d+-\d+-\d+/.exec(form.legacy)[1].toString(),
                 date: path.basename(form.legacy.split(" ").pop()),
                 started: 1,
                 raw: 1
@@ -626,8 +654,8 @@ export class  IpcBackend {
                 fs.readdirSync(path.join(form.legacy, form.backup)).forEach(pictureBackup => {
                     let source = path.join(form.legacy, flows.backup, pictureBackup);
                     let destination = path.join(album.album, flows.backup, pictureBackup);
-                    
-                    let backupStat = fs.statSync(source); 
+
+                    let backupStat = fs.statSync(source);
 
                     Api.insertBackupIntoDatabase({
                         collection: form.collection,
@@ -646,37 +674,37 @@ export class  IpcBackend {
                     let source: string = path.join(form.legacy, form.base, pictureBase);
                     let destination = path.join(album.album, flows.base, pictureBase);
 
-                    let baseStat = fs.statSync(source); 
+                    let baseStat = fs.statSync(source);
                     obj.time = Helper.formatTime(baseStat.mtime.toISOString());
 
-                    obj.base = { source: source, destination: destination};
-                    obj.favorited = { isFavorited: 0, source: ""};
-                    
+                    obj.base = { source: source, destination: destination };
+                    obj.favorited = { isFavorited: 0, source: "" };
+
                     // Backup flow
                     fs.readdirSync(path.join(form.legacy, form.backup)).forEach(pictureBackup => {
                         let backupStat = fs.statSync(path.join(form.legacy, form.backup, pictureBackup));
 
-                        if(baseStat.size == backupStat.size && baseStat.mtimeMs == backupStat.mtimeMs) {
-                            obj.backup = { source: path.join(form.legacy, form.backup, pictureBackup), destination: path.join(form.collection, flows.backup, pictureBackup)};
+                        if (baseStat.size == backupStat.size && baseStat.mtimeMs == backupStat.mtimeMs) {
+                            obj.backup = { source: path.join(form.legacy, form.backup, pictureBackup), destination: path.join(form.collection, flows.backup, pictureBackup) };
                         }
                     });
 
                     // Preview flow
                     fs.readdirSync(path.join(form.legacy, form.preview)).forEach(picturePreview => {
-                        if(Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(picturePreview)) {
-                            obj.preview = { source: path.join(form.legacy, form.preview, picturePreview), destination: path.join(album.album, flows.preview, picturePreview)};
+                        if (Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(picturePreview)) {
+                            obj.preview = { source: path.join(form.legacy, form.preview, picturePreview), destination: path.join(album.album, flows.preview, picturePreview) };
                         }
                     });
 
                     // Edited flow
                     fs.readdirSync(path.join(form.legacy, form.edited)).forEach(pictureEdited => {
-                        if(Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureEdited)) {
-                            obj.edited = { source: path.join(form.legacy, form.edited, pictureEdited), destination: path.join(album.album, flows.edited, pictureEdited)};
+                        if (Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureEdited)) {
+                            obj.edited = { source: path.join(form.legacy, form.edited, pictureEdited), destination: path.join(album.album, flows.edited, pictureEdited) };
 
                             Api.insertEditedIntoDatabase({
                                 collection: form.collection,
                                 album: album.album,
-                                preview: obj.preview.destination, 
+                                preview: obj.preview.destination,
                                 base: obj.base.destination,
                                 edited: obj.edited.destination
                             });
@@ -687,13 +715,13 @@ export class  IpcBackend {
 
                     // Social-Media flow
                     fs.readdirSync(path.join(form.legacy, form.socialMedia)).forEach(pictureSocialMedia => {
-                        if(Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureSocialMedia)) {
-                            obj.socialMedia = { source: path.join(form.legacy, form.socialMedia, pictureSocialMedia), destination: path.join(album.album, flows.socialMedia, pictureSocialMedia)};
+                        if (Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureSocialMedia)) {
+                            obj.socialMedia = { source: path.join(form.legacy, form.socialMedia, pictureSocialMedia), destination: path.join(album.album, flows.socialMedia, pictureSocialMedia) };
 
                             Api.AddSocialMediaPicture({
                                 collection: form.collection,
                                 album: album.album,
-                                preview: obj.preview.destination, 
+                                preview: obj.preview.destination,
                                 base: obj.base.destination,
                                 socialMedia: obj.socialMedia.destination
                             });
@@ -704,14 +732,14 @@ export class  IpcBackend {
 
                     // Favorites flow
                     fs.readdirSync(path.join(form.legacy, form.favorites)).forEach(pictureFavorites => {
-                        
-                        if(Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureFavorites)) {
-                            obj.favorited = { isFavorited: 1, source: path.join(form.legacy, form.socialMedia, pictureFavorites)};
+
+                        if (Helper.BasenameWithoutExtension(pictureBase) == Helper.BasenameWithoutExtension(pictureFavorites)) {
+                            obj.favorited = { isFavorited: 1, source: path.join(form.legacy, form.socialMedia, pictureFavorites) };
 
                             Api.insertFavoriteIntoDatabase({
                                 collection: form.collection,
                                 album: album.album,
-                                preview: obj.preview.destination, 
+                                preview: obj.preview.destination,
                                 base: obj.base.destination,
                             });
                         }
@@ -723,7 +751,7 @@ export class  IpcBackend {
                         album: album.album,
                         favorited: obj.favorited.isFavorited,
                         backup: obj.backup.destination,
-                        preview: obj.preview.destination, 
+                        preview: obj.preview.destination,
                         base: obj.base.destination,
                         date: album.date,
                         time: obj.time
@@ -734,7 +762,7 @@ export class  IpcBackend {
                         name: album.name,
                         album: album.album,
                         base: obj.base.destination,
-                        preview: obj.preview.destination, 
+                        preview: obj.preview.destination,
                         date: album.date,
                         time: obj.time
                     });
@@ -745,8 +773,8 @@ export class  IpcBackend {
                     Helper.copyFile(obj.preview.source, obj.preview.destination);
 
                 });
-            }   
+            }
             event.returnValue = "";
         });
-    }   
+    }
 }
