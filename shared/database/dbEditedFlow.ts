@@ -99,7 +99,7 @@ export class DbEditedFlow extends Sqlite {
      * @param album Selected album
      */
     queryAllWhereAlbum(album) {
-        let query: string = `SELECT DISTINCT * FROM editedFlow WHERE album='${album}';`;
+        let query: string = `SELECT DISTINCT * FROM editedFlow WHERE album='${album}' ORDER BY preview ASC;`;
         let result = null;
 
         try {
@@ -160,7 +160,7 @@ export class DbEditedFlow extends Sqlite {
      */
     queryEditedFlow(album: string) {
         let result = null;
-        let query: string = `SELECT * FROM editedFlow where album='${album}';`;
+        let query: string = `SELECT * FROM editedFlow where album='${album}' ORDER BY preview ASC;;`;
 
         try {
             Logger.Log().debug(`Query: ${query}`);

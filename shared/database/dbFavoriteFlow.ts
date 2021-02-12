@@ -66,7 +66,7 @@ export class DbFavoriteFlow extends Sqlite {
      * Method to query all values from the favoriteFlow table
      */
     queryAll() {
-        let query: string = 'SELECT DISTINCT * FROM favoriteFlow;';
+        let query: string = 'SELECT DISTINCT * FROM favoriteFlow ORDER BY preview ASC;';
         let result = null;
 
         try {
@@ -120,7 +120,7 @@ export class DbFavoriteFlow extends Sqlite {
      * @param path Path to the picture
      */
     deletePicture(path: string) {
-        let query: string = `Delete FROM favoriteFlow WHERE preview='${path}'`;
+        let query: string = `Delete FROM favoriteFlow WHERE preview='${path}';`;
         let result = null;
 
         try {
@@ -138,7 +138,7 @@ export class DbFavoriteFlow extends Sqlite {
      * @param album Selected album
      */
     queryAllWhereAlbum(album) {
-        let query: string = `SELECT DISTINCT * FROM favoriteFlow WHERE album='${album}';`;
+        let query: string = `SELECT DISTINCT * FROM favoriteFlow WHERE album='${album}' ORDER BY preview ASC;`;
         let result = null;
 
         try {

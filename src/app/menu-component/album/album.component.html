@@ -1,64 +1,64 @@
 <div style="padding-top: 68px;" fxLayout="column" fxFlex="25"></div>
-    <div style="padding-top: 68px;" fxLayout="column" fxFlex="50">
-        <form class="example-form" [formGroup]="albumForm">
-            <div style="padding-top: 1%;">
-                <mat-card>
-                    <h4>Link library to a collection</h4>
-                    <mat-form-field appearance="fill" style="width: 100%;">
-                        <mat-label>Select collection</mat-label>
-                        <mat-select formControlName="collection" id="select-album-id">
-                            <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                        <mat-form-field class="example-full-width" style="width: 70%;">
-                            <mat-label>Album name</mat-label>
-                            <input formControlName="name" matInput type="text" id="input-name-id">
-                            <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('name')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-name-id">
-                                <mat-icon>close</mat-icon>
-                            </button>
-                            <mat-error *ngIf="form.name.errors?.required && !form.name.dirty" id="error-name-required-id">
-                                {{ message.Required }}
-                            </mat-error>
-                            <mat-error *ngIf="form.name.errors?.pattern" id="error-name-pattern-id">
-                                {{ message.WhiteSpaces }}
-                            </mat-error>    
-                        </mat-form-field>
-                        <mat-form-field appearance="fill" style="width: 25%; padding-left: 5%;"> 
-                            <mat-label>Select date</mat-label>
-                            <input matInput [matDatepicker]="picker" formControlName="date" disabled id="input-date-id">
-                            <mat-error *ngIf="form.date.errors?.required && form.date.untouched" id="error-date-required-id">
-                                {{ message.Required }}
-                            </mat-error>
-                            <mat-datepicker-toggle matSuffix [for]="picker" disabled="false"></mat-datepicker-toggle>
-                            <mat-datepicker #picker disabled="false"></mat-datepicker>
-                        </mat-form-field>
-                        <ngx-dropzone (change)="onSelect($event)">
-                            <ngx-dropzone-label>Drop pictures</ngx-dropzone-label>                        
-                            <ngx-dropzone-preview *ngFor="let p of picturesDropzone" [removable]="true" (removed)="onRemove(p)">
-                                <ngx-dropzone-label>{{ p.name }} ({{ p.type }})</ngx-dropzone-label>
-                            </ngx-dropzone-preview>
-                        </ngx-dropzone>
-                        <mat-error *ngIf="!settings" id="error-conversion-settings-id">
-                            {{ message.PercentageSettings }}
-                        </mat-error>
-                        <mat-error *ngIf="!isRawExtension && picturesDropzone.length !== 0" id="error-extension-id">
-                            {{ message.Extension }}
-                        </mat-error>
-                        <mat-error *ngIf="!hasPictures && picturesDropzone.length === 0 && settings" id="error-dropzone-required-id">
-                            {{ message.Dropzone }}
-                        </mat-error>
-                        <div *ngIf="hasPictures" id="error-dropzone-required-id">
-                            <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearDropzone()" matTooltip="Remove all picture from the dropzone" [matTooltipPosition]="'right'" id="btn-clear-base-id">
-                                <mat-icon>close</mat-icon>
-                            </button>
-                        </div>
-                    <div align="end">
-                        <button  mat-fab color="primary" aria-label="Example icon-button with a heart icon" (click)="saveAlbum()" id="btn-save-form-album-id">
-                            <mat-icon>save</mat-icon>
-                        </button>
-                    </div>
-                </mat-card>
-            </div>
-        </form>
-    </div>
+<div style="padding-top: 68px;" fxLayout="column" fxFlex="50">
+    <form class="example-form" [formGroup]="albumForm">
+        <div style="padding-top: 1%;">
+            <mat-card>
+                <h4>Link library to a collection</h4>
+                <mat-form-field appearance="fill" style="width: 100%;">
+                    <mat-label>Select collection</mat-label>
+                    <mat-select formControlName="collection" id="select-album-id">
+                        <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field style="width: 70%;">
+                    <mat-label>Album name</mat-label>
+                    <input formControlName="name" matInput type="text" id="input-name-id">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearInput('name')" matTooltip="Clear input" [matTooltipPosition]="'right'" id="btn-clear-name-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-error *ngIf="form.name.errors?.required && !form.name.dirty" id="error-name-required-id">
+                        {{ message.Required }}
+                    </mat-error>
+                    <mat-error *ngIf="form.name.errors?.pattern" id="error-name-pattern-id">
+                        {{ message.WhiteSpaces }}
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="fill" style="width: 25%; padding-left: 4.50%;">
+                    <mat-label>Select date</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="date" disabled id="input-date-id">
+                    <mat-error *ngIf="form.date.errors?.required && form.date.untouched" id="error-date-required-id">
+                        {{ message.Required }}
+                    </mat-error>
+                    <mat-datepicker-toggle matSuffix [for]="picker" disabled="false"></mat-datepicker-toggle>
+                    <mat-datepicker #picker disabled="false"></mat-datepicker>
+                </mat-form-field>    
+                <ngx-dropzone (change)="onSelect($event)">
+                    <ngx-dropzone-label>Drop pictures</ngx-dropzone-label>
+                    <ngx-dropzone-preview *ngFor="let p of picturesDropzone" [removable]="true" (removed)="onRemove(p)">
+                        <ngx-dropzone-label>{{ p.name }} ({{ p.type }})</ngx-dropzone-label>
+                    </ngx-dropzone-preview>
+                </ngx-dropzone>
+                <mat-error *ngIf="!settings" id="error-conversion-settings-id">
+                    {{ message.PercentageSettings }}
+                </mat-error>
+                <mat-error *ngIf="!isRawExtension && picturesDropzone.length !== 0" id="error-extension-id">
+                    {{ message.Extension }}
+                </mat-error>
+                <mat-error *ngIf="!hasPictures && picturesDropzone.length === 0 && settings" id="error-dropzone-required-id">
+                    {{ message.Dropzone }}
+                </mat-error>
+                <div *ngIf="hasPictures" id="error-dropzone-required-id">
+                    <button mat-button matSuffix mat-icon-button aria-label="Clear" (click)="clearDropzone()" matTooltip="Remove all picture from the dropzone" [matTooltipPosition]="'right'" id="btn-clear-base-id">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </div>
+                <div align="end">
+                    <button  mat-fab color="primary" aria-label="Example icon-button with a heart icon" (click)="saveAlbum()" id="btn-save-form-album-id">
+                        <mat-icon>save</mat-icon>
+                    </button>
+                </div>
+            </mat-card>
+        </div>
+    </form>
+</div>
 <div fxLayout="column" fxFlex="25"></div>

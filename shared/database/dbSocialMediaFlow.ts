@@ -100,7 +100,7 @@ export class DbSocialMediaFlow extends Sqlite {
      * @param album Selected album
      */
     queryAllWhereAlbum(album) {
-        let query: string = `SELECT DISTINCT * FROM socialMediaFlow WHERE album='${album}';`;
+        let query: string = `SELECT DISTINCT * FROM socialMediaFlow WHERE album='${album}' ORDER BY preview ASC;`;
         let result = null;
 
         try {
@@ -158,7 +158,7 @@ export class DbSocialMediaFlow extends Sqlite {
      */
     queryEditedFlow(album: string) {
         let result = null;
-        let query: string = `SELECT * FROM socialMediaFlow where album='${album}';`;
+        let query: string = `SELECT * FROM socialMediaFlow where album='${album}' ORDER BY preview ASC;`;
 
         try {
             Logger.Log().debug(`Query: ${query}`);

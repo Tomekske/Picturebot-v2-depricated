@@ -229,7 +229,7 @@ export class DbPreviewFlow extends Sqlite {
      */
     queryPreviewFlow(album: string) {
         let result = null;
-        let query: string = `SELECT * FROM previewFlow where album='${album}';`;
+        let query: string = `SELECT * FROM previewFlow where album='${album}' ORDER BY preview ASC;`;
 
         try {
             Logger.Log().debug(`Query: ${query}`);

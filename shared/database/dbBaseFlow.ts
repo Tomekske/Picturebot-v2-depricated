@@ -145,7 +145,7 @@ export class DbBaseFlow extends Sqlite {
      * @param album Select the album where all the records will get queried
      */
     queryBaseFlow(album: string) {
-        let query: string = `SELECT * FROM baseFlow where album='${album}';`;
+        let query: string = `SELECT * FROM baseFlow where album='${album}' ORDER BY preview ASC;`;
         let result = null;
 
         try {
