@@ -95,7 +95,7 @@ Converting RAW images to a JPG format is done by using [ImageMagick](https://ima
 | Add functionality to import legacy albums to the new database system                                                      | High    | :white_check_mark: |
 | Add pictures to an existing shoots                                                                                        | High    | :x: |
 | Display update status' when the application is updating                                                                   | High	  | :x: |
-| Fix: Date component layout issues in production                                                                          | High	  | :x: |
+| Fix: Date component layout issues in production                                                                          | High	  | :white_check_mark: |
 | Conversion percentage default value                                                                                       | High	  | :white_check_mark: |
 | Automatically set the album date                                                                                          | Medium	| :x: |
 | Visual representation whether a shoot is fully edited, partially edited, or not edited at all                             | Medium	| :x: |

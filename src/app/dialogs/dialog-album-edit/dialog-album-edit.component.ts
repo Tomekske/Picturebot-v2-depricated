@@ -21,4 +21,11 @@ export class DialogAlbumEditComponent implements OnInit {
     this.name = this.data.album.name;
     this.date = moment(this.data.album.date, "DD/MM/YYYY").toDate();
   }
+  
+  /**
+   * Close the dialog button
+   */
+  cancelClick() {
+    this.dialogRef.close();
+  }
 }

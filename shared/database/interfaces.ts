@@ -106,6 +106,10 @@ export interface IBase extends IPicture {
     base?: string;
     /** Location of the converted picture */
     preview?: string;
+    /** Updated base location of the file */
+    baseUpdated?: string;
+    /** Updated location of the converted picture */
+    previewUpdated?: string;
 }
 
 /**
@@ -126,6 +130,10 @@ export interface IPreview extends IPicture {
     base: string;
     /** Location of the converted picture */
     preview: string;
+    /** Updated base location of the file */
+    baseUpdated?: string;
+    /** Updated location of the converted picture */
+    previewUpdated?: string;
 }
 
 /**

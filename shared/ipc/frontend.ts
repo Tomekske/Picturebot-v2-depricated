@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron';
-import { IAlbum, IBase, ILegacy } from '../database/interfaces';
+import { IAlbum, IBase, IFlow, ILegacy } from '../database/interfaces';
 
 /**
  * Static class contains methods to communicate with the backend 
@@ -152,7 +152,7 @@ export class IpcFrontend {
      * Get the flows which are displayed in the tab component
      * @param collection Selected collection
      */
-    static getTabFlows(collection: string) {
+    static getTabFlows(collection: string): IFlow{
         return ipcRenderer.sendSync("get-tab-flows", collection);
     }
 
@@ -249,5 +249,13 @@ export class IpcFrontend {
      */
     static importLegacyAlbum(form: ILegacy) {
         ipcRenderer.sendSync("import-legacy-album", form);
+    }
+
+    /**
+     * Static method to start organize an album
+     * @param album Album object
+     */
+    static startOrganizingAlbum(album: IAlbum) {
+        ipcRenderer.sendSync("start-organizing-album", album);
     }
 }

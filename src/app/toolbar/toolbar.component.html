@@ -20,22 +20,22 @@
         <mat-toolbar color="primary">
           <!-- Start organizing album action -->
           <div matTooltip="Start organizing">
-            <button type="button" mat-icon-button [disabled]="isOrganized || albums.length == 0" class="example-icon" (click)="startClickEvent()">
+            <button type="button" mat-icon-button [disabled]="isOrganized || albums.length == 0" (click)="startClickEvent()">
             <mat-icon>play_arrow</mat-icon>
             </button>
           </div>
           <!-- Edit album action -->
           <div>
-            <button type="button" mat-icon-button [disabled]="albums.length == 0" class="example-icon" (click)="editAlbum()" matTooltip="Edit album" id="test-open-album-id">
+            <button type="button" mat-icon-button [disabled]="albums.length == 0 || !isOrganized" (click)="editAlbum()" matTooltip="Edit album" id="test-open-album-id">
               <mat-icon>create</mat-icon>
             </button>
           </div>
           <!-- Open album in explorer action -->
-          <button type="button" mat-icon-button [disabled]="albums.length == 0" class="example-icon" (click)="openInExplorerEvent()" matTooltip="{{ explorerTooltip }}">
+          <button type="button" mat-icon-button [disabled]="albums.length == 0 || flow === favoriteFlow" (click)="openInExplorerEvent()" matTooltip="{{ explorerTooltip }}">
             <mat-icon>open_in_new</mat-icon>
           </button>
           <!-- Delete album action -->
-          <button type="button" mat-icon-button [disabled]="albums.length == 0" class="example-icon" (click)="deleteAlbum()" matTooltip="{{ explorerTooltip }}">
+          <button type="button" mat-icon-button [disabled]="albums.length == 0" (click)="deleteAlbum()" matTooltip="{{ explorerTooltip }}">
             <mat-icon>delete</mat-icon>
           </button>
         </mat-toolbar>

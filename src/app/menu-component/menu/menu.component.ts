@@ -85,8 +85,10 @@ selectedCollection: ICollection;
       onSelected: () => {
         // Picture deletion dialog
         this._dialog.open(DialogImportLegacyComponent).afterClosed().subscribe((form: ILegacy) => {
-          IpcFrontend.importLegacyAlbum(form);
-          this._router.navigateByUrl("/main");            
+          if(form) {
+            IpcFrontend.importLegacyAlbum(form);
+            this._router.navigateByUrl("/main");
+          }   
         });
       }
     },

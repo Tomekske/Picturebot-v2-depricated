@@ -25,6 +25,8 @@ export class ToolbarComponent implements OnInit {
   selectedAlbum: IAlbum;
   isPictures: boolean = true;
   menuText: string = "";
+  flow: string = "";
+  favoriteFlow: string = "";
 
   constructor(private _electron: ElectronService, private _data: DataService, private _router: Router, private _snack: MatSnackBar, private cdRef: ChangeDetectorRef, private _dialog: MatDialog) { }
 
@@ -33,7 +35,6 @@ export class ToolbarComponent implements OnInit {
    */
   ngOnInit(): void {
     this.isOrganized = true;
-
     // Monitor whether a new album is saved
     this._data.ctxIsAlbumSaved.subscribe(state => {
       if (state) {
@@ -44,6 +45,7 @@ export class ToolbarComponent implements OnInit {
     // Monitor whether the user switches pages and display the menu text accordingly
     this._data.ctxIsPictures.subscribe(state => this.isPictures = state);
     this._data.ctxMenuText.subscribe(text => this.menuText = text);
+    this._data.ctxSelectedFlow.subscribe(flow => this.flow = flow);
     this._data.ctxIsCollectionSaved.subscribe(state => {
       if (state) {
         // Get all the collections
@@ -76,6 +78,8 @@ export class ToolbarComponent implements OnInit {
       album.started ? this.isOrganized = true : this.isOrganized = false;
       this.selectedAlbum = album;
     });
+
+    this.favoriteFlow = IpcFrontend.getStartingFlows(this.selectedCollection).favorites;
   }
 
   /**
@@ -93,52 +97,7 @@ export class ToolbarComponent implements OnInit {
    * Start organizing pictures within the base flow and preview flow
    */
   startClickEvent() {
-    // Get the preview and base flow from a certain collection
-    let startFlows: IFlow = IpcFrontend.getStartingFlows(this.selectedAlbum.collection);
-
-    // Iterate over every key-value pair in the startFlows array
-    for (const [key, flow] of Object.entries(startFlows)) {
-      // Counter is used as picture indexer
-      let counter = 0;
-
-      // Get all the base flow pictures
-      if (flow == startFlows.base) {
-
-        IpcFrontend.getBaseFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
-          // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
-          let destination = this._electron.path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5));
-          let previewDestination = this._electron.path.join(picture.album, startFlows.preview, Helper.renameOrganizesPicture(picture, counter, 5, true));
-
-          // Rename pictures with the new file name
-          this._electron.fs.rename(picture.base, destination, function (err) {
-            if (err) console.log('ERROR: ' + err);
-          });
-
-          let update = { name: this._electron.path.basename(destination), base: picture.base, album: picture.album, updatedBase: destination, preview: previewDestination, backup: picture.base.replace(startFlows.base, startFlows.backup) };
-          IpcFrontend.updateBaseFlowName(update);
-        });
-      }
-
-      // Get all the preview flow pictures
-      else if (flow == startFlows.preview) {
-        IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album).forEach((picture: IPreview) => {
-          // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
-          let destination = this._electron.path.join(picture.album, startFlows.preview, Helper.renameOrganizesPicture(picture, ++counter, 5, true));
-          let baseDestination = this._electron.path.join(picture.album, startFlows.base, Helper.renameOrganizesPicture(picture, counter, 5));
-
-          // Rename pictures with the new file name
-          this._electron.fs.rename(picture.preview, destination, function (err) {
-            if (err) console.log('ERROR: ' + err);
-          });
-
-          let update = { name: this._electron.path.basename(destination), preview: picture.preview, album: picture.album, updatedPreview: destination, base: baseDestination };
-          IpcFrontend.updatePreviewFlowName(update);
-        });
-      }
-    }
-
-    // Update the is organized to true
-    IpcFrontend.updateAlbumIsOrganized(this.selectedAlbum, true);
+    IpcFrontend.startOrganizingAlbum(this.selectedAlbum);
 
     // value must be set to true
     this._data.setAlbumStarted(this.selectedAlbum.album, true);
@@ -214,18 +173,20 @@ export class ToolbarComponent implements OnInit {
         album: this.selectedAlbum
       }
     }).afterClosed().subscribe(form => {
-      let updatedAlbum: IAlbum = {
-        collection: this.selectedAlbum.collection,
-        name: form.album,
-        date: Helper.formatDate(form.date),
-        started: this.selectedAlbum.started,
-        raw: this.selectedAlbum.raw,
-        album: this._electron.path.join(this.selectedAlbum.collection, `${form.album} ${Helper.formatDate(form.date)}`)
-      };
-
-      IpcFrontend.updateAlbum(this.selectedAlbum, updatedAlbum);
-
-      this._data.isAlbumUpdated = true;
+      if(form) {
+        let updatedAlbum: IAlbum = {
+          collection: this.selectedAlbum.collection,
+          name: form.album,
+          date: Helper.formatDate(form.date),
+          started: this.selectedAlbum.started,
+          raw: this.selectedAlbum.raw,
+          album: this._electron.path.join(this.selectedAlbum.collection, `${form.album} ${Helper.formatDate(form.date)}`)
+        };
+  
+        IpcFrontend.updateAlbum(this.selectedAlbum, updatedAlbum);
+  
+        this._data.isAlbumUpdated = true;
+      }
     });
   }
 }

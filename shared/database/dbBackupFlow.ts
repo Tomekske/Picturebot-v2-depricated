@@ -17,7 +17,6 @@ export class DbBackupFlow extends Sqlite {
     createTable() {
         let query: string = `CREATE TABLE IF NOT EXISTS backupFlow(
             "collection" varchar(400) NOT NULL,
-            "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
             "backup" varchar(400) NOT NULL PRIMARY KEY,
             "date" varchar(10) NOT NULL,
@@ -55,7 +54,7 @@ export class DbBackupFlow extends Sqlite {
     insertRow(args) {
         try {
             Logger.Log().debug(`Query: INSERT INTO backupFlow VALUES ("${JSON.stringify(args)}")`);
-            this.connection.prepare("INSERT INTO backupFlow VALUES (@collection, @name, @album, @backup, @date, @time);").run(args);
+            this.connection.prepare("INSERT INTO backupFlow VALUES (@collection, @album, @backup, @date, @time);").run(args);
         } catch (err) {
             Logger.Log().error(`DbBackupFlow insertRow query error: ${err}`);
         }

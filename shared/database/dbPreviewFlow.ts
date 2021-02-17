@@ -1,6 +1,6 @@
 import { Logger } from '../logger/logger';
 import { Api } from './api';
-import { IAlbum, IFlow } from './interfaces';
+import { IAlbum, IFlow, IPreview } from './interfaces';
 import { Sqlite } from './sqlite';
 import * as path from 'path';
 import { Helper } from '../helper/helper';
@@ -20,7 +20,6 @@ export class DbPreviewFlow extends Sqlite {
     createTable() {
         let query: string = `CREATE TABLE IF NOT EXISTS previewFlow(
             "collection" varchar(400) NOT NULL,
-            "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
             "base" varchar(400) NOT NULL,
             "preview" varchar(400) NOT NULL PRIMARY KEY,
@@ -59,33 +58,18 @@ export class DbPreviewFlow extends Sqlite {
     insertRow(args) {
         try {
             Logger.Log().debug(`Query: INSERT INTO PreviewFlow VALUES ("${JSON.stringify(args)}")`);
-            this.connection.prepare("INSERT INTO PreviewFlow VALUES (@collection, @name, @album, @base, @preview, @date, @time);").run(args);
+            this.connection.prepare("INSERT INTO PreviewFlow VALUES (@collection, @album, @base, @preview, @date, @time);").run(args);
         } catch (err) {
             Logger.Log().error(`DbPreviewFlow insertRow query error: ${err}`);
         }
     }
 
     /**
-     * Method to update the name record
-     * @param update Updated values
-     */
-    updateName(update) {
-        let query: string = `UPDATE previewFlow SET name='${update.name}' WHERE preview='${update.preview}' AND album='${update.album}';`;
-
-        try {
-            Logger.Log().debug(`Query: ${query}`);
-            this.connection.prepare(query).run();
-        } catch (err) {
-            Logger.Log().error(`DbPreviewFlow updateName query error: ${err}`);
-        }
-    }
-
-    /**
      * Method to update the destination record
-     * @param update Updated values
+     * @param picture Updated preview flow picture object
      */
-    updatePreview(update) {
-        let query: string = `UPDATE previewFlow SET preview='${update.updatedPreview}' WHERE name='${update.name}' AND album='${update.album}';`;
+    updatePreview(picture: IPreview) {
+        let query: string = `UPDATE previewFlow SET preview='${picture.previewUpdated}' WHERE album='${picture.album}' AND base='${picture.base}';`;
 
         try {
             Logger.Log().debug(`Query: ${query}`);
@@ -99,8 +83,8 @@ export class DbPreviewFlow extends Sqlite {
      * Method to update the base record
      * @param update Update values
      */
-    updateBase(update) {
-        let query: string = `UPDATE previewFlow SET base='${update.base}' WHERE name='${update.name}' AND album='${update.album}';`;
+    updateBase(picture: IPreview) {
+        let query: string = `UPDATE previewFlow SET base='${picture.baseUpdated}' WHERE album='${picture.album}' AND preview='${picture.preview}';`;
 
         try {
             Logger.Log().debug(`Query: ${query}`);
@@ -147,10 +131,10 @@ export class DbPreviewFlow extends Sqlite {
 
     /**
      * Method to query all records from a certain album
-     * @param album Selected album
+     * @param name Picture name
      */
-    queryBaseWhereName(picture) {
-        let query: string = `SELECT * FROM previewFlow WHERE name LIKE '${picture}%';`
+    queryBaseWhereName(name: string) {
+        let query: string = `SELECT * FROM previewFlow WHERE preview LIKE '%${name}%';`;
         let result = null;
 
         try {
@@ -201,14 +185,13 @@ export class DbPreviewFlow extends Sqlite {
 
     /**
      * Update album's name within the album, base and preview record
-     * @param value Current album name
-     * @param updated Updated album name
+     * @param current Current album name
+     * @param album Updated album name
      */
     updateAlbum(current: IAlbum, album: IAlbum) {
         let result = null;
         let flows: IFlow = Api.getFlows(current);
         let query: string = `UPDATE previewFlow SET
-            name=REPLACE(name, '${Helper.ParsePictureNameWithoutDate(path.basename(current.album))}', '${Helper.ParsePictureNameWithoutDate(path.basename(album.album))}'), 
             album=REPLACE(album,'${current.album}', '${album.album}'), 
             base=REPLACE(base, '${path.join(current.album, flows.base, Helper.ParsePictureNameWithoutDate(path.basename(current.album)))}','${path.join(album.album, flows.base, Helper.ParsePictureNameWithoutDate(path.basename(album.album)))}'),
             preview=REPLACE(preview, '${path.join(current.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(current.album)))}', '${path.join(album.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(album.album)))}');`;

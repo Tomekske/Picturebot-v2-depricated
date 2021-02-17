@@ -18,7 +18,7 @@
 <!-- <div mat-dialog-actions> -->
 <div>
     <div align="end">
+        <button mat-button (click)="cancelClick()">Cancel</button>
         <button mat-button [mat-dialog-close]="{album: name, date: date}" cdkFocusInitial>Ok</button>
-        <!-- <button mat-button (click)="test()">Ok</button> -->
     </div>        
 </div>

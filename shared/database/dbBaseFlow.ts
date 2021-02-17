@@ -1,7 +1,7 @@
 import { Logger } from '../logger/logger';
 import { Sqlite } from './sqlite';
 import * as path from 'path';
-import { IAlbum, IFlow } from './interfaces';
+import { IAlbum, IBase, IFlow } from './interfaces';
 import { Api } from './api';
 import { Helper } from '../helper/helper';
 
@@ -20,7 +20,6 @@ export class DbBaseFlow extends Sqlite {
     createTable() {
         let query: string = `CREATE TABLE IF NOT EXISTS baseFlow(
             "collection" varchar(400) NOT NULL,
-            "name" varchar(200) NOT NULL,
             "album" varchar(200) NOT NULL,
             "favorited" INTEGER NULL,
             "backup" varchar(400) NOT NULL,
@@ -59,40 +58,22 @@ export class DbBaseFlow extends Sqlite {
      * @param args Data needed to insert into the table's row
      */
     insertRow(args) {
-        const stmt = this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @favorited, @backup, @preview, @base, @date, @time);");
+        const stmt = this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @album, @favorited, @backup, @preview, @base, @date, @time);");
 
         try {
             Logger.Log().debug(`Query: INSERT INTO baseFlow VALUES ("${JSON.stringify(args)}")`);
-            this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @name, @album, @favorited, @backup, @preview, @base, @date, @time);").run(args);
+            this.connection.prepare("INSERT INTO baseFlow VALUES (@collection, @album, @favorited, @backup, @preview, @base, @date, @time);").run(args);
         } catch (err) {
             Logger.Log().error(`DbBaseFlow insertRow query error: ${err}`);
         }
     }
 
     /**
-     * Method to update the album name of a specified album
-     * @param update updated values
-     */
-    updateName(update) {
-        let query: string = `UPDATE baseFlow SET name='${update.name}' WHERE base='${update.base}' AND album='${update.album}';`;
-        let result = null;
-
-        try {
-            Logger.Log().debug(`Query: ${query}`);
-            result = this.connection.prepare(query).run();
-        } catch (err) {
-            Logger.Log().error(`DbBaseFlow updateName query error: ${err}`);
-        }
-
-        return result;
-    }
-
-    /**
      * Method to update the destination location
-     * @param update updated values
+     * @param picture Updated base flow picture object
      */
-    updateBase(update) {
-        let query: string = `UPDATE baseFlow SET base='${update.updatedBase}' WHERE name='${update.name}' AND album='${update.album}';`;
+    updateBase(picture: IBase) {
+        let query: string = `UPDATE baseFlow SET base='${picture.baseUpdated}' WHERE album='${picture.album}' AND preview='${picture.preview}';`;
         let result = null;
 
         try {
@@ -107,10 +88,10 @@ export class DbBaseFlow extends Sqlite {
 
     /**
      * Method to update the destination location
-     * @param update updated values
+     * @param picture Updated preview flow picture object
      */
-    updatePreview(update) {
-        let query: string = `UPDATE baseFlow SET preview='${update.preview}' WHERE name='${update.name}' AND album='${update.album}';`;
+    updatePreview(picture: IBase) {
+        let query: string = `UPDATE baseFlow SET preview='${picture.previewUpdated}' WHERE album='${picture.album}' AND base='${picture.base}';`;
         let result = null;
 
         try {
@@ -196,14 +177,13 @@ export class DbBaseFlow extends Sqlite {
 
     /**
      * Update album's name within the album, base and backup record
-     * @param value Current album name
-     * @param updated Updated album name
+     * @param current Current album name
+     * @param album Updated album name
      */
     updateAlbum(current: IAlbum, album: IAlbum) {
         let result = null;
         let flows: IFlow = Api.getFlows(current);
         let query: string = `UPDATE baseFlow SET 
-            name=REPLACE(name, '${Helper.ParsePictureNameWithoutDate(path.basename(current.album))}', '${Helper.ParsePictureNameWithoutDate(path.basename(album.album))}'), 
             album=REPLACE(album,'${current.album}', '${album.album}'), 
             backup=REPLACE(backup, '${current.album}', '${album.album}'),      
             preview=REPLACE(preview, '${path.join(current.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(current.album)))}', '${path.join(album.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(album.album)))}'), 

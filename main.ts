@@ -131,8 +131,6 @@ function ipcCollections() {
 function ipcFlows() {
   IpcBackend.getTabFlows();
   IpcBackend.getStartingFlows();
-  IpcBackend.updateBaseFlowName();
-  IpcBackend.updatePreviewFlowName();
 }
 
 /**
@@ -172,6 +170,7 @@ function ipcAlbums() {
   IpcBackend.updateAlbum();
   IpcBackend.selectedAlbum();
   IpcBackend.importLegacyAlbum();
+  IpcBackend.startOrganizingAlbum();
 }
 
 /**

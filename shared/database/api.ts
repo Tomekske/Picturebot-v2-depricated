@@ -302,4 +302,43 @@ export class Api {
 
         return pictures;
     }
+
+    /**
+     * Update a base flow picture object
+     * @param picture Base flow picture object
+     */
+    static updateBaseFlow(picture: IBase) {
+        let baseUpdated: IBase = { base: picture.base, preview: picture.preview, album: picture.album, baseUpdated: picture.baseUpdated };
+        let previewUpdated: IBase = { base: picture.baseUpdated, preview: picture.preview, album: picture.album, previewUpdated: picture.previewUpdated };
+
+        const db = new DbBaseFlow();
+        db.updateBase(baseUpdated);
+        db.updatePreview(previewUpdated);
+        db.dbClose();
+    }
+
+    /**
+     * Update a preview flow picture object
+     * @param picture Preview flow picture object
+     */
+    static updatePreviewFlow(picture: IPreview) {
+        let baseUpdated: IPreview = { base: picture.base, preview: picture.preview, album: picture.album, baseUpdated: picture.baseUpdated };
+        let previewUpdated: IPreview = { base: picture.baseUpdated, preview: picture.previewUpdated, album: picture.album, previewUpdated: picture.previewUpdated };
+
+        const db = new DbPreviewFlow();
+        db.updateBase(baseUpdated);
+        db.updatePreview(previewUpdated);
+        db.dbClose();
+    }
+
+    /**
+     * Update the is organized status of an album
+     * @param album Album object
+     * @param isOrganized Is organized boolean
+     */
+    static updateAlbumIsOrganized(album: IAlbum, isOrganized: boolean) {
+        const db = new DbAlbum();
+        db.updateStartedRecord(isOrganized ? 1 : 0, album.album);
+        db.dbClose();
+    }
 }
