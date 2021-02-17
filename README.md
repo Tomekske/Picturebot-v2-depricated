@@ -92,6 +92,8 @@ Converting RAW images to a JPG format is done by using [ImageMagick](https://ima
 | Database API                                                                                                              | High    | :x: |
 | Delete collections                                                                                                        | High    | :x: |
 | Delete libraries                                                                                                          | High    | :x: |
+| Remove menu bar                                                                                                           | High    | :x: 
+| Enable full-screen when in display mode                                                                                   | High    | :x: |
 | Add functionality to import legacy albums to the new database system                                                      | High    | :white_check_mark: |
 | Add pictures to an existing shoots                                                                                        | High    | :x: |
 | Display update status' when the application is updating                                                                   | High	  | :x: |
