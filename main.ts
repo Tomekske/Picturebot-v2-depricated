@@ -28,7 +28,7 @@ function createWindow(): BrowserWindow {
       allowRunningInsecureContent: (serve) ? true : false,
       webSecurity: false,
       devTools: Helper.isProduction(true) ? false : true
-    },
+    }
   });
 
   if (serve) {
@@ -58,6 +58,7 @@ function createWindow(): BrowserWindow {
   win.setTitle(`Picturebot ${app.getVersion()}`);
   // On startup maximize the browser window
   win.maximize();
+  win.setMenuBarVisibility(false);
 
   return win;
 }

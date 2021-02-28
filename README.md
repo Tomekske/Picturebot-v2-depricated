@@ -88,25 +88,27 @@ Converting RAW images to a JPG format is done by using [ImageMagick](https://ima
 
 | Functionality	| Priority	| Status	|
 | ------- | ----------------------------- | --------------- |
-| Add picture lazy loading                                                                                                  | High    | :x: |
-| Database API                                                                                                              | High    | :x: |
-| Delete collections                                                                                                        | High    | :x: |
-| Delete libraries                                                                                                          | High    | :x: |
-| Remove menu bar                                                                                                           | High    | :x: 
-| Enable full-screen when in display mode                                                                                   | High    | :x: |
-| Add functionality to import legacy albums to the new database system                                                      | High    | :white_check_mark: |
-| Add pictures to an existing shoots                                                                                        | High    | :x: |
-| Display update status' when the application is updating                                                                   | High	  | :x: |
-| Fix: Date component layout issues in production                                                                          | High	  | :white_check_mark: |
-| Conversion percentage default value                                                                                       | High	  | :white_check_mark: |
-| Automatically set the album date                                                                                          | Medium	| :x: |
-| Visual representation whether a shoot is fully edited, partially edited, or not edited at all                             | Medium	| :x: |
+| Add picture lazy loading                                                                                                  | High      | :white_check_mark: |
+| Database API                                                                                                              | High      | :x: |
+| Investigate memory & performance issues                                                                                   | High      | :x: |
+| Delete collections                                                                                                        | High      | :x: |
+| Delete libraries                                                                                                          | High      | :x: |
+| Import albums                                                                                                             | High      | :x: |
+| Remove menu bar                                                                                                           | High      | :white_check_mark: |
+| Enable full-screen when in display mode                                                                                   | High      | :white_check_mark: |
+| Add functionality to import legacy albums to the new database system                                                      | High      | :white_check_mark: |
+| Add pictures to an existing shoots                                                                                        | High      | :x: |
+| Display update status' when the application is updating                                                                   | High	    | :x: |
+| Fix: Date component layout issues in production                                                                           | High	    | :white_check_mark: |
+| Conversion percentage default value                                                                                       | High      | :white_check_mark: |
+| Automatically set the album date                                                                                          | Medium    | :x: |
+| Visual representation whether a shoot is fully edited, partially edited, or not edited at all                             | Medium    | :x: |
 | Investigate whether it is possible to add a tool to automatically upload pictures to google pictures                      | Medium	| :x: |
-| Detect whether an external memory-card is connected and automatically open the directory when adding a new shoot          | Medium  | :x: |
+| Detect whether an external memory-card is connected and automatically open the directory when adding a new shoot          | Medium    | :x: |
 | Investigate and implement the best way how to add a pictures within the backup flow to the base flow                      | Medium	| :x: |
 | Add meta-data information to pictures                                                                                     | Medium	| :x: |
 | Import compressed pictures                                                                                                | Medium	| :x: |
-| Investigate and implement a way of dragging pictures to lightroom, since lightroom doesn’t support a CLI to open files    | Low     | :x: |
-| Different themes                                                                                                          | Low     | :x: |
-| Let the user decide how they want to format the datetime format                                                           | Low     | :x: |
-| Add a picture rating system and the ability to filter pictures based on their rating                                      | Low  | :x: |
+| Investigate and implement a way of dragging pictures to lightroom, since lightroom doesn’t support a CLI to open files    | Low       | :x: |
+| Different themes                                                                                                          | Low       | :x: |
+| Let the user decide how they want to format the datetime format                                                           | Low       | :x: |
+| Add a picture rating system and the ability to filter pictures based on their rating                                      | Low       | :x: |

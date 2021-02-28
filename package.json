@@ -1,6 +1,6 @@
 {
   "name": "Picturebot",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Angular 10 with Electron (Typescript + SASS + Hot Reload)",
   "homepage": "https://github.com/Tomekske/Picturebot",
   "author": {
@@ -113,6 +113,7 @@
     "@ng-bootstrap/schematics": "2.0.0-alpha.1",
     "@popperjs/core": "2.5.3",
     "@syncfusion/ej2-angular-lists": "18.3.35",
+    "@thisissoon/angular-inviewport": "4.2.2",
     "@types/better-sqlite3": "5.4.0",
     "better-sqlite3": "7.1.0",
     "body-parser": "1.19.0",
@@ -126,6 +127,7 @@
     "material-icons": "0.3.1",
     "moment": "2.29.1",
     "ng-material-multilevel-menu": "4.12.2",
+    "ng-opengallery": "0.0.4",
     "ngx-dropzone": "2.2.2",
     "node-watch": "0.7.1",
     "popper.js": "1.16.1",

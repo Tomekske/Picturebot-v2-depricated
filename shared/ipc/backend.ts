@@ -245,7 +245,7 @@ export class IpcBackend {
 
             // Create database
             const db = new DbPreviewFlow();
-            let result = db.queryAllWhereAlbum(args);
+            let result: IPreview[] = db.queryAllWhereAlbum(args);
 
             db.dbClose();
             event.returnValue = result;

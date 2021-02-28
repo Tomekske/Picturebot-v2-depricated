@@ -1,0 +1,39 @@
+<div class="gallery" #gallery (window:resize)="onResize()" style="overflow-y: auto;">
+    <div *ngFor='let mediaContainer of datasource; let i = index' class="item-gallery"
+        [style.height.px]='getMediaHeight(mediaContainer)' [style.width.px]='getMediaWidth(mediaContainer)'
+        [style.margin-right.px]='mediaContainer.widthMargin' [style.margin-left.px]='mediaContainer.widthMargin'
+        [style.margin-top.px]='mediaContainer.heightMargin' [style.margin-bottom.px]='mediaContainer.heightMargin'
+        snInViewport (inViewportChange)="onInViewportChange($event, mediaContainer)">
+        <div class="gallery-container">
+            <img *ngIf='mediaContainer.ready && mediaContainer.media.type === "img"' (click)='select($event, i)'
+                [src]='mediaContainer.media.previewUrl' [style.height.px]='mediaContainer.computedHeight'
+                [style.width.px]='mediaContainer.computedWidth' [height]='prefHeight'
+                (load)='loadMedia(mediaContainer, $event.target)' (error)='onError(mediaContainer,i)' />
+
+            <!-- Picture function overlay -->
+            <div *ngIf="selectedFlow === tabFlows.preview" class="gallery-overlay">
+                <mat-toolbar fxLayoutAlign="end center" style="background-color: transparent;">
+                    <button [disabled]="!selectedAlbum.started" mat-icon-button (click)="updateFavorite(i)"
+                        matTooltip="Favorite">
+                        <mat-icon *ngIf="!datasource[i].media.display.favorited">favorite_border</mat-icon>
+                        <mat-icon *ngIf="datasource[i].media.display.favorited">favorite</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="openPictureInformation(i)" matTooltip="Info">
+                        <mat-icon>info</mat-icon>
+                    </button>
+                    <button [disabled]="selectedAlbum.started" mat-icon-button (click)="deletePicture(i)"
+                        matTooltip="Delete picture">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </mat-toolbar>
+            </div>
+            <div *ngIf="selectedFlow === tabFlows.favorites" class="gallery-overlay">
+                <mat-toolbar fxLayoutAlign="end center" style="background-color: transparent;">
+                    <button mat-icon-button (click)="openPictureInPostProcessingProgram(i)" matTooltip="Favorite">
+                        <mat-icon>brush</mat-icon>
+                    </button>
+                </mat-toolbar>
+            </div>
+        </div>
+    </div>
+</div>

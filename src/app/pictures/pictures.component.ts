@@ -1,39 +1,25 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { MatTabGroup } from '@angular/material/tabs';
 import { DataService } from 'app/services/data.service';
 import { Subscription } from 'rxjs';
-import { IAlbum, IBase, IEdited, IFlow, IPreview, ISettings, ISocialMedia } from '../../../shared/database/interfaces';
+import { IAlbum, IBase, IDisplay, IEdited, IFlow, IPreview, ISettings, ISocialMedia } from '../../../shared/database/interfaces';
 import { Logger } from '../../../shared/logger/logger';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogPictureInfoComponent } from 'app/dialogs/dialog-picture-info/dialog-picture-info.component';
 import { IpcFrontend } from '../../../shared/ipc/frontend';
-import { DialogPictureDeleteComponent } from 'app/dialogs/dialog-picture-delete/dialog-picture-delete.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Helper } from '../../../shared/helper/helper';
 import { Router } from '@angular/router';
-import { Location } from '@angular/common';
-
-/**
- * Display interface containing properties 
- */
-export interface IDisplay {
-  /** Picture path containing 'file:// prefix */
-  location: string;
-  /** Preview picture location */
-  preview: string;
-  /** Base picture location */
-  base: string;
-  /** Is favorited property of an image */
-  favorited?: boolean;
-}
+import { Media, Config, LayoutStyle } from 'app/gallery/public-api';
 
 @Component({
   selector: 'app-pictures',
   templateUrl: './pictures.component.html',
   styleUrls: ['./pictures.component.css']
 })
+
 export class PicturesComponent implements OnInit {
-  previewList: IPreview[] = [];
+  previewList: Media[] = [];
   pictureList: IDisplay[] = [];
   selectedFlow: string;
   flows: string[] = [];
@@ -45,9 +31,27 @@ export class PicturesComponent implements OnInit {
   albums: IAlbum[] = [];
   isVisible: boolean = false;
   isOrganized: boolean;
+  pathList: string[] = [];
+  isLazy: boolean = true;
+  _albums: Array<{src: string, caption: string, thumb: string}>= [];
+  title = 'ng-opengallery';
+  data: Media[] = [];
 
-  constructor(private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar, private _router: Router, private _location: Location) { }
-  
+  // Gallery options
+  config: Config = {
+    diaporamaDuration: 5,
+    layout: LayoutStyle.SIMPLE,
+    prefMediaHeight: 350,
+    spacing: 3,
+    viewerEnabled: true,
+    enableAutoPlay: false
+  } 
+
+  styles: string[];
+
+  constructor(private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar, private _router: Router, @Inject(DOCUMENT) private _document: any) { 
+    this.styles = Object.keys(LayoutStyle).filter( (s:any) => isNaN(s));
+  }
   /**
    * On init lifecycle hook
    */
@@ -85,6 +89,7 @@ export class PicturesComponent implements OnInit {
         if (typeof this.albums[0] !== 'undefined') {
           this.selectedAlbumEvent(this.albums[0]);
         } else {
+          this.pictureList = null;
           this.pictureList = [];
           this.isVisible = this._data.isAlbumSelectorVisible = false;
         }
@@ -120,6 +125,10 @@ export class PicturesComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.pictureList = null;
+  }
+
   /**
    * Select a flow using the tab component
    * @param event Tab events
@@ -135,35 +144,43 @@ export class PicturesComponent implements OnInit {
    */
   displayPictures() {
     // Clear array when a flow is selected
-    this.pictureList = [];
-    
+    this.previewList = null;   
+    this.previewList = []; 
+
     // Display pictures from a selected flow
     if(this.selectedFlow == this.tabFlows.preview) {
+  
       this.isOrganized = Boolean(this.selectedAlbum.started);
+      var t0 = performance.now();
 
       IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album).forEach((picture: IPreview) => {
         let isFavorite = IpcFrontend.getIsFavoriteBaseFlowWherePreview(picture.preview);
+        let display: IDisplay = { location: `file://${picture.preview}`, favorited: isFavorite, preview: picture.preview, base: picture.base };
 
-        this.pictureList.push({ location: `file://${picture.preview}`, favorited: isFavorite, preview: picture.preview, base: picture.base });
+        this.previewList.push(new Media(`file://${picture.preview}`, picture.preview, display));
       });
-      this.isOrganized = Boolean(this.selectedAlbum.started);
-
-    } else if(this.selectedFlow == this.tabFlows.favorites) {
+    }
+     else if(this.selectedFlow == this.tabFlows.favorites) {
       IpcFrontend.getFavoritesFlowPictures(this.selectedAlbum.album).forEach((picture: IBase) => {
-        let isFavorite = IpcFrontend.getIsFavoriteBaseFlowWherePreview(picture.preview);
-        this.pictureList.push({ location: `file://${picture.preview}`, preview: picture.preview, base: picture.base });
+        let display: IDisplay = { location: `file://${picture.preview}`, preview: picture.preview, base: picture.base };
+
+        this.previewList.push(new Media(`file://${picture.preview}`, picture.preview, display));
       });
 
       this.isOrganized = Boolean(this.selectedAlbum.started);
     } else if(this.selectedFlow == this.tabFlows.edited) {
       IpcFrontend.getEditedFlowPictures(this.selectedAlbum.album).forEach((picture: IEdited) => {
-        this.pictureList.push({ location: `file://${picture.edited}`, preview: picture.edited, base: picture.base });
+        let display: IDisplay = { location: `file://${picture.preview}`, preview: picture.edited, base: picture.base };
+
+        this.previewList.push(new Media(`file://${picture.edited}`, picture.edited, display));
       });
 
       this.isOrganized = Boolean(this.selectedAlbum.started);    
     } else if(this.selectedFlow == this.tabFlows.socialMedia) {
       IpcFrontend.getSocialMediaFlowPictures(this.selectedAlbum.album).forEach((picture: ISocialMedia) => {
-        this.pictureList.push({ location: `file://${picture.socialMedia}`, preview: picture.socialMedia, base: picture.base });
+        let display: IDisplay = { location: `file://${picture.preview}`, preview: picture.socialMedia, base: picture.base };
+
+        this.previewList.push(new Media(`file://${picture.socialMedia}`, picture.socialMedia, display));
       });
 
       this.isOrganized = Boolean(this.selectedAlbum.started);    
@@ -206,78 +223,28 @@ export class PicturesComponent implements OnInit {
   }
 
   /**
-   * Display a picture's metadata
-   * @param index Index of the picture within the array
+   * Log gallery errors
+   * @param error Gallery error object
    */
-  openPictureInformation(index: number) {
-    this.previewList = [];
-    this.previewList = IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album);
-
-    this._dialog.open(DialogPictureInfoComponent, { 
-      data: 
-        { album: this.previewList[index] }
-    });
+  galleryOnError(error) {
+    Logger.Log().error(error);
   }
 
   /**
-   * Delete a picture from an album
-   * @param index Index of the picture within the array
+   * Gallery on selection event
+   * @param event Gallery selection event object
    */
-  deletePicture(index: number) {
-    this.previewList = [];
-
-    this.previewList = IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album);
-    let baseList: IBase = IpcFrontend.getBaseFlowPictures(this.selectedAlbum.album);
-
-    // Picture deletion dialog
-    this._dialog.open(DialogPictureDeleteComponent, { 
-      data: { 
-        picture: this.previewList[index],
-        flow: this.selectedFlow 
-      }
-    }).afterClosed().subscribe(confirmed => {
-      // Only delete pictures on confirmation
-      if(confirmed) {
-        IpcFrontend.favoriteFlowDeletePicture(this.previewList[index].preview);
-        IpcFrontend.previewFlowDeletePicture(this.previewList[index].preview);
-        IpcFrontend.baseFlowDeletePicture(baseList[index].base);
-
-        this.displayPictures();
-
-        this._snack.open(`Picture '${baseList[index].name}' deleted`, "Dismiss", {
-          duration: 4000,
-          horizontalPosition: "end"
-        });
-      }
-    });
+  galleryOnSelection(event) {
+    Helper.windowFullScreen(this._document);
   }
 
   /**
-   * Update the favorited boolean of a specified picture
-   * @param index Index of the picture within the array
+   * Gallery on open event
+   * @param isOpen Checks whether the slideshow is opened
    */
-  updateFavorite(index: number) {
-    let pictures: IBase[] = IpcFrontend.getPreviewFlowPictures(this.selectedAlbum.album);
-
-    if(this.pictureList[index].favorited) {
-      this.pictureList[index].favorited = false;
-      IpcFrontend.updateFavorited(this.pictureList[index].preview, false);
-      IpcFrontend.deleteFavoriteWhereBase(pictures[index].base);
-    } else {
-      this.pictureList[index].favorited = true;
-      IpcFrontend.updateFavorited(this.pictureList[index].preview, true);
-      let x: IBase = { collection: this.selectedCollection, album: this.selectedAlbum.album, preview: pictures[index].preview, base: pictures[index].base}
-      IpcFrontend.saveFavorite(x);
+  galleryOnOpen(isOpen) {
+    if(!isOpen) {
+      Helper.windowCloseFullScreen(this._document);
     }
-  }
-
-  /**
-   * Open a favorited picture within a post processing editing program
-   * @param index Index of the picture within the array
-   */
-  openPictureInPostProcessingProgram(index: number) {
-    let settings: ISettings = IpcFrontend.getSettings();
-
-    Helper.ExternalProgram(settings.sofwarePostProcessing, this.pictureList[index].base, this._snack);
   }
 }

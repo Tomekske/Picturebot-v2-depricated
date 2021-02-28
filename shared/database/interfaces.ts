@@ -67,7 +67,7 @@ export interface IAlbum {
     /** Album full path (~/collection/name_date) */
     album?: string;
     /** Checks if organizing has started */
-    started?: number;
+    started?: number | boolean;
     /** Checks if file formats are of RAW type */
     raw?: number;
 }
@@ -169,3 +169,17 @@ export interface ILegacy extends ICollection {
     /** Creation date of the picture */
     date: string;
 }
+
+/**
+ * Display interface containing properties 
+ */
+export interface IDisplay {
+    /** Picture path containing 'file:// prefix */
+    location: string;
+    /** Preview picture location */
+    preview: string;
+    /** Base picture location */
+    base: string;
+    /** Is favorited property of an image */
+    favorited?: boolean;
+  }

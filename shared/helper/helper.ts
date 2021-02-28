@@ -29,7 +29,7 @@ export class Helper {
         // Create a new directory if the path doesn't exists
         if (!fs.existsSync(directory)) {
             fs.mkdir(directory, err => {
-                console.log(err);
+                Logger.Log().error(err);
             });
 
             Logger.Log().debug(`Created directory: '${directory}'`);
@@ -285,5 +285,25 @@ export class Helper {
         } catch (error) {
             Logger.Log().error(error);
         }
+    }
+
+    /**
+     * Enable full-screen mode
+     * @param document Document object
+     */
+    static windowFullScreen(document: any): void {
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        }  
+    }
+
+    /**
+     * Close full-screen mode
+     * @param document Document object
+     */
+    static windowCloseFullScreen(document: any): void {
+        if (document.exitFullscreen) {
+            document.exitFullscreen().catch(err => Promise.resolve(err));
+        }        
     }
 }

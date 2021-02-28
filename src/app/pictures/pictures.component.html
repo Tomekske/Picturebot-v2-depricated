@@ -8,36 +8,13 @@
     </mat-tab-group>
     <!-- Picture display -->
     <div style="padding-top: 1%;">
-      <mat-grid-list cols="3" rowHeight="6:4" style="padding-top: 5px;">
-        <div lightbox-group>
-          <mat-grid-tile *ngFor="let picture of pictureList; let i = index">
-            <div class="container">
-              <img class="image" style="width: 100%; height: auto;" [src]="picture.location" lightbox counter="true" counterSeparator="/" loading="lazy">
-              <div *ngIf="selectedFlow === tabFlows.preview" class="overlay">
-                <mat-toolbar fxLayoutAlign="end center" style="background-color: transparent;">
-                  <button [disabled]="!isOrganized" mat-icon-button class="example-icon" (click)="updateFavorite(i)" matTooltip="Favorite">
-                    <mat-icon *ngIf="!picture.favorited">favorite_border</mat-icon>
-                    <mat-icon *ngIf="picture.favorited">favorite</mat-icon>
-                  </button>
-                  <button mat-icon-button class="example-icon" (click)="openPictureInformation(i)" matTooltip="Info">
-                    <mat-icon>info</mat-icon>
-                  </button>
-                  <button [disabled]="isOrganized" mat-icon-button class="example-icon" (click)="deletePicture(i)" matTooltip="Delete picture">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </mat-toolbar>
-              </div>
-              <div *ngIf="selectedFlow === tabFlows.favorites" class="overlay">
-                <mat-toolbar fxLayoutAlign="end center" style="background-color: transparent;">
-                  <button mat-icon-button class="example-icon" (click)="openPictureInPostProcessingProgram(i)" matTooltip="Favorite">
-                    <mat-icon>brush</mat-icon>
-                  </button>
-                </mat-toolbar>
-              </div>
-            </div>
-          </mat-grid-tile>
-        </div>
-      </mat-grid-list>
+      <ng-opengallery
+        [datasource]='this.previewList'
+        [config]='this.config'
+        (error)='galleryOnError($event)'
+        (selection)='galleryOnSelection($event)'
+        (open)='galleryOnOpen($event)'>
+      </ng-opengallery>
     </div>
   </div>
   <!-- Album selector -->
