@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, protocol, ipcRenderer } from 'electron';
+import { app, BrowserWindow, screen, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import * as fs from 'fs';
@@ -98,14 +98,11 @@ try {
   });
 
   // Check for new updates
-  // if(Helper.isProduction(true)) {
-  //   checkForUpdates();
-  // }
-  checkForUpdates();
-  console.log("ALEEEEEEEEEEEEEEEEEZ");
+  if(Helper.isProduction(true)) {
+    checkForUpdates();
+  }
+
   Api.defaultSettings();
-
-
 
   // Ipc functions
   ipcAlbums();
@@ -114,7 +111,6 @@ try {
   ipcLibraries();
   ipcPictures();
   ipcSettings();
-  IpcBackend.checkForUpdates();
 } catch (e) {
   // Catch Error
   // throw e;

@@ -1,8 +1,8 @@
 {
   "name": "Picturebot",
-  "version": "2.0.5-dev.1",
+  "version": "2.0.4",
   "description": "Angular 10 with Electron (Typescript + SASS + Hot Reload)",
-  "homepage": "https://github.com/Tomekske/PicturebotUpdater",
+  "homepage": "https://github.com/Tomekske/Picturebot",
   "author": {
     "name": "Tomek Joostens",
     "email": "joostenstomek@gmail.com"
