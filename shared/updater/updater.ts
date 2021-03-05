@@ -10,6 +10,7 @@ export class Updater {
      * Updater constructor
      */
     constructor() {
+        console.log("Updater-constructor");
         autoUpdater.checkForUpdates();
     }
 
@@ -18,6 +19,7 @@ export class Updater {
      */
     checkForUpdates() {
         autoUpdater.on('checking-for-update', (info) => {
+            console.log(`Checking for updates: ${info}`);
             Logger.Log().debug(`Checking for updates: ${info}`);
         });    
     }
@@ -27,6 +29,7 @@ export class Updater {
      */
     isUpdateAvailable() {
         autoUpdater.on('update-available', (info) => {
+            console.log(`Update available: ${info}`);
             Logger.Log().debug(`Update available: ${info.releaseNotes}`);
         });    
     }
@@ -36,6 +39,7 @@ export class Updater {
      */
     isUpdateNotAvailable() {
         autoUpdater.on('update-not-available', (info) => {
+            console.log(`Update not available: ${info}`);
             Logger.Log().debug(`Update not available: ${info}`);
         });        
     }
