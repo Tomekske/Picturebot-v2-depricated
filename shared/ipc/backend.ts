@@ -813,4 +813,10 @@ export class IpcBackend {
             event.returnValue = "";
         });
     }
+
+    static checkForUpdates() {
+        ipcMain.on('check-for-updates', (event) => {
+            event.returnValue = true;
+        });
+    }
 }

@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Helper } from '../../../shared/helper/helper';
 import { Router } from '@angular/router';
 import { Media, Config, LayoutStyle } from 'app/gallery/public-api';
+import { ElectronService } from 'app/core/services';
 
 @Component({
   selector: 'app-pictures',
@@ -49,7 +50,7 @@ export class PicturesComponent implements OnInit {
 
   styles: string[];
 
-  constructor(private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar, private _router: Router, @Inject(DOCUMENT) private _document: any) { 
+  constructor(private _data: DataService, private cdRef:ChangeDetectorRef, private _dialog: MatDialog, private _snack: MatSnackBar, private _router: Router, @Inject(DOCUMENT) private _document: any, private _electron: ElectronService) { 
     this.styles = Object.keys(LayoutStyle).filter( (s:any) => isNaN(s));
   }
   /**
@@ -123,6 +124,10 @@ export class PicturesComponent implements OnInit {
         });
       }
     });
+
+    let x = IpcFrontend.checkForUpdates();
+
+    console.log(x);
   }
 
   ngOnDestroy() {

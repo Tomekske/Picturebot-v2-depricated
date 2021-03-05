@@ -11,6 +11,11 @@
     </div>
     <!-- Picture display -->
     <div fxFlex="85" style="overflow-y: auto;" class="sides">
+      <script>
+        require('electron').ipcRenderer.on('ping', (event, message) => {
+          alert.log(message) // Prints 'whoooooooh!'
+        })
+      </script>
       <router-outlet></router-outlet>
     </div>
   </div>

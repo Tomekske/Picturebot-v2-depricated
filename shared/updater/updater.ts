@@ -10,6 +10,7 @@ export class Updater {
      * Updater constructor
      */
     constructor() {
+        console.log("CONSTRUCTOR UPDATER");
         autoUpdater.checkForUpdates();
     }
 
@@ -18,6 +19,7 @@ export class Updater {
      */
     checkForUpdates() {
         autoUpdater.on('checking-for-update', (info) => {
+            console.log("checkForUpdates");
             Logger.Log().debug(`Checking for updates: ${info}`);
         });    
     }
@@ -27,6 +29,7 @@ export class Updater {
      */
     isUpdateAvailable() {
         autoUpdater.on('update-available', (info) => {
+            console.log("isUpdateAvailable");
             Logger.Log().debug(`Update available: ${info.releaseNotes}`);
         });    
     }
@@ -36,6 +39,7 @@ export class Updater {
      */
     isUpdateNotAvailable() {
         autoUpdater.on('update-not-available', (info) => {
+            console.log("isUpdateNotAvailable");
             Logger.Log().debug(`Update not available: ${info}`);
         });        
     }
@@ -45,6 +49,7 @@ export class Updater {
      */
     error() {
         autoUpdater.on('error', (error) => {
+            console.log(error);
             Logger.Log().debug(`error: ${error}`);
         });
     }
@@ -54,6 +59,7 @@ export class Updater {
      */
     downloadProgress() {
         autoUpdater.on('download-progress', (progress) => {
+            console.log("downloadProgress");
             Logger.Log().debug(`Update download speed: ${progress.bytesPerSecond} - Download ${progress.percent}`);
         });
     }
@@ -63,6 +69,7 @@ export class Updater {
      */
     updateDownloaded() {
         autoUpdater.on('update-downloaded', (info) => {
+            console.log("updateDownloaded");
             Logger.Log().debug(`Update is being installed: ${info}`);
             autoUpdater.quitAndInstall();
         });

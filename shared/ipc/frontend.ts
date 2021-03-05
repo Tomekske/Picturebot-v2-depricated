@@ -258,4 +258,8 @@ export class IpcFrontend {
     static startOrganizingAlbum(album: IAlbum) {
         ipcRenderer.sendSync("start-organizing-album", album);
     }
+
+    static checkForUpdates(): boolean {
+        return ipcRenderer.sendSync("check-for-updates");
+    }
 }
