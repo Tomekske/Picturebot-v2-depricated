@@ -1,0 +1,16 @@
+<div fxLayout="column">
+  <h1 mat-dialog-title>New update available</h1>
+</div>
+
+<div fxLayout="column" style="max-height: 85%; height: 85%; margin-right: 4.5%;">
+  <div mat-dialog-content>
+    <markdown [src]="location" (load)="onLoad($event)" (error)="onError($event)"></markdown>
+  </div>
+</div>
+
+<div fxLayout="column" style="margin-top: 2%;">
+  <div mat-dialog-actions align="end">
+    <button mat-button [mat-dialog-close]="false" cdkFocusInitial>Cancel</button>
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Download</button>
+  </div>
+</div>

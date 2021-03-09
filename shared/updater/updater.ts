@@ -5,11 +5,15 @@ import { Logger } from '../logger/logger';
  * Class to automatically update the application
  */
 export class Updater { 
+    event: any;
 
     /**
      * Updater constructor
+     * @param event Event object
      */
-    constructor() {
+    constructor(event) {
+        this.event = event;
+
         autoUpdater.checkForUpdates();
     }
 
@@ -27,8 +31,9 @@ export class Updater {
      */
     isUpdateAvailable() {
         autoUpdater.on('update-available', (info) => {
-            Logger.Log().debug(`Update available: ${info.releaseNotes}`);
-        });    
+            Logger.Log().debug(`Update available: ${info}`);
+            this.event.returnValue = true;
+        });
     }
 
     /**
@@ -37,6 +42,7 @@ export class Updater {
     isUpdateNotAvailable() {
         autoUpdater.on('update-not-available', (info) => {
             Logger.Log().debug(`Update not available: ${info}`);
+            this.event.returnValue = false;
         });        
     }
 

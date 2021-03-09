@@ -99,7 +99,7 @@ try {
 
   // Check for new updates
   if(Helper.isProduction(true)) {
-    checkForUpdates();
+    IpcBackend.checkForUpdate();
   }
 
   Api.defaultSettings();
@@ -181,18 +181,4 @@ function ipcSettings() {
   IpcBackend.saveSettings();
   IpcBackend.getSettings();
   IpcBackend.checkSettingsEmpty();
-}
-
-/**
- * Function to check for application updates
- */
-function checkForUpdates() {
-  const updater = new Updater();
-
-  updater.checkForUpdates();
-  updater.isUpdateAvailable();
-  updater.isUpdateNotAvailable();
-  updater.error();
-  updater.downloadProgress();
-  updater.updateDownloaded();
 }

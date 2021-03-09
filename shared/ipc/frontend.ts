@@ -1,5 +1,7 @@
+import { DialogReleaseNotesComponent } from 'app/dialogs/dialog-release-notes/dialog-release-notes.component';
 import { ipcRenderer } from 'electron';
 import { IAlbum, IBase, IFlow, ILegacy } from '../database/interfaces';
+import { Logger } from '../logger/logger';
 
 /**
  * Static class contains methods to communicate with the backend 
@@ -152,7 +154,7 @@ export class IpcFrontend {
      * Get the flows which are displayed in the tab component
      * @param collection Selected collection
      */
-    static getTabFlows(collection: string): IFlow{
+    static getTabFlows(collection: string): IFlow {
         return ipcRenderer.sendSync("get-tab-flows", collection);
     }
 
@@ -257,5 +259,31 @@ export class IpcFrontend {
      */
     static startOrganizingAlbum(album: IAlbum) {
         ipcRenderer.sendSync("start-organizing-album", album);
+    }
+
+    /**
+     * Static method to check wether an update is available
+     * @param dialog Dialog object
+     */
+    static checkForUpdate(dialog, snack) {
+        // Fetch for updates
+        let isUpdate: boolean = ipcRenderer.sendSync("check-for-update", "");
+
+        if (isUpdate) {
+            dialog.open(DialogReleaseNotesComponent, { height: '800px', width: '600px' }).afterClosed().subscribe((isDownload: boolean) => {
+                if (isDownload) {
+                    ipcRenderer.send("check-for-update-install", "");
+                    snack.open("Downloading update!", "Dismiss", {
+                        duration: 4000,
+                        horizontalPosition: "end"
+                    });
+                } else {
+                    snack.open("Download canceled!", "Dismiss", {
+                        duration: 4000,
+                        horizontalPosition: "end"
+                    });
+                }
+            });
+        }
     }
 }

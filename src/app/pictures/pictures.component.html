@@ -1,6 +1,6 @@
-<div fxLayout="row" style="overflow-y: auto;">
+<div fxLayout="row" style="overflow-y: auto;" fxFill>
   <!-- Flow Selector -->
-  <div fxFlex="85" [ngClass]="{'window': albums.length !== 0}">
+  <div fxFlex="85" style="background-color: #222; overflow-y: auto;">
     <mat-tab-group animationDuration="0ms" (selectedTabChange)="selectedFlowEvent($event)" #tab>
     <div *ngFor="let flow of flows">
       <mat-tab label="{{ flow }}"></mat-tab>

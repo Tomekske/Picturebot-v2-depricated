@@ -9,18 +9,20 @@ import { App } from '../../../../shared/helper/enums';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogImportLegacyComponent } from 'app/dialogs/dialog-import-legacy/dialog-import-legacy.component';
+import { DialogReleaseNotesComponent } from 'app/dialogs/dialog-release-notes/dialog-release-notes.component';
 import { Router } from '@angular/router';
-import { Location} from '@angular/common'
+import { Location } from '@angular/common'
+
 @Component({
-    selector: 'app-menu',
-    templateUrl: './menu.component.html',
-    styleUrls: ['./menu.component.css']
+  selector: 'app-menu',
+  templateUrl: './menu.component.html',
+  styleUrls: ['./menu.component.css']
 })
 export class MenuComponent {
 
   // Construct side bar menu
   menuItems = [];
-  
+
   config = {
     paddingAtStart: true,
     interfaceWithRoute: true,
@@ -33,11 +35,11 @@ export class MenuComponent {
     collapseOnSelect: true,
     useDividers: false,
     rtlLayout: false,
-};
+  };
 
-selectedCollection: ICollection;
+  selectedCollection: ICollection;
 
-  constructor(private _electron: ElectronService, private _data: DataService, private _snack: MatSnackBar, private _dialog: MatDialog, private _router: Router, private _location: Location) { 
+  constructor(private _electron: ElectronService, private _data: DataService, private _snack: MatSnackBar, private _dialog: MatDialog, private _router: Router, private _location: Location) {
     this.menuItems.push({
       label: 'Library',
       icon: 'library_books',
@@ -56,51 +58,51 @@ selectedCollection: ICollection;
         }
       ]
     },
-    {
-      label: 'Collection',
-      icon: 'perm_media',
-      items: [
-        {
-          label: 'Open',
-          icon: 'open_in_new',
-          onSelected: () => {
-            Helper.openInExplorer(this.selectedCollection.collection, this._snack);
+      {
+        label: 'Collection',
+        icon: 'perm_media',
+        items: [
+          {
+            label: 'Open',
+            icon: 'open_in_new',
+            onSelected: () => {
+              Helper.openInExplorer(this.selectedCollection.collection, this._snack);
+            }
+          },
+          {
+            label: 'Add',
+            link: '/addCollection',
+            icon: 'add_box'
           }
-        },
-        {
-          label: 'Add',
-          link: '/addCollection',
-          icon: 'add_box'
+        ]
+      },
+      {
+        label: 'Album',
+        link: '/addAlbum',
+        icon: 'photo_album'
+      },
+      {
+        label: 'Import legacy',
+        icon: 'publish',
+        onSelected: () => {
+          // Picture deletion dialog
+          this._dialog.open(DialogImportLegacyComponent).afterClosed().subscribe((form: ILegacy) => {
+            if (form) {
+              IpcFrontend.importLegacyAlbum(form);
+              this._router.navigateByUrl("/main");
+            }
+          });
         }
-      ]
-    },
-    {
-      label: 'Album',
-      link: '/addAlbum',
-      icon: 'photo_album'
-    },
-    {
-      label: 'Import legacy',
-      icon: 'publish',
-      onSelected: () => {
-        // Picture deletion dialog
-        this._dialog.open(DialogImportLegacyComponent).afterClosed().subscribe((form: ILegacy) => {
-          if(form) {
-            IpcFrontend.importLegacyAlbum(form);
-            this._router.navigateByUrl("/main");
-          }   
-        });
-      }
-    },
-    {
-      label: 'Settings',
-      link: '/settings',
-      icon: 'settings'
-    });
+      },
+      {
+        label: 'Settings',
+        link: '/settings',
+        icon: 'settings'
+      });
 
 
     // Add a developer tab when running a non production version
-    if(!Helper.isProduction(false)) {
+    if (!Helper.isProduction(false)) {
       this.menuItems.push({
         label: 'Developers Tab',
         icon: 'bug_report',
@@ -125,9 +127,30 @@ selectedCollection: ICollection;
             onSelected: () => {
               Helper.openInExplorer("D:\\e2e", this._snack);
             }
+          },
+          {
+            label: 'Release notes',
+            icon: 'new_releases',
+            onSelected: () => {
+              // Picture deletion dialog
+              this._dialog.open(DialogReleaseNotesComponent, { height: '800px', width: '600px' }).afterClosed().subscribe((isDownload: boolean) => {
+                if (isDownload) {
+                  this._electron.ipcRenderer.send("check-for-update-install", "");
+                  this._snack.open("Downloading update!", "Dismiss", {
+                    duration: 4000,
+                    horizontalPosition: "end"
+                  });
+                } else {
+                  this._snack.open("Download canceled!", "Dismiss", {
+                    duration: 4000,
+                    horizontalPosition: "end"
+                  });
+                }
+              });
+            }
           }
         ]
-      });  
+      });
     }
 
     this._data.ctxSelectedCollection.subscribe(collection => this.selectedCollection = IpcFrontend.getAllCollectionWhereCollection(collection));

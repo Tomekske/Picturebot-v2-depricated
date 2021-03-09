@@ -19,6 +19,7 @@ import { DbSocialMediaFlow } from '../database/dbSocialMediaFlow';
 import { WatcherEdited } from '../watcher/watcherEdited';
 import { WatcherSocialMedia } from '../watcher/watcherSocialMedia';
 import { Api } from '../database/api';
+import { Updater } from '../updater/updater';
 
 let oldAlbum: IAlbum;
 let stalkerEdited: any;
@@ -267,22 +268,6 @@ export class IpcBackend {
             event.returnValue = result;
         });
     }
-
-    /**
-     * Update the name object of the base flow
-     */
-    // static updateBaseFlowName() {
-    //     ipcMain.on('update-name-baseFlow', (event, update) => {
-    //         Logger.Log().debug('ipcMain: update-name-baseFlow');
-
-    //         // const dbBase = new DbBaseFlow();
-    //         // dbBase.updateBase(update);
-    //         // dbBase.updatePreview(update);
-    //         // dbBase.dbClose();
-
-    //         event.returnValue = "";
-    //     });
-    // }
 
     /**
      * Get pictures from a specified album of the base flow
@@ -811,6 +796,32 @@ export class IpcBackend {
             Api.updateAlbumIsOrganized(album, true);
 
             event.returnValue = "";
+        });
+    }
+
+    /**
+     * Static method to check wether an update is available
+     */
+    static checkForUpdate() {
+        // Fetch for updates
+        ipcMain.on('check-for-update', (event, arg) => {
+            Logger.Log().debug("check-for-update");
+
+            const updater = new Updater(event);
+            updater.checkForUpdates();
+            updater.isUpdateAvailable();
+            updater.isUpdateNotAvailable();
+        });
+
+        // Download and install update
+        ipcMain.on('check-for-update-install', (event, arg) => {
+            Logger.Log().debug("check-for-update-install");
+
+            const updater = new Updater(event);
+            updater.checkForUpdates();
+            updater.error();
+            updater.downloadProgress();
+            updater.updateDownloaded();
         });
     }
 }

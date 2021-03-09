@@ -37,6 +37,8 @@ import { DialogAlbumEditComponent } from './dialogs/dialog-album-edit/dialog-alb
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DialogImportLegacyComponent } from './dialogs/dialog-import-legacy/dialog-import-legacy.component';
 import { NgOpengalleryModule } from 'app/gallery/public-api';
+import { DialogReleaseNotesComponent } from './dialogs/dialog-release-notes/dialog-release-notes.component';
+import { MarkdownModule } from 'ngx-markdown';
 
 
 // AoT requires an exported function for factories
@@ -56,7 +58,6 @@ export const MY_FORMATS: MatDateFormats = {
   },
 };
 
-
 @NgModule({
   declarations: [AppComponent, 
     MenuComponent, 
@@ -70,7 +71,8 @@ export const MY_FORMATS: MatDateFormats = {
     DialogPictureDeleteComponent, 
     DialogAlbumDeleteComponent, 
     DialogAlbumEditComponent, 
-    DialogImportLegacyComponent
+    DialogImportLegacyComponent, 
+    DialogReleaseNotesComponent
   ],
   imports: [
     BrowserModule,
@@ -85,6 +87,7 @@ export const MY_FORMATS: MatDateFormats = {
     FlexLayoutModule,
     CommonModule,
     NgOpengalleryModule,
+    MarkdownModule.forRoot({ loader: HttpClient }),
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
