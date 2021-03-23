@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ElectronService } from '../core/services/electron/electron.service';
-import { IAlbum, IBase, ICollection, IFlow, IPreview } from '../../../shared/database/interfaces';
+import { IAlbum, IBase, ICollection, IFlow, IPreview, ILibrary } from '../../../shared/database/interfaces';
 import { Helper } from '../../../shared/helper/helper';
 import { DataService } from '../services/data.service';
 import { Router } from '@angular/router';
@@ -9,14 +9,16 @@ import { IpcFrontend } from '../../../shared/ipc/frontend';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAlbumDeleteComponent } from 'app/dialogs/dialog-album-delete/dialog-album-delete.component';
 import { DialogAlbumEditComponent } from 'app/dialogs/dialog-album-edit/dialog-album-edit.component';
+import { ICollectionSelector } from '../../../shared/helper/interfaces';
 
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.css']
 })
+
 export class ToolbarComponent implements OnInit {
-  collections: string[] = [];
+  collectionSelector: ICollectionSelector[] = [];
   selectedCollection: string;
   explorerTooltip: string;
   flowPath: string;
@@ -35,6 +37,7 @@ export class ToolbarComponent implements OnInit {
    */
   ngOnInit(): void {
     this.isOrganized = true;
+    
     // Monitor whether a new album is saved
     this._data.ctxIsAlbumSaved.subscribe(state => {
       if (state) {
@@ -48,28 +51,25 @@ export class ToolbarComponent implements OnInit {
     this._data.ctxSelectedFlow.subscribe(flow => this.flow = flow);
     this._data.ctxIsCollectionSaved.subscribe(state => {
       if (state) {
-        // Get all the collections
-        IpcFrontend.getCollections().forEach((collection: ICollection) => this.collections.push(collection.collection));
-
+        this.collectionSelector = IpcFrontend.collectionsSelector();
+        
         // Display a default collection when the collection array isn't empty
-        if (this.collections.length != 0) {
-          this.selectedCollection = this.collections[0];
+        if (this.collectionSelector.length != 0) {
+          this.selectedCollection = this.collectionSelector[0].collections[0].basename;
           this.selectedCollectionEvent();
         }
         this.albums = IpcFrontend.getAlbums(this.selectedCollection);
       }
     });
-
-    // Get all the collections
-    IpcFrontend.getCollections().forEach((collection: ICollection) => {
-      this.collections.push(collection.collection);
-    });
+    // IpcFrontend.collectionsSelector(this.collectionSelector);
+    this.collectionSelector = IpcFrontend.collectionsSelector();
 
     // Display a default collection when the collection array isn't empty
-    if (this.collections.length != 0) {
-      this.selectedCollection = this.collections[0];
+    if (this.collectionSelector.length != 0) {
+      this.selectedCollection = this.collectionSelector[0].collections[0].fullPath;
       this.selectedCollectionEvent();
     }
+
     this.albums = IpcFrontend.getAlbums(this.selectedCollection);
 
     // Monitor wether a new album is selected
@@ -118,13 +118,11 @@ export class ToolbarComponent implements OnInit {
    */
   selectionClickEvent() {
     // Make sure to clear the collections array before pushing the collections from the database on the array
-    if (this.collections.length != 0) {
-      this.collections = [];
+    if (this.collectionSelector.length != 0) {
+      this.collectionSelector = [];
     }
 
-    IpcFrontend.getCollections().forEach((collection: ICollection) => {
-      this.collections.push(collection.collection);
-    });
+    this.collectionSelector = IpcFrontend.collectionsSelector();
   }
 
   /**
@@ -171,9 +169,9 @@ export class ToolbarComponent implements OnInit {
     this._dialog.open(DialogAlbumEditComponent, {
       data: {
         album: this.selectedAlbum
-      }
+      } 
     }).afterClosed().subscribe(form => {
-      if(form) {
+      if (form) {
         let updatedAlbum: IAlbum = {
           collection: this.selectedAlbum.collection,
           name: form.album,
@@ -182,9 +180,9 @@ export class ToolbarComponent implements OnInit {
           raw: this.selectedAlbum.raw,
           album: this._electron.path.join(this.selectedAlbum.collection, `${form.album} ${Helper.formatDate(form.date)}`)
         };
-  
+
         IpcFrontend.updateAlbum(this.selectedAlbum, updatedAlbum);
-  
+
         this._data.isAlbumUpdated = true;
       }
     });

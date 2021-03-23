@@ -7,8 +7,10 @@
                 <mat-form-field appearance="fill" style="width: 100%;">
                     <mat-label>Select collection</mat-label>
                     <mat-select formControlName="collection" id="select-album-id">
-                        <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
-                    </mat-select>
+                        <mat-optgroup *ngFor="let library of collectionSelector" [label]="library.library.basename" >
+                            <mat-option value="option" *ngFor="let collection of library.collections" value="{{ collection.fullPath }}">{{ collection.basename }}</mat-option>
+                        </mat-optgroup>
+                      </mat-select>
                 </mat-form-field>
                 <mat-form-field style="width: 70%;">
                     <mat-label>Album name</mat-label>
@@ -25,7 +27,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="fill" style="width: 25%; padding-left: 4.50%;">
                     <mat-label>Select date</mat-label>
-                    <input matInput [matDatepicker]="picker" formControlName="date" disabled id="input-date-id">
+                    <input matInput [matDatepicker]="picker" formControlName="date" disabled id="input-date-id" [(ngModel)]="date">
                     <mat-error *ngIf="form.date.errors?.required && form.date.untouched" id="error-date-required-id">
                         {{ message.Required }}
                     </mat-error>

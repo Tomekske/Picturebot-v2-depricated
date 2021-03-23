@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ElectronService } from '../../core/services/electron/electron.service';
 import { IAlbum, IBase, ICollection, ISettings } from '../../../../shared/database/interfaces';
-import { IFileTypes } from '../../../../shared/helper/interfaces';
+import { ICollectionSelector, IFileTypes } from '../../../../shared/helper/interfaces';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Helper } from '../../../../shared/helper/helper';
@@ -10,6 +10,7 @@ import { DataService } from 'app/services/data.service';
 import { Stats } from 'original-fs';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
 import { Regex, Message, MenuText, FileTypes } from '../../../../shared/helper/enums';
+import moment from 'moment';
 
 @Component({
   selector: 'app-album',
@@ -22,12 +23,14 @@ export class AlbumComponent implements OnInit {
   hasPictures: boolean;
   message = Message;
   isRawExtension: boolean;
+  collectionSelector: ICollectionSelector[] = [];
 
   constructor(private electron: ElectronService, private fb: FormBuilder, private _snack: MatSnackBar, private _data: DataService, private _router: Router) { }
   picturesDropzone: File[] = [];
   pictures: IBase[] = [];
   hashedPictures: IBase[] = [];
   settings: ISettings;
+  date: Date;
 
   /**
    * On init lifecycle hook
@@ -36,12 +39,10 @@ export class AlbumComponent implements OnInit {
     this._data.IsPictures = false;
     this._data.MenuText = MenuText.album;
     this.settings = IpcFrontend.getSettings();
- 
-    IpcFrontend.getCollections().forEach((collection: ICollection) => {
-      this.collections.push(collection.collection);
-    });
 
-    let defaultCollection: string = (this.collections.length == 0) ? "" : this.collections[0];
+    this.collectionSelector = IpcFrontend.collectionsSelector();
+
+    let defaultCollection: string = (this.collectionSelector.length == 0) ? "" : this.collectionSelector[0].collections[0].fullPath;
 
     this.albumForm = this.fb.group({
       collection: defaultCollection,
@@ -53,14 +54,14 @@ export class AlbumComponent implements OnInit {
   /**
    * Method that simplifies getting the form controls 
    */
-  get form() { 
-    return this.albumForm.controls; 
+  get form() {
+    return this.albumForm.controls;
   }
 
   /**
    * Function to save an album to the database
    */
-  saveAlbum() {   
+  saveAlbum() {
     let dropzone: IAlbum = this.albumForm.value;
     let formatedDate = Helper.formatDate(dropzone.date);
 
@@ -72,36 +73,26 @@ export class AlbumComponent implements OnInit {
         horizontalPosition: "end",
         panelClass: "snackbar-id"
       });
-              
+
       return;
     }
 
     // Create album object
-    let album: IAlbum = { 
-      collection: dropzone.collection, 
-      name: dropzone.name, 
-      date: formatedDate, 
-      album: this.electron.path.join(dropzone.collection, `${dropzone.name} ${formatedDate}`), 
+    let album: IAlbum = {
+      collection: dropzone.collection,
+      name: dropzone.name,
+      date: formatedDate,
+      album: this.electron.path.join(dropzone.collection, `${dropzone.name} ${formatedDate}`),
       started: 0,
       raw: 1
     };
 
-    // Iterate over all the pictures within the dropzone
-    this.picturesDropzone.forEach((element) => {
-      // Obtain picture information
-      const stats: Stats = this.electron.fs.statSync(element.path);
-      let createdDate: string = Helper.formatDate(stats.mtime.toISOString());
-      let createdTime: string = Helper.formatTime(stats.mtime.toISOString());
-
-      this.pictures.push({source: element.path, name: element.name, modification: stats.mtime, date: createdDate, time: createdTime});
-    });
-
-    this.pictures.sort(Helper.sortDateTimes);
+    this.sortPictures();
 
     let that = this;
     this.pictures.forEach((picture, i) => {
       const newFilename = Helper.renameHashedPicture(picture, i + 1, 5);
-      that.hashedPictures.push({source: picture.source, name: newFilename, hashed: newFilename, date: picture.date, time: picture.time});
+      that.hashedPictures.push({ source: picture.source, name: newFilename, hashed: newFilename, date: picture.date, time: picture.time });
     });
 
     IpcFrontend.savePictures(this.hashedPictures, album);
@@ -112,7 +103,7 @@ export class AlbumComponent implements OnInit {
       horizontalPosition: "end"
     });
 
-    this._data.isAlbumSaved = true;   
+    this._data.isAlbumSaved = true;
     this._router.navigateByUrl('/main');
   }
 
@@ -120,7 +111,7 @@ export class AlbumComponent implements OnInit {
    * Function to add pictures to an from the dropzone
    * @param event Event parameter
    */
-	onSelect(event) {
+  onSelect(event) {
     this.hasPictures = true;
     this.picturesDropzone.push(...event.addedFiles);
 
@@ -128,16 +119,26 @@ export class AlbumComponent implements OnInit {
       let extension = this.electron.path.extname(pictures.name);
       this.isRawExtension = FileTypes.Raw.includes(extension);
     });
-	}
+
+    this.sortPictures();
+    this.date = moment(this.pictures[0].date, "DD/MM/YYYY").toDate();
+  }
 
   /**
    * Function to remove pictures from the dropzone array
    * @param event Event parameter
    */
-	onRemove(event) {
+  onRemove(event) {
     this.picturesDropzone.splice(this.picturesDropzone.indexOf(event), 1);
 
+    this.sortPictures();
+    this.date = moment(this.pictures[0].date, "DD/MM/YYYY").toDate();
+
     this.hasPictures = this.picturesDropzone.length == 0 ? false : true;
+
+    if (this.picturesDropzone.length == 0) {
+      this.date = null;
+    }
   }
 
   /**
@@ -148,7 +149,30 @@ export class AlbumComponent implements OnInit {
     this.albumForm.controls[control].reset();
   }
 
+  /**
+   * Remove all pictures from the dropzone
+   */
   clearDropzone() {
+    this.date = null;
     this.picturesDropzone = [];
+  }
+
+  /**
+   * Sort all pictures by date
+   */
+  sortPictures() {
+    this.pictures = [];
+    
+    // Iterate over all the pictures within the dropzone
+    this.picturesDropzone.forEach((element) => {
+      // Obtain picture information
+      const stats: Stats = this.electron.fs.statSync(element.path);
+      let createdDate: string = Helper.formatDate(stats.mtime.toISOString());
+      let createdTime: string = Helper.formatTime(stats.mtime.toISOString());
+
+      this.pictures.push({ source: element.path, name: element.name, modification: stats.mtime, date: createdDate, time: createdTime });
+    });
+
+    this.pictures.sort(Helper.sortDateTimes);
   }
 }

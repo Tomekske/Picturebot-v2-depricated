@@ -2,21 +2,23 @@
   <div *ngIf="isPictures">
     <div fxLayout="row">
       <!-- Collection selector -->
-      <div fxFlex="35">        
+      <div fxFlex="40">        
         <mat-toolbar color="primary"></mat-toolbar>
       </div>
-      <div fxFlex="30">
+      <div fxFlex="20">
         <mat-toolbar color="primary" fxLayoutAlign="end center">
           <mat-form-field color="primary" appearance="fill" style="width: 100%; margin-top: 13px;">
             <mat-label style="margin-top: 13px; font-size: 15px;" align="end">Select collection</mat-label>
             <mat-select [(ngModel)]="selectedCollection" name="collection" (ngModelChange)="selectedCollectionEvent()" (click)="selectionClickEvent()">
-              <mat-option style="font-size: 17px;" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
+              <mat-optgroup style="font-size: 16px;" *ngFor="let library of collectionSelector" [label]="library.library.basename">
+                  <mat-option style="font-size: 16px;" *ngFor="let collection of library.collections" value="{{ collection.fullPath }}">{{ collection.basename }}</mat-option>
+              </mat-optgroup>
             </mat-select>
           </mat-form-field>
         </mat-toolbar>     
       </div>
       <!-- Album actions -->
-      <div fxFlex="35">
+      <div fxFlex="40">
         <mat-toolbar color="primary">
           <!-- Start organizing album action -->
           <div matTooltip="Start organizing">

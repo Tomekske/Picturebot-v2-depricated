@@ -86,7 +86,7 @@ export class MenuComponent {
         icon: 'publish',
         onSelected: () => {
           // Picture deletion dialog
-          this._dialog.open(DialogImportLegacyComponent).afterClosed().subscribe((form: ILegacy) => {
+          this._dialog.open(DialogImportLegacyComponent, { width: '600px' }).afterClosed().subscribe((form: ILegacy) => {
             if (form) {
               IpcFrontend.importLegacyAlbum(form);
               this._router.navigateByUrl("/main");

@@ -188,7 +188,7 @@ export class DbBaseFlow extends Sqlite {
             backup=REPLACE(backup, '${current.album}', '${album.album}'),      
             preview=REPLACE(preview, '${path.join(current.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(current.album)))}', '${path.join(album.album, flows.preview, Helper.ParsePictureNameWithoutDate(path.basename(album.album)))}'), 
             base=REPLACE(base, '${path.join(current.album, flows.base, Helper.ParsePictureNameWithoutDate(path.basename(current.album)))}','${path.join(album.album, flows.base, Helper.ParsePictureNameWithoutDate(path.basename(album.album)))}')`;
-
+        
         try {
             Logger.Log().debug(`Query: ${query}`);
             result = this.connection.prepare(query).run();

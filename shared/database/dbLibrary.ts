@@ -1,4 +1,5 @@
 import { Logger } from '../logger/logger';
+import { ILibrary } from './interfaces';
 import { Sqlite } from './sqlite';
 
 export class DbLibrary extends Sqlite {
@@ -76,8 +77,8 @@ export class DbLibrary extends Sqlite {
     /**
      * Method to select all the libraries within the library table
      */
-    queryLibraries() {
-        let query: string = 'SELECT DISTINCT library FROM Library DESC;'
+    queryLibraries(): ILibrary[] {
+        let query: string = 'SELECT * FROM Library ORDER BY name ASC;'
         let result = null;
 
         try {

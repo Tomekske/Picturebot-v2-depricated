@@ -1,6 +1,7 @@
 import { DialogReleaseNotesComponent } from 'app/dialogs/dialog-release-notes/dialog-release-notes.component';
 import { ipcRenderer } from 'electron';
-import { IAlbum, IBase, IFlow, ILegacy } from '../database/interfaces';
+import { IAlbum, IBase, ICollection, IFlow, ILegacy, ILibrary } from '../database/interfaces';
+import { ICollectionSelector } from '../helper/interfaces';
 import { Logger } from '../logger/logger';
 
 /**
@@ -32,7 +33,7 @@ export class IpcFrontend {
     /**
      * Get all libraries from the database
      */
-    static getLibraries() {
+    static getLibraries(): ILibrary[] {
         return ipcRenderer.sendSync("get-libraries");
     }
 
@@ -47,7 +48,7 @@ export class IpcFrontend {
     /**
      * Get all collections from the database
      */
-    static getCollections() {
+    static getCollections(): ICollection[] {
         return ipcRenderer.sendSync("get-collections");
     }
 
@@ -285,5 +286,12 @@ export class IpcFrontend {
                 }
             });
         }
+    }
+
+    /**
+     * Map collections to a library
+     */
+    static collectionsSelector(): ICollectionSelector[] {
+        return ipcRenderer.sendSync("collections-selector", "");
     }
 }

@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { Logger } from '../../shared/logger/logger';
-import { IAlbum, IBase, IEdited, IFlow, IPreview, ISettings, ISocialMedia } from '../database/interfaces';
+import { IAlbum, IBase, ICollection, IEdited, IFlow, ILibrary, IPreview, ISettings, ISocialMedia } from '../database/interfaces';
 import { Helper } from '../helper/helper';
 import { DbCollection } from '../database/dbCollection';
 import { DbAlbum } from './dbAlbum';
@@ -11,6 +11,7 @@ import { DbFavoriteFlow } from './dbFavoriteFlow';
 import { DbEditedFlow } from './dbEditedFlow';
 import { DbSocialMediaFlow } from './dbSocialMediaFlow';
 import { DbSettings } from './dbSettings';
+import { DbLibrary } from './dbLibrary';
 
 /**
  * Static class which integrates an API to easily interact with the database
@@ -329,6 +330,32 @@ export class Api {
         db.updateBase(baseUpdated);
         db.updatePreview(previewUpdated);
         db.dbClose();
+    }
+
+    /**
+     * Get all libraries from the database
+     */
+    static getLibraries(): ILibrary[] {
+        // Create database
+        const db = new DbLibrary();
+        let result: ILibrary[] = db.queryLibraries();
+
+        db.dbClose();
+        
+        return result;
+    }
+
+    /**
+     * 
+     * @returns Get all collections from the database
+     */
+    static getCollections(): ICollection[] {
+        const db = new DbCollection();
+        let result: ICollection[] = db.queryCollections();
+
+        db.dbClose();
+
+        return result;
     }
 
     /**

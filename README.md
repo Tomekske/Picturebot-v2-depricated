@@ -89,8 +89,9 @@ Converting RAW images to a JPG format is done by using [ImageMagick](https://ima
 | Functionality	| Priority	| Status	|
 | ------- | ----------------------------- | --------------- |
 | Add picture lazy loading                                                                                                  | High      | :white_check_mark: |
-| Database API                                                                                                              | High      | :x: |
+| Database API                                                                                                              | High      | :white_check_mark: |
 | Investigate memory & performance issues                                                                                   | High      | :x: |
+| Splash screen                                                                                                             | High      | :x: |
 | Delete collections                                                                                                        | High      | :x: |
 | Delete libraries                                                                                                          | High      | :x: |
 | Import albums                                                                                                             | High      | :x: |
@@ -98,10 +99,10 @@ Converting RAW images to a JPG format is done by using [ImageMagick](https://ima
 | Enable full-screen when in display mode                                                                                   | High      | :white_check_mark: |
 | Add functionality to import legacy albums to the new database system                                                      | High      | :white_check_mark: |
 | Add pictures to an existing shoots                                                                                        | High      | :x: |
-| Display update status' when the application is updating                                                                   | High	    | :x: |
+| Display update status' when the application is updating                                                                   | High	    | :white_check_mark: |
 | Fix: Date component layout issues in production                                                                           | High	    | :white_check_mark: |
 | Conversion percentage default value                                                                                       | High      | :white_check_mark: |
-| Automatically set the album date                                                                                          | Medium    | :x: |
+| Automatically set the album date                                                                                          | Medium    | :white_check_mark: |
 | Visual representation whether a shoot is fully edited, partially edited, or not edited at all                             | Medium    | :x: |
 | Investigate whether it is possible to add a tool to automatically upload pictures to google pictures                      | Medium	| :x: |
 | Detect whether an external memory-card is connected and automatically open the directory when adding a new shoot          | Medium    | :x: |

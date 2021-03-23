@@ -7,9 +7,11 @@
                 <h4>Select collection</h4>
                 <mat-form-field appearance="fill" style="width: 100%;">
                     <mat-label>Select collection</mat-label>
-                    <mat-select [disabled]="collections.length === 0" formControlName="collection" id="select-collection-id">
-                        <mat-option value="option" *ngFor="let collection of collections" value="{{ collection }}">{{ collection }}</mat-option>
-                    </mat-select>
+                    <mat-select formControlName="collection" id="select-album-id">
+                        <mat-optgroup *ngFor="let library of collectionSelector" [label]="library.library.basename" >
+                            <mat-option value="option" *ngFor="let collection of library.collections" value="{{ collection.fullPath }}">{{ collection.basename }}</mat-option>
+                        </mat-optgroup>
+                      </mat-select>
                 </mat-form-field>
                 <mat-form-field class="example-full-width" style="width: 100%;">
                     <mat-label>Legacy album</mat-label>
@@ -70,7 +72,7 @@
     </form>
   </div>
 </div>
-<div mat-dialog-actions>
+<div mat-dialog-actions align="end">
     <button mat-button (click)="cancelClick()">Cancel</button>
     <button mat-button [mat-dialog-close]="collectionForm.value" cdkFocusInitial>Ok</button>
 </div>

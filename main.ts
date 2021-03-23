@@ -124,6 +124,7 @@ function ipcCollections() {
   IpcBackend.getCollections();
   IpcBackend.getAllCollectionWhereCollection();
   IpcBackend.saveCollection();
+  IpcBackend.collectionsSelector();
 }
 
 /**

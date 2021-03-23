@@ -1,4 +1,5 @@
 import { Logger } from '../logger/logger';
+import { ICollection } from './interfaces';
 import { Sqlite } from './sqlite';
 
 export class DbCollection extends Sqlite {
@@ -101,8 +102,8 @@ export class DbCollection extends Sqlite {
     /**
      * Method to query all collections
      */
-    queryCollections() {
-        let query: string = 'SELECT DISTINCT collection FROM Collection DESC;';
+    queryCollections(): ICollection[] {
+        let query: string = 'SELECT DISTINCT * FROM Collection ORDER BY name ASC;';
         let result = null;
 
         try {

@@ -114,7 +114,7 @@ export class Helper {
         // Get the correct extension format of the original picture
         let extname = isPreview ? path.extname(picture.preview) : path.extname(picture.base);
 
-        return `${dirname.split(" ")[0]}_${dirname.split(" ")[1]}_${(index).toString().padStart(padding, '0')}${extname}`;
+        return `${Helper.ParsePictureNameWithDate(picture.album)}_${(index).toString().padStart(padding, '0')}${extname}`;
     }
 
     /**
@@ -257,10 +257,9 @@ export class Helper {
      * Example: Rio De Janeiro 24-05-2020 -> Rio_De_Janeiro_24-05-20
      * Example: Arizona 24-05-2020 -> Arizona_24-05-20
      * @param name Album name containing whitespaces 
-     * @param date Album date
      */
-    static ParsePictureNameWithDate(name: string, date: string): string {
-        return `${name.split(" ").join("_")}_${date}`;
+    static ParsePictureNameWithDate(name: string): string {
+        return `${path.basename(name).split(" ").join("_")}`;
     }
 
     /**
@@ -305,5 +304,18 @@ export class Helper {
         if (document.exitFullscreen) {
             document.exitFullscreen().catch(err => Promise.resolve(err));
         }        
+    }
+
+    /**
+     * Format a picture to the correct naming convention
+     * Example: London 23-04-2021 with index 5 -> London_23-04-2021_000005
+     * @param album Album object
+     * @param pictureName Name of the picture
+     * @param flow Desired flow
+     * @returns Picture name with the correct naming convention
+     */
+    static formatPictureName(album: IAlbum, pictureName: string, flow: string): string {
+        let basename = `${Helper.ParsePictureNameWithDate(album.album)}_${path.basename(pictureName).split("_").slice(-1)[0]}`;
+        return path.join(album.album, flow, basename);
     }
 }

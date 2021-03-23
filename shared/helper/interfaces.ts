@@ -8,7 +8,7 @@ export interface IRegex {
     Percentage: string;
     /** Windows folder path validator */
     Folder: RegExp;
-    /** Windows file path validator */ 
+    /** Windows file path validator */
     File: RegExp;
     /** Name must not contain white spaces validator */
     NameNoWhiteSpaces: RegExp;
@@ -21,5 +21,25 @@ export interface IRegex {
  */
 export interface IFileTypes {
     /** RAW file types */
-    Raw: string[]
+    Raw: string[];
+}
+
+/**
+ * Interface contains library - collection dictionary
+ */
+export interface ICollectionSelector {
+    /** Library name of the collection */
+    library: {
+        /** Base name of the library */
+        basename: string;
+        /** Full path of the library name */
+        fullPath: string;
+    },
+    /** Collection name */
+    collections?: {
+        /** Base name of the library */
+        basename: string;
+        /** Full path of the library name */
+        fullPath: string;
+    }[];
 }

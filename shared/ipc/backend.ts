@@ -20,6 +20,7 @@ import { WatcherEdited } from '../watcher/watcherEdited';
 import { WatcherSocialMedia } from '../watcher/watcherSocialMedia';
 import { Api } from '../database/api';
 import { Updater } from '../updater/updater';
+import { ICollectionSelector } from '../helper/interfaces';
 
 let oldAlbum: IAlbum;
 let stalkerEdited: any;
@@ -82,12 +83,7 @@ export class IpcBackend {
         ipcMain.on('get-libraries', (event, args: ILibrary) => {
             Logger.Log().debug('ipcMain: get-libraries');
 
-            // Create database
-            const db = new DbLibrary();
-            let result = db.queryLibraries();
-
-            db.dbClose();
-            event.returnValue = result;
+            event.returnValue = Api.getLibraries();
         });
     }
 
@@ -116,12 +112,7 @@ export class IpcBackend {
         ipcMain.on('get-collections', (event, args: ILibrary) => {
             Logger.Log().debug('ipcMain: get-collections');
 
-            // Create database
-            const db = new DbCollection();
-            let result = db.queryCollections();
-
-            db.dbClose();
-            event.returnValue = result;
+            event.returnValue = Api.getCollections();
         });
     }
 
@@ -341,35 +332,15 @@ export class IpcBackend {
             stalkerEdited.close();
             stalkerSocialMedia.close();
 
-            let flows: IFlow = Api.getFlows(currentAlbum);
-
-            // Rename pictures within the flows
-            Api.getBaseFlowPictures(currentAlbum).forEach((picture: IBase) => {
-                let name = `${Helper.ParsePictureNameWithDate(updatedAlbum.name, updatedAlbum.date)}_${path.basename(picture.base).split("_").slice(-1)[0]}`;
-                let destination: string = path.join(currentAlbum.album, flows.base, name);
-                Helper.renameFile(picture.base, destination);
-            });
-
-            Api.getPreviewFlowPictures(currentAlbum).forEach((picture: IPreview) => {
-                let name = `${Helper.ParsePictureNameWithDate(updatedAlbum.name, updatedAlbum.date)}_${path.basename(picture.preview).split("_").slice(-1)[0]}`;
-                let destination: string = path.join(currentAlbum.album, flows.preview, name);
-                Helper.renameFile(picture.preview, destination);
-            });
-
-            Api.getEditedFlowPictures(currentAlbum).forEach((picture: IEdited) => {
-                let name = `${Helper.ParsePictureNameWithDate(updatedAlbum.name, updatedAlbum.date)}_${path.basename(picture.edited).split("_").slice(-1)[0]}`;
-                let destination: string = path.join(currentAlbum.album, flows.edited, name);
-                Helper.renameFile(picture.edited, destination);
-            });
-
-            Api.getSocialMediaFlowPictures(currentAlbum).forEach((picture: ISocialMedia) => {
-                let name = `${Helper.ParsePictureNameWithDate(updatedAlbum.name, updatedAlbum.date)}_${path.basename(picture.socialMedia).split("_").slice(-1)[0]}`;
-                let destination: string = path.join(currentAlbum.album, flows.socialMedia, name);
-
-                Helper.renameFile(picture.socialMedia, destination);
-            });
+            let flow: IFlow = Api.getFlows(currentAlbum);
 
             Helper.renameDirectory(currentAlbum.album, updatedAlbum.album);
+
+            // Rename pictures within the flows
+            Api.getBaseFlowPictures(currentAlbum).forEach((picture: IBase) => Helper.renameFile(path.join(updatedAlbum.album, flow.base, path.basename(picture.base)), Helper.formatPictureName(updatedAlbum, picture.base, flow.base)));
+            Api.getPreviewFlowPictures(currentAlbum).forEach((picture: IPreview) => Helper.renameFile(path.join(updatedAlbum.album, flow.preview, path.basename(picture.preview)), Helper.formatPictureName(updatedAlbum, picture.preview, flow.preview)));
+            Api.getEditedFlowPictures(currentAlbum).forEach((picture: IEdited) => Helper.renameFile(path.join(updatedAlbum.album, flow.edited, path.basename(picture.edited)), Helper.formatPictureName(updatedAlbum, picture.edited, flow.edited)));
+            Api.getSocialMediaFlowPictures(currentAlbum).forEach((picture: ISocialMedia) => Helper.renameFile(path.join(updatedAlbum.album, flow.socialMedia, path.basename(picture.socialMedia)), Helper.formatPictureName(updatedAlbum, picture.socialMedia, flow.socialMedia)));
 
             Api.updateAlbum(currentAlbum, updatedAlbum);
 
@@ -755,36 +726,36 @@ export class IpcBackend {
             for (const [key, flow] of Object.entries(flows)) {
                 // Counter is used as picture indexer
                 let counter = 0;
-  
+
                 // Get all the base flow pictures
                 if (flow == flows.base) {
-                    
+
                     Api.getBaseFlowPictures(album).forEach((picture: IBase) => {
                         // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
                         let destination = path.join(picture.album, flow, Helper.renameOrganizesPicture(picture, ++counter, 5));
                         let previewDestination = path.join(picture.album, flows.preview, Helper.renameOrganizesPicture(picture, counter, 5, true));
-            
+
                         // Rename pictures with the new file name
                         Helper.renameFile(picture.base, destination);
-            
+
                         picture.baseUpdated = destination;
                         picture.previewUpdated = previewDestination;
 
                         Api.updateBaseFlow(picture);
                     });
                 }
-  
+
                 // Get all the preview flow pictures
                 else if (flow == flows.preview) {
-                    
+
                     Api.getPreviewFlowPictures(album).forEach((picture: IPreview) => {
                         // D:\Test\Forests\Woods 03-11-2020\Base\Woods_03-11-2020_00001.{extension}
                         let destination = path.join(picture.album, flows.preview, Helper.renameOrganizesPicture(picture, ++counter, 5, true));
                         let baseDestination = path.join(picture.album, flows.base, Helper.renameOrganizesPicture(picture, counter, 5));
-            
+
                         // Rename pictures with the new file name
                         Helper.renameFile(picture.preview, destination);
-            
+
                         picture.baseUpdated = baseDestination;
                         picture.previewUpdated = destination;
 
@@ -822,6 +793,28 @@ export class IpcBackend {
             updater.error();
             updater.downloadProgress();
             updater.updateDownloaded();
+        });
+    }
+
+    /**
+     * Map collections to a library
+     */
+    static collectionsSelector() {
+        ipcMain.on('collections-selector', (event, args) => {
+            Logger.Log().debug("collections-selector");
+
+            let collectionSelector: ICollectionSelector[] = [];
+
+            Api.getLibraries().forEach((library: ILibrary) => collectionSelector.push({ library: { basename: library.name, fullPath: library.library }, collections: [] }));
+            Api.getCollections().forEach((collection: ICollection) => {
+                // Map collections to the corresponding library 
+                if (collectionSelector.some(library => library.library.fullPath === collection.library)) {
+                    let pos = collectionSelector.map(e => e.library.fullPath).indexOf(collection.library);
+                    collectionSelector[pos].collections.push({ basename: path.basename(collection.collection), fullPath: collection.collection });
+                }
+            });
+
+            event.returnValue = collectionSelector;
         });
     }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ICollection, ILibrary } from '../../../../shared/database/interfaces';
+import { ICollectionSelector } from '../../../../shared/helper/interfaces';
 import { IpcFrontend } from '../../../../shared/ipc/frontend';
 
 @Component({
@@ -12,15 +13,14 @@ import { IpcFrontend } from '../../../../shared/ipc/frontend';
 export class DialogImportLegacyComponent implements OnInit {
   collectionForm: FormGroup;
   collections: any = [];
+  collectionSelector: ICollectionSelector[] = [];
 
   constructor(private fb: FormBuilder, public dialogRef: MatDialogRef<DialogImportLegacyComponent>) { }
 
   ngOnInit(): void {
-    IpcFrontend.getCollections().forEach((collection: ICollection) => {
-      this.collections.push(collection.collection);
-    });
+    this.collectionSelector = IpcFrontend.collectionsSelector();
 
-    let defaultCollection: string = (this.collections.length == 0) ? "" : this.collections[0];
+    let defaultCollection: string = (this.collectionSelector.length == 0) ? "" : this.collectionSelector[0].collections[0].fullPath;
 
     this.collectionForm = this.fb.group({
       collection: defaultCollection,
