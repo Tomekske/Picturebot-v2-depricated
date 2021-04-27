@@ -1,6 +1,6 @@
 {
   "name": "Picturebot",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Angular 10 with Electron (Typescript + SASS + Hot Reload)",
   "homepage": "https://github.com/Tomekske/Picturebot",
   "author": {

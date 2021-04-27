@@ -8,7 +8,7 @@
             <img *ngIf='mediaContainer.ready && mediaContainer.media.type === "img"' (click)='select($event, i)'
                 [src]='mediaContainer.media.previewUrl' [style.height.px]='mediaContainer.computedHeight'
                 [style.width.px]='mediaContainer.computedWidth' [height]='prefHeight'
-                (load)='loadMedia(mediaContainer, $event.target)' (error)='onError(mediaContainer,i)' />
+                (load)='loadMedia(mediaContainer, $event.target)' (error)='onError(mediaContainer,i)'/>
 
             <!-- Picture function overlay -->
             <div *ngIf="selectedFlow === tabFlows.preview" class="gallery-overlay">

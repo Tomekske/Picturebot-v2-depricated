@@ -19,7 +19,7 @@
   </div>
   <!-- Album selector -->
   <div fxFlex="15" fxLayoutAlign="center center">
-    <div class="fixedPosition" *ngIf="isVisible">
+    <div class="fixedPosition" *ngIf="isVisible" style="max-height: 50%; overflow-y: auto;">
       <mat-card>
         <mat-selection-list [multiple]="false">
           <div mat-subheader>Select album</div>

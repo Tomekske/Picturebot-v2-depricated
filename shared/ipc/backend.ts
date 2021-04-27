@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { ipcMain, Clipboard, clipboard, nativeImage } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as cp from 'child_process';
